@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="com.tsubik.cordova.geofence"
+    version="0.2.0">
+    <name>geofence</name>
+    <description>Geofence plugin</description>
+    <license>MIT</license>
+    <keywords>phonegap,background geolocation, geofence</keywords>
+
+    <engines>
+        <engine name="cordova" version=">=3.0.0" />
+    </engines>
+
+    <js-module src="www/geofence.js" name="geofence">
+        <clobbers target="geofence" />
+    </js-module>
+
+    <dependency id="com.vladstirbu.cordova.promise" url="https://github.com/vstirbu/PromisesPlugin.git" /> 
+    <!-- android -->
+    <platform name="android">
+        <source-file src="src/android/AbstractGoogleServiceCommand.java" target-dir="src/com/tsubik/cordova/geofence" />
+        <source-file src="src/android/AddGeofenceCommand.java" target-dir="src/com/tsubik/cordova/geofence" />
+        <source-file src="src/android/BeepHelper.java" target-dir="src/com/tsubik/cordova/geofence" />
+        <source-file src="src/android/GeoNotification.java" target-dir="src/com/tsubik/cordova/geofence" />
+        <source-file src="src/android/GeoNotificationManager.java" target-dir="src/com/tsubik/cordova/geofence" />
+        <source-file src="src/android/GeoNotificationNotifier.java" target-dir="src/com/tsubik/cordova/geofence" />
+        <source-file src="src/android/GeoNotificationStore.java" target-dir="src/com/tsubik/cordova/geofence" />
+        <source-file src="src/android/GeofencePlugin.java" target-dir="src/com/tsubik/cordova/geofence" />
+        <source-file src="src/android/GoogleServiceCommandExecutor.java" target-dir="src/com/tsubik/cordova/geofence" />
+        <source-file src="src/android/IGoogleServiceCommandListener.java" target-dir="src/com/tsubik/cordova/geofence" />
+        <source-file src="src/android/LocalStorage.java" target-dir="src/com/tsubik/cordova/geofence" />
+        <source-file src="src/android/LocalStorageDBHelper.java" target-dir="src/com/tsubik/cordova/geofence" />
+        <source-file src="src/android/Logger.java" target-dir="src/com/tsubik/cordova/geofence" />
+        <source-file src="src/android/ReceiveTransitionsIntentService.java" target-dir="src/com/tsubik/cordova/geofence" />
+        <source-file src="src/android/RemoveGeofenceCommand.java" target-dir="src/com/tsubik/cordova/geofence" />
+        <source-file src="src/android/StartAppAtBootReceiver.java" target-dir="src/com/tsubik/cordova/geofence" />
+        
+        <lib-file src="src/android/libs/gson-2.3.jar" /> 
+        <lib-file src="src/android/libs/android-support-v4.jar" />
+        <lib-file src="src/android/libs/google-play-services.jar" />
+        
+        <config-file target="config.xml" parent="/*">
+            <feature name="GeofencePlugin">
+              <param name="android-package" value="com.tsubik.cordova.geofence.GeofencePlugin"/>
+            </feature> 
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <meta-data android:name="com.google.android.gms.version" android:value="5089000" />
+            <!-- <service android:name="com.tsubik.cordova.geofence.BTWService" android:enabled="true" android:process=":remote" /> -->
+            <service
+                android:name="com.tsubik.cordova.geofence.ReceiveTransitionsIntentService"
+                android:label="@string/app_name"
+                android:exported="false">
+            </service>
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <receiver
+                android:name="com.tsubik.cordova.geofence.StartAppAtBootReceiver">
+                <intent-filter>
+                    <action android:name="android.intent.action.BOOT_COMPLETED" />
+                </intent-filter>
+            </receiver>
+
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+            <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+        </config-file>
+
+     </platform>          
+
+</plugin>
