@@ -6,7 +6,7 @@
     version="0.2.0">
     <name>geofence</name>
     <description>Geofence plugin</description>
-    <license>MIT</license>
+    <license>Apache 2.0</license>
     <keywords>phonegap,background geolocation, geofence</keywords>
 
     <engines>

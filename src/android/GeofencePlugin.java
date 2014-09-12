@@ -77,13 +77,13 @@ public class GeofencePlugin extends CordovaPlugin {
                 .setLatitude(object.getDouble("latitude"))
                 .setLongitute(object.getDouble("longitude"))
                 .setRadius(object.getInt("radius"))
-                .setTransitionType((object.getInt("transitionType") == 1) ? Geofence.GEOFENCE_TRANSITION_ENTER : Geofence.GEOFENCE_TRANSITION_EXIT)
-                .setData(object.getString("data"));
+                .setTransitionType((object.getInt("transitionType") == 1) ? Geofence.GEOFENCE_TRANSITION_ENTER : Geofence.GEOFENCE_TRANSITION_EXIT);
             JSONObject notificationObject = object.getJSONObject("notification");
             geo
             	.setNotificationText(notificationObject.getString("text"))
             	.setNotificationTitle(notificationObject.getString("title"))
-            	.setOpenAppOnClick(notificationObject.getBoolean("openAppOnClick"));
+            	.setOpenAppOnClick(notificationObject.getBoolean("openAppOnClick"))
+                .setData(object.getString("data"));
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

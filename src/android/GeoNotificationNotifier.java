@@ -24,7 +24,7 @@ public class GeoNotificationNotifier {
 	
 	public void notify(GeoNotification notification, boolean isEntered){
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
-		    .setSmallIcon(R.drawable.ic_notification_overlay)
+		    .setSmallIcon(R.drawable.ic_menu_mylocation)
 		    .setContentTitle(notification.getNotificationTitle())
 		    .setContentText(notification.getNotificationText());
 		// Creates an explicit intent for an Activity in your app
@@ -34,7 +34,7 @@ public class GeoNotificationNotifier {
 			String packageName  = context.getPackageName();
 			Intent resultIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
 			
-			resultIntent.putExtra("tsubik.geotask.loadTask", notification.getData().toString());
+			resultIntent.putExtra("geofence.notification.data", notification.getData().toString());
 			// The stack builder object will contain an artificial back stack for the
 			// started Activity.
 			// This ensures that navigating backward from the Activity leads out of
