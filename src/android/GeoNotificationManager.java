@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import org.apache.cordova.CallbackContext;
+
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -70,27 +72,54 @@ public class GeoNotificationManager
             return false;
         }
     }
-	public void addGeoNotifications(List<GeoNotification> geoNotifications){
+	public void addGeoNotifications(List<GeoNotification> geoNotifications,final CallbackContext callback){
 		List<Geofence> newGeofences = new ArrayList<Geofence>();
 		for(GeoNotification geo: geoNotifications){
 			geoNotificationStore.setGeoNotification(geo);
 			newGeofences.add(geo.toGeofence());
 		}
-		googleServiceCommandExecutor.QueueToExecute(new AddGeofenceCommand(context, pendingIntent,newGeofences));
+		AddGeofenceCommand geoFenceCmd = new AddGeofenceCommand(context, pendingIntent,newGeofences);
+		if(callback != null)
+		{
+			geoFenceCmd.addListener(new IGoogleServiceCommandListener() {
+				public void onCommandExecuted() {
+					callback.success();
+				}
+			});
+		}
+		googleServiceCommandExecutor.QueueToExecute(geoFenceCmd);
 	}
 	
-	public void removeGeoNotification(String id){
+	public void removeGeoNotification(String id,final CallbackContext callback){
 		List<String> ids = new ArrayList<String>();
 		ids.add(id);
-		removeGeoNotifications(ids);
+		removeGeoNotifications(ids, callback);
 	}
 	
-	public void removeGeoNotifications(List<String> ids){
-		googleServiceCommandExecutor.QueueToExecute(new RemoveGeofenceCommand(context, ids));
+	public void removeGeoNotifications(List<String> ids,final CallbackContext callback){
+		RemoveGeofenceCommand cmd = new RemoveGeofenceCommand(context, ids);
+		if(callback != null){
+			cmd.addListener(new IGoogleServiceCommandListener() {
+				@Override
+				public void onCommandExecuted() {
+					callback.success();
+				}
+			});
+		}
+		googleServiceCommandExecutor.QueueToExecute(cmd);
 	}
 	
-	public void removeAllGeoNotifications(){
-		googleServiceCommandExecutor.QueueToExecute(new RemoveGeofenceCommand(context, pendingIntent));
+	public void removeAllGeoNotifications(final CallbackContext callback){
+		RemoveGeofenceCommand cmd = new RemoveGeofenceCommand(context, pendingIntent);
+		if(callback != null){
+			cmd.addListener(new IGoogleServiceCommandListener() {
+				@Override
+				public void onCommandExecuted() {
+					callback.success();
+				}
+			});
+		}
+		googleServiceCommandExecutor.QueueToExecute(cmd);
 	}
 
 	/*

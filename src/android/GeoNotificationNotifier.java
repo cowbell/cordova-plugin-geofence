@@ -15,11 +15,13 @@ public class GeoNotificationNotifier {
 	private NotificationManager notificationManager;
 	private Context context;
 	private BeepHelper beepHelper;
+	private Logger logger;
 	
 	public GeoNotificationNotifier(NotificationManager notificationManager, Context context){
 		this.notificationManager = notificationManager;
 		this.context = context;
 		this.beepHelper = new BeepHelper();
+		this.logger = Logger.getLogger();
 	}
 	
 	public void notify(GeoNotification notification, boolean isEntered){
@@ -27,21 +29,21 @@ public class GeoNotificationNotifier {
 		    .setSmallIcon(R.drawable.ic_menu_mylocation)
 		    .setContentTitle(notification.getNotificationTitle())
 		    .setContentText(notification.getNotificationText());
-		// Creates an explicit intent for an Activity in your app
-		//Intent resultIntent = new Intent(context, Donebytheway.class);
 		
 		if(notification.getOpenAppOnClick()){
 			String packageName  = context.getPackageName();
 			Intent resultIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
 			
-			resultIntent.putExtra("geofence.notification.data", notification.getData().toString());
+			Object extraData = notification.getData();
+			if(extraData != null){
+				resultIntent.putExtra("geofence.notification.data", extraData.toString());
+			}
 			// The stack builder object will contain an artificial back stack for the
 			// started Activity.
 			// This ensures that navigating backward from the Activity leads out of
 			// your application to the Home screen.
 			TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
 			// Adds the back stack for the Intent (but not the Intent itself)
-			//stackBuilder.addParentStack(Donebytheway.class);
 			// Adds the Intent that starts the Activity to the top of the stack
 			stackBuilder.addNextIntent(resultIntent);
 			PendingIntent resultPendingIntent =
@@ -53,5 +55,6 @@ public class GeoNotificationNotifier {
 		}
 		beepHelper.startTone("beep_beep_beep");
 		notificationManager.notify(100, mBuilder.build());
+		logger.log(Log.DEBUG, "GeoNotification title: "+notification.getNotificationTitle()+" text: " +notification.getNotificationText());
 	}
 }

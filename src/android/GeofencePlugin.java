@@ -22,7 +22,7 @@ import android.location.LocationManager;
 import android.util.Log;
 
 public class GeofencePlugin extends CordovaPlugin {
-    private static final String TAG = "BTWPlugin";
+    public static final String TAG = "GeofencePlugin";
     private GeoNotificationManager geoNotificationManager;
     private Context context;
     
@@ -34,7 +34,7 @@ public class GeofencePlugin extends CordovaPlugin {
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
         context = this.cordova.getActivity().getApplicationContext();
-        Logger.setLogger(new Logger(TAG, context, true));
+        Logger.setLogger(new Logger(TAG, context, false));
         geoNotificationManager = new GeoNotificationManager(context);
     }
     
@@ -45,22 +45,22 @@ public class GeofencePlugin extends CordovaPlugin {
         if(action.equals("addOrUpdate")){
             List<GeoNotification> geoNotifications = new ArrayList<GeoNotification>();
             for(int i=0; i<args.length();i++){
-                geoNotifications.add(parseFromJSONObject(args.getJSONObject(i)));
+            	GeoNotification not = parseFromJSONObject(args.getJSONObject(i));
+            	if(not != null){
+                    geoNotifications.add(not);	
+            	}
             }
-            geoNotificationManager.addGeoNotifications(geoNotifications);
-            callbackContext.success();
+            geoNotificationManager.addGeoNotifications(geoNotifications, callbackContext);
         }
         else if(action.equals("remove")){ 
             List<String> ids = new ArrayList<String>();
             for(int i=0; i<args.length();i++){
                 ids.add(args.getString(i));
             }
-            geoNotificationManager.removeGeoNotifications(ids);
-            callbackContext.success();
+            geoNotificationManager.removeGeoNotifications(ids, callbackContext);
         }
         else if(action.equals("removeAll")){ 
-            geoNotificationManager.removeAllGeoNotifications();   
-            callbackContext.success();
+            geoNotificationManager.removeAllGeoNotifications(callbackContext);
         }
         else{ 
             return false;
@@ -80,14 +80,16 @@ public class GeofencePlugin extends CordovaPlugin {
                 .setTransitionType((object.getInt("transitionType") == 1) ? Geofence.GEOFENCE_TRANSITION_ENTER : Geofence.GEOFENCE_TRANSITION_EXIT);
             JSONObject notificationObject = object.getJSONObject("notification");
             geo
-            	.setNotificationText(notificationObject.getString("text"))
-            	.setNotificationTitle(notificationObject.getString("title"))
-            	.setOpenAppOnClick(notificationObject.getBoolean("openAppOnClick"))
-                .setData(object.getString("data"));
+            	.setNotificationText(JSONHelper.getStringOrDefault(notificationObject, "text", ""))
+            	.setNotificationTitle(JSONHelper.getStringOrDefault(notificationObject, "title", ""))
+            	.setOpenAppOnClick(JSONHelper.getBooleanOrDefault(notificationObject, "openAppOnClick", true))
+                .setData(JSONHelper.getStringOrDefault(notificationObject, "data", null));
+            
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return geo;
     }
+    
 } 

@@ -6,11 +6,11 @@ import android.util.Log;
 import android.content.BroadcastReceiver;
 import android.content.Context;
  
-public class StartAppAtBootReceiver extends BroadcastReceiver {
+public class BootReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-//            Intent serviceIntent = new Intent(context, BTWService.class);
-//            context.startService(serviceIntent);
+    	GeoNotificationManager manager = new GeoNotificationManager(context);
+    	manager.loadFromStorageAndInitializeGeofences();
     }
 }

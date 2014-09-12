@@ -20,7 +20,7 @@ public class ReceiveTransitionsIntentService extends IntentService {
 	protected BeepHelper beepHelper;
 	protected GeoNotificationNotifier notifier;
 	protected GeoNotificationStore store;
-	
+
     /**
      * Sets an identifier for the service
      */
@@ -28,6 +28,7 @@ public class ReceiveTransitionsIntentService extends IntentService {
         super("ReceiveTransitionsIntentService");
         beepHelper = new BeepHelper();
         store = new GeoNotificationStore(this);
+        Logger.setLogger(new Logger(GeofencePlugin.TAG, this, false));
     }
     /**
      * Handles incoming intents
@@ -40,13 +41,13 @@ public class ReceiveTransitionsIntentService extends IntentService {
     protected void onHandleIntent(Intent intent) {
     	notifier = new GeoNotificationNotifier((NotificationManager)this.getSystemService(Context.NOTIFICATION_SERVICE), this);
     	
-    	Logger logger = new Logger("BTWService", this.getApplicationContext(), true);
+    	Logger logger = Logger.getLogger();
     	// First check for errors
         if (LocationClient.hasError(intent)) {
             // Get the error code with a static method
             int errorCode = LocationClient.getErrorCode(intent);
             // Log the error
-            Log.e("ReceiveTransitionsIntentService",
+            logger.log(Log.ERROR, 
                     "Location Services error: " +
                     Integer.toString(errorCode));
             /*
