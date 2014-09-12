@@ -25,6 +25,7 @@ IGoogleServiceCommandListener{
 			return;
 		isExecuting = true;
 		AbstractGoogleServiceCommand command = commandsToExecute.poll();
+		command.addListener(this);
 		command.Execute();
 	}
 
