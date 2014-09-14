@@ -46,7 +46,7 @@ public class LocalStorageDBHelper extends SQLiteOpenHelper {
 	 */
 	public static LocalStorageDBHelper getInstance(Context ctx) {
 		if (mInstance == null) {
-			mInstance = new LocalStorageDBHelper(ctx.getApplicationContext());
+			mInstance = new LocalStorageDBHelper(ctx);
 		}
 		return mInstance;
 	}
