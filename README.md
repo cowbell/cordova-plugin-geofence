@@ -4,8 +4,9 @@ Plugin to monitor circular geofences using mobile devices. The purpose is to not
 
 ## Installation
 
+From master
 ```
-cordova plugin add 
+cordova plugin add  
 ```
 
 ## Removing the Plugin from project
@@ -40,7 +41,7 @@ The plugin is not available until `deviceready` event is fired.
 
 ```javascript
 document.addEventListener('deviceready', function () {
-    // window.plugin.notification.local is now available
+    // window.geofence is now available
 }, false);
 ```
 

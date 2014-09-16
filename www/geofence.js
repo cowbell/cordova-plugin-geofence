@@ -4,52 +4,42 @@ var Geofence = function() {
     
 };
 
-Geofence.prototype.addOrUpdate = function(geofences){
+Geofence.prototype.addOrUpdate = function(geofences, success, error){
     if(!Array.isArray(geofences)){
         geofences = [geofences];
     }
-    return new Promise(function(resolve, reject) {
-        exec(function(result){
-            resolve(result);
-        },
-        function(reason){
-            reject(reason);
-        },
-        'GeofencePlugin',
-        'addOrUpdate',
-        geofences);
-    });    
+    return execPromise(success, error, 'GeofencePlugin', 'addOrUpdate', geofences);
 }
 
-Geofence.prototype.remove = function(ids){
+Geofence.prototype.remove = function(ids, success, error){
     if(!Array.isArray(ids)){
         ids = [ids];
     }
-    return new Promise(function(resolve, reject) {
-        exec(function(result){
-            resolve(result);
-        },
-        function(reason){
-            reject(reason);
-        },
-        'GeofencePlugin',
-        'remove',
-        ids);
-    });    
+    return execPromise(success, error, 'GeofencePlugin', 'remove', ids);
 }
 
-Geofence.prototype.removeAll = function(){
+Geofence.prototype.removeAll = function(success, error){
+    return execPromise(success, error, 'GeofencePlugin', 'removeAll', [])
+}
+
+function execPromise(success, error, pluginName, method, args){
     return new Promise(function(resolve, reject) {
         exec(function(result){
             resolve(result);
+            if(typeof success === 'function'){
+                success(result);
+            }
         },
         function(reason){
             reject(reason);
+            if(typeof error === 'function'){
+                error(reason);
+            }
         },
-        'GeofencePlugin',
-        'removeAll',
-        []);
-    });
+        pluginName,
+        method,
+        args);
+    });  
 }
 
 var geofence = new Geofence();
