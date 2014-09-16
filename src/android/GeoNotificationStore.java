@@ -32,6 +32,9 @@ public class GeoNotificationStore {
 		}
 		return result;
 	}
+	public void remove(String id){
+		storage.removeItem(id);
+	}
 	public void clear(){
 		storage.clear();
 	}

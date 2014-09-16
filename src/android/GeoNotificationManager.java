@@ -57,7 +57,6 @@ public class GeoNotificationManager
 		for(GeoNotification geo: geoNotifications){
 			geoFences.add(geo.toGeofence());
 		}
-		googleServiceCommandExecutor.QueueToExecute(new RemoveGeofenceCommand(context, pendingIntent));
 		googleServiceCommandExecutor.QueueToExecute(new AddGeofenceCommand(context,pendingIntent, geoFences));
 	}
 	
@@ -106,20 +105,19 @@ public class GeoNotificationManager
 				}
 			});
 		}
+		for(String id: ids){
+			geoNotificationStore.remove(id);
+		}
 		googleServiceCommandExecutor.QueueToExecute(cmd);
 	}
 	
 	public void removeAllGeoNotifications(final CallbackContext callback){
-		RemoveGeofenceCommand cmd = new RemoveGeofenceCommand(context, pendingIntent);
-		if(callback != null){
-			cmd.addListener(new IGoogleServiceCommandListener() {
-				@Override
-				public void onCommandExecuted() {
-					callback.success();
-				}
-			});
+		List<GeoNotification> geoNotifications = geoNotificationStore.getAll();
+		List<String> geoNotificationsIds = new ArrayList<String>();
+		for(GeoNotification geo: geoNotifications){
+			geoNotificationsIds.add(geo.getId());
 		}
-		googleServiceCommandExecutor.QueueToExecute(cmd);
+		removeGeoNotifications(geoNotificationsIds, callback);
 	}
 
 	/*
