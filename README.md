@@ -2,6 +2,8 @@
 
 Plugin to monitor circular geofences using mobile devices. The purpose is to notify user if crossing the boundary of the monitored geofence.
 
+*Geofences persists after device reboot. You do not have to open your app first to monitor added geofences*
+
 ## Installation
 
 From master
