@@ -11,6 +11,7 @@ public class GeoNotification {
 	private int transitionType;
 	private boolean openAppOnClick;
 	
+	private int notificationId;
 	private String notificationTitle;
 	private String notificationText;
 	private Object data;
@@ -57,6 +58,14 @@ public class GeoNotification {
 		this.notificationText = text;
 		return this;
 	}
+	public GeoNotification setNotificationId(int id){
+		this.notificationId = id;
+		return this;
+	}
+	public int getNotificationId(){
+		return this.notificationId;
+	}
+
 	public String getNotificationText(){
 		return this.notificationText;
 	}

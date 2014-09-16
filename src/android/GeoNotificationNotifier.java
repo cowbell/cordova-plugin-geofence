@@ -54,7 +54,7 @@ public class GeoNotificationNotifier {
 			mBuilder.setContentIntent(resultPendingIntent);
 		}
 		beepHelper.startTone("beep_beep_beep");
-		notificationManager.notify(100, mBuilder.build());
+		notificationManager.notify(notification.getNotificationId(), mBuilder.build());
 		logger.log(Log.DEBUG, "GeoNotification title: "+notification.getNotificationTitle()+" text: " +notification.getNotificationText());
 	}
 }

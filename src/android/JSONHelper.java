@@ -23,4 +23,14 @@ public class JSONHelper {
 		}
 		return result;
 	}
+
+	public static int getIntOrDefault(JSONObject obj, String property, int def){
+		int result = def;
+		try {
+			result = obj.getInt(property);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return result;	
+	}
 }

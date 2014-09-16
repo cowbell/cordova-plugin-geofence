@@ -80,6 +80,7 @@ public class GeofencePlugin extends CordovaPlugin {
                 .setTransitionType((object.getInt("transitionType") == 1) ? Geofence.GEOFENCE_TRANSITION_ENTER : Geofence.GEOFENCE_TRANSITION_EXIT);
             JSONObject notificationObject = object.getJSONObject("notification");
             geo
+                .setNotificationId(JSONHelper.getIntOrDefault(notificationObject, "id", 0))
             	.setNotificationText(JSONHelper.getStringOrDefault(notificationObject, "text", ""))
             	.setNotificationTitle(JSONHelper.getStringOrDefault(notificationObject, "title", ""))
             	.setOpenAppOnClick(JSONHelper.getBooleanOrDefault(notificationObject, "openAppOnClick", true))

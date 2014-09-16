@@ -31,11 +31,11 @@ Cordova initialize plugin to `window.geofence` object.
 
 ## Methods
 
-- window.geofence.addOrUpdate
-- window.geofence.remove
-- window.geofence.removeAll
+- window.geofence.addOrUpdate(geofences, onsucces, onerror)
+- window.geofence.remove(onsuccess, onerror)
+- window.geofence.removeAll(onsuccess, onerror)
 
-All methods returing promises.
+All methods returing promises, but you can also use standard callback functions.
 
 ## Plugin initialization
 
@@ -57,6 +57,7 @@ window.geofence.addOrUpdate({
     radius:         Number, //Radius of geofence in meters
     transitionType: Number, //Type of transition 1 - Enter, 0 - Exit
     notification: {         //Notification object
+        id:             Number, //optional should be integer, id of notidication
         title:          String, //Title of notification
         text:           String, //Text of notification
         openAppOnClick: Boolean,//is main app activity should be opened after clicking on notification
@@ -76,6 +77,8 @@ window.geofence.addOrUpdate([geofence1, geofence2, geofence3]);
 Geofence could override the previously one with the same `id`. 
 
 *All geofences are stored on the device and restored to monitor after device reboot.*
+
+Notification could override the previously one with the same `notification.id`.
 
 ## Removing 
 
@@ -117,7 +120,8 @@ window.geofence.addOrUpdate({
     longitude:      18.6593152, 
     radius:         3000, 
     transitionType: 1, 
-    notification: {         
+    notification: {    
+        id:             1,     
         title:          "Welcome in Gliwice", 
         text:           "You just arrived to Gliwice city center.",
         openAppOnClick: true
