@@ -6,7 +6,7 @@ Plugin to monitor circular geofences using mobile devices. The purpose is to not
 
 From master
 ```
-cordova plugin add  
+cordova plugin add https://github.com/tsubik/cordova-plugin-geofence
 ```
 
 ## Removing the Plugin from project
@@ -21,7 +21,7 @@ cordova plugin rm com.tsubik.cordova.geofence
 
 - Android
 - iOS (comming soon)
-- Windows Phone (comming soon)
+- Windows Phone 8.1 (comming soon)
 
 # Using the plugin
 
