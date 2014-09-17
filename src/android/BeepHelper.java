@@ -1,4 +1,4 @@
-package com.tsubik.cordova.geofence;
+package com.cowbell.cordova.geofence;
 
 import android.media.AudioManager;
 import android.media.ToneGenerator;

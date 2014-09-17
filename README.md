@@ -8,7 +8,7 @@ Plugin to monitor circular geofences using mobile devices. The purpose is to not
 
 From master
 ```
-cordova plugin add https://github.com/tsubik/cordova-plugin-geofence
+cordova plugin add https://github.com/cowbell/cordova-plugin-geofence
 ```
 
 ## Removing the Plugin from project
@@ -16,7 +16,7 @@ cordova plugin add https://github.com/tsubik/cordova-plugin-geofence
 Using cordova CLI
 
 ```
-cordova plugin rm com.tsubik.cordova.geofence
+cordova plugin rm com.cowbell.cordova.geofence
 ```
 
 ## Supported Platforms
@@ -137,4 +137,4 @@ window.geofence.addOrUpdate({
 
 This software is released under the [Apache 2.0 License](http://opensource.org/licenses/Apache-2.0).
 
-© 2014 Tomasz Subik. All rights reserved
+© 2014 Cowbell-labs. All rights reserved

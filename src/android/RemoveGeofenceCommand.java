@@ -1,4 +1,4 @@
-package com.tsubik.cordova.geofence;
+package com.cowbell.cordova.geofence;
 import java.util.List;
 
 import com.google.android.gms.location.LocationClient.OnRemoveGeofencesResultListener;

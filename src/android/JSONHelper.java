@@ -1,4 +1,4 @@
-package com.tsubik.cordova.geofence;
+package com.cowbell.cordova.geofence;
 
 import org.json.JSONException;
 import org.json.JSONObject;
