@@ -3,12 +3,13 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="com.tsubik.cordova.geofence"
-    version="0.2.0">
+    version="0.2.1">
     <name>geofence</name>
     <description>Geofence plugin</description>
     <license>Apache 2.0</license>
     <keywords>phonegap,background geolocation, geofence</keywords>
-
+    <repo>https://github.com/tsubik/cordova-plugin-geofence.git</repo>
+    <issue>https://github.com/tsubik/cordova-plugin-geofence/issues</issue>
     <engines>
         <engine name="cordova" version=">=3.0.0" />
     </engines>
