@@ -109,7 +109,7 @@ window.geofence.removeAll()
     })
 ```
 
-#Example
+#Example usage
 
 Adding geofence to monitor entering Gliwice city center area of radius 3km
 
@@ -132,6 +132,10 @@ window.geofence.addOrUpdate({
     console.log('Adding geofence failed', reason);
 })
 ```
+
+#Example application
+
+Check out our [example application](https://github.com/cowbell/ionic-geofence) built with ionic framework.
 
 ##License
 
