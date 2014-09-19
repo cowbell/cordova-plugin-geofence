@@ -75,5 +75,14 @@
         </config-file>
 
      </platform>          
+    <!-- wp8 -->
+    <platform name="wp8">
+        <config-file target="config.xml" parent="/*">
+            <feature name="GeofencePlugin">
+                <param name="wp-package" value="GeofencePlugin"/>
+            </feature>
+        </config-file>
 
+        <source-file src="src/wp8/GeofencePlugin.cs" />
+    </platform>
 </plugin>
