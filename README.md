@@ -22,8 +22,8 @@ cordova plugin rm com.cowbell.cordova.geofence
 ## Supported Platforms
 
 - Android
-- iOS (comming soon)
-- Windows Phone 8.1 (comming soon)
+- iOS (coming soon)
+- Windows Phone 8.1 (coming soon)
 
 # Using the plugin
 

@@ -1,4 +1,4 @@
-package com.tsubik.cordova.geofence;
+package com.cowbell.cordova.geofence;
 
 import com.google.android.gms.location.Geofence;
 import com.google.gson.Gson;

@@ -27,6 +27,8 @@ public class GeoNotificationNotifier {
 	public void notify(GeoNotification notification, boolean isEntered){
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
 		    .setSmallIcon(R.drawable.ic_menu_mylocation)
+		    .setVibrate(new long[] { 1000, 1000 ,1000 })
+		    .setAutoCancel(true)
 		    .setContentTitle(notification.getNotificationTitle())
 		    .setContentText(notification.getNotificationText());
 		
