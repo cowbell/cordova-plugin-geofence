@@ -1,4 +1,4 @@
-var exec = require("cordova/exec");
+cordova.define("com.cowbell.cordova.geofence.geofence", function(require, exports, module) { var exec = require("cordova/exec");
 
 var Geofence = function() {
     
@@ -9,6 +9,10 @@ Geofence.prototype.addOrUpdate = function(geofences, success, error){
         geofences = [geofences];
     }
     return execPromise(success, error, 'GeofencePlugin', 'addOrUpdate', geofences);
+}
+
+Geofence.prototype.initialize = function (success, error) {
+    return execPromise(success, error, 'GeofencePlugin', 'initialize', []);
 }
 
 Geofence.prototype.remove = function(ids, success, error){
@@ -44,3 +48,4 @@ function execPromise(success, error, pluginName, method, args){
 
 var geofence = new Geofence();
 module.exports = geofence;
+});

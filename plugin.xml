@@ -82,7 +82,9 @@
                 <param name="wp-package" value="GeofencePlugin"/>
             </feature>
         </config-file>
-
+        <framework src="src/wp8/libs/Newtonsoft.Json.dll" custom="true" /> 
+        <framework src="src/wp8/libs/Core.dll" custom="true"/>
+        <framework src="src/wp8/BackgroundTasks.winmd" custom="true"/>
         <source-file src="src/wp8/GeofencePlugin.cs" />
     </platform>
 </plugin>
