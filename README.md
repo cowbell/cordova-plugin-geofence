@@ -23,7 +23,9 @@ cordova plugin rm com.cowbell.cordova.geofence
 
 - Android
 - iOS (coming soon)
-- Windows Phone 8.1 (coming soon)
+- Windows Phone 8.1 
+    - using Universal App (cordova windows platform)
+    - using Silverlight App (cordova wp8 platform retargeted to WP 8.1)
 
 # Using the plugin
 
@@ -31,9 +33,10 @@ Cordova initialize plugin to `window.geofence` object.
 
 ## Methods
 
-- window.geofence.addOrUpdate(geofences, onsucces, onerror)
-- window.geofence.remove(onsuccess, onerror)
-- window.geofence.removeAll(onsuccess, onerror)
+- window.geofence.initialize(onSuccess, onError)
+- window.geofence.addOrUpdate(geofences, onSuccess, onError)
+- window.geofence.remove(onSuccess, onError)
+- window.geofence.removeAll(onSuccess, onError)
 
 All methods returing promises, but you can also use standard callback functions.
 
@@ -44,6 +47,7 @@ The plugin is not available until `deviceready` event is fired.
 ```javascript
 document.addEventListener('deviceready', function () {
     // window.geofence is now available
+    window.geofence.initialize();
 }, false);
 ```
 
@@ -136,6 +140,24 @@ window.geofence.addOrUpdate({
 #Example application
 
 Check out our [example application](https://github.com/cowbell/ionic-geofence) built with ionic framework.
+
+# Platform specifics
+
+##Windows phone 8.1
+
+Plugin can be used with both windows phone 8.1 type projects Univeral App, Silverlight App.
+
+In order to use toast notifications you have to enable this feature in appxmanifest file either using UI in Visual Studio or edit file setting attribute **ToastCapable="true"** in **m3:VisualElements** node under Package/Applications/Application.
+
+If you are retargeting WP 8.0 to WP 8.1 you need to register background task to perform geofence notifications. Register it via UI in Visual Studio or add following code under Package/Applications/Application/Extensions
+
+```xml
+<Extension Category="windows.backgroundTasks" EntryPoint="GeofenceComponent.GeofenceTrigger">
+    <BackgroundTasks>
+        <m2:Task Type="location" />
+    </BackgroundTasks>
+</Extension>
+``` 
 
 ##License
 

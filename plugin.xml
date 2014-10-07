@@ -1,9 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
-<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    id="com.cowbell.cordova.geofence"
-    version="0.2.2">
+<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="com.cowbell.cordova.geofence" version="0.2.3">
     <name>geofence</name>
     <description>Geofence plugin</description>
     <license>Apache 2.0</license>
@@ -18,7 +15,7 @@
         <clobbers target="geofence" />
     </js-module>
 
-    <dependency id="com.vladstirbu.cordova.promise" url="https://github.com/vstirbu/PromisesPlugin.git" /> 
+    <dependency id="com.vladstirbu.cordova.promise" url="https://github.com/vstirbu/PromisesPlugin.git" />
     <!-- android -->
     <platform name="android">
         <source-file src="src/android/AbstractGoogleServiceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
@@ -39,28 +36,24 @@
         <source-file src="src/android/ReceiveTransitionsIntentService.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/RemoveGeofenceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
 
-        <lib-file src="src/android/libs/gson-2.3.jar" /> 
+        <lib-file src="src/android/libs/gson-2.3.jar" />
         <lib-file src="src/android/libs/android-support-v4.jar" />
         <lib-file src="src/android/libs/google-play-services.jar" />
-        
+
         <config-file target="config.xml" parent="/*">
             <feature name="GeofencePlugin">
-              <param name="android-package" value="com.cowbell.cordova.geofence.GeofencePlugin"/>
-            </feature> 
+                <param name="android-package" value="com.cowbell.cordova.geofence.GeofencePlugin" />
+            </feature>
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <meta-data android:name="com.google.android.gms.version" android:value="5089000" />
-            <service
-                android:name="com.cowbell.cordova.geofence.ReceiveTransitionsIntentService"
-                android:label="@string/app_name"
-                android:exported="false">
+            <service android:name="com.cowbell.cordova.geofence.ReceiveTransitionsIntentService" android:label="@string/app_name" android:exported="false">
             </service>
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <receiver
-                android:name="com.cowbell.cordova.geofence.BootReceiver">
+            <receiver android:name="com.cowbell.cordova.geofence.BootReceiver">
                 <intent-filter>
                     <action android:name="android.intent.action.BOOT_COMPLETED" />
                 </intent-filter>
@@ -74,17 +67,39 @@
             <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
         </config-file>
 
-     </platform>          
+    </platform>
     <!-- wp8 -->
     <platform name="wp8">
+        <config-file target="Properties/WMAppManifest.xml" parent="/Deployment/App/Capabilities">
+            <Capability Name="ID_CAP_LOCATION" />
+        </config-file>
         <config-file target="config.xml" parent="/*">
             <feature name="GeofencePlugin">
-                <param name="wp-package" value="GeofencePlugin"/>
+                <param name="wp-package" value="GeofencePlugin" />
             </feature>
         </config-file>
-        <framework src="src/wp8/libs/Newtonsoft.Json.dll" custom="true" /> 
-        <framework src="src/wp8/libs/Core.dll" custom="true"/>
-        <framework src="src/wp8/BackgroundTasks.winmd" custom="true"/>
+        <framework src="src/wp8/libs/Newtonsoft.Json.dll" custom="true" />
+        <framework src="src/wp8/GeofenceComponent.winmd" custom="true" />
         <source-file src="src/wp8/GeofencePlugin.cs" />
     </platform>
+
+    <!-- windows -->
+    <platform name="windows">
+        <config-file target="package.appxmanifest" parent="/Package/Capabilities">
+            <DeviceCapability Name="location" />
+        </config-file>
+        <config-file target="package.appxmanifest" parent="/Package/Applications/Application/Extensions">
+            <Extension Category="windows.backgroundTasks" EntryPoint="GeofenceComponent.GeofenceTrigger">
+                <BackgroundTasks>
+                    <m2:Task Type="location" />
+                </BackgroundTasks>
+            </Extension>
+        </config-file>
+        <framework src="src/windows/libs/Newtonsoft.Json.dll" custom="true" />
+        <framework src="src/windows/GeofenceComponent.winmd" custom="true" />
+        <js-module src="src/windows/GeofenceProxy.js" name="GeofenceProxy">
+            <runs />
+        </js-module>
+    </platform>
+
 </plugin>
