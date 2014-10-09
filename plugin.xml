@@ -77,6 +77,7 @@
             <feature name="GeofencePlugin">
                 <param name="wp-package" value="GeofencePlugin" />
             </feature>
+
         </config-file>
         <framework src="src/wp8/libs/Newtonsoft.Json.dll" custom="true" />
         <framework src="src/wp8/GeofenceComponent.winmd" custom="true" />
@@ -100,6 +101,16 @@
         <js-module src="src/windows/GeofenceProxy.js" name="GeofenceProxy">
             <runs />
         </js-module>
-    </platform>
+    </platform>   
 
+    <!-- ios -->
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+          <feature name="GeofencePlugin">
+            <param name="ios-package" value="HWPGeofencePlugin"/>
+          </feature>
+        </config-file>
+        <header-file src="src/ios/Bridging-Header.h" />
+        <source-file src="src/ios/GeofencePlugin.swift"/>
+    </platform>
 </plugin>
