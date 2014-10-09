@@ -25,7 +25,7 @@ public class GeofencePlugin extends CordovaPlugin {
     public static final String TAG = "GeofencePlugin";
     private GeoNotificationManager geoNotificationManager;
     private Context context;
-    
+
     /**
      * @param cordova The context of the main Activity.
      * @param webView The associated CordovaWebView.
@@ -37,38 +37,41 @@ public class GeofencePlugin extends CordovaPlugin {
         Logger.setLogger(new Logger(TAG, context, false));
         geoNotificationManager = new GeoNotificationManager(context);
     }
-    
+
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-        Log.d(TAG, "BTWPlugin execute action: "+ action + " args: " + args.toString());
-        
+        Log.d(TAG, "GeofencePlugin execute action: "+ action + " args: " + args.toString());
+
         if(action.equals("addOrUpdate")){
             List<GeoNotification> geoNotifications = new ArrayList<GeoNotification>();
             for(int i=0; i<args.length();i++){
             	GeoNotification not = parseFromJSONObject(args.getJSONObject(i));
             	if(not != null){
-                    geoNotifications.add(not);	
+                    geoNotifications.add(not);
             	}
             }
             geoNotificationManager.addGeoNotifications(geoNotifications, callbackContext);
         }
-        else if(action.equals("remove")){ 
+        else if(action.equals("remove")){
             List<String> ids = new ArrayList<String>();
             for(int i=0; i<args.length();i++){
                 ids.add(args.getString(i));
             }
             geoNotificationManager.removeGeoNotifications(ids, callbackContext);
         }
-        else if(action.equals("removeAll")){ 
+        else if(action.equals("removeAll")){
             geoNotificationManager.removeAllGeoNotifications(callbackContext);
         }
-        else{ 
+        else if(action.equals("initialize")) {
+
+        }
+        else {
             return false;
         }
         return true;
 
     }
-    
+
     private GeoNotification parseFromJSONObject(JSONObject object){
         GeoNotification geo = null;
         try {
@@ -85,12 +88,12 @@ public class GeofencePlugin extends CordovaPlugin {
             	.setNotificationTitle(JSONHelper.getStringOrDefault(notificationObject, "title", ""))
             	.setOpenAppOnClick(JSONHelper.getBooleanOrDefault(notificationObject, "openAppOnClick", true))
                 .setData(JSONHelper.getStringOrDefault(notificationObject, "data", null));
-            
+
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return geo;
     }
-    
-} 
+
+}
