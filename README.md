@@ -37,8 +37,12 @@ Cordova initialize plugin to `window.geofence` object.
 - window.geofence.addOrUpdate(geofences, onSuccess, onError)
 - window.geofence.remove(onSuccess, onError)
 - window.geofence.removeAll(onSuccess, onError)
+- window.geofence.getWatched(onSuccess, onError)
 
-All methods returing promises, but you can also use standard callback functions.
+All methods returning promises, but you can also use standard callback functions.
+
+For listening of geofence transistion you can override recieveTransition method
+- window.geofence.recieveTransition(geofences)
 
 ## Plugin initialization
 
@@ -111,6 +115,24 @@ window.geofence.removeAll()
     .fail(function(reason){
         console.log('Removing geofences failed', reason);
     })
+```
+
+## Getting watched geofences from device
+
+```javascript
+window.geofence.getWatched().then(function (geofencesJson) {
+    var geofences = JSON.parse(geofencesJson);
+});
+```
+
+## Listening for geofence transitions
+
+```javascript
+window.geofence.recieveTransition = function (geofences) {
+    geofences.forEach(function (geo) {
+        console.log('Geofence transition detected', geo);
+    });
+};
 ```
 
 #Example usage
