@@ -24,19 +24,19 @@ public class GeoNotificationNotifier {
 		this.logger = Logger.getLogger();
 	}
 	
-	public void notify(GeoNotification notification, boolean isEntered){
+	public void notify(Notification notification, boolean isEntered){
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
 		    .setSmallIcon(R.drawable.ic_menu_mylocation)
 		    .setVibrate(new long[] { 1000, 1000 ,1000 })
 		    .setAutoCancel(true)
-		    .setContentTitle(notification.getNotificationTitle())
-		    .setContentText(notification.getNotificationText());
+		    .setContentTitle(notification.title)
+		    .setContentText(notification.text);
 		
-		if(notification.getOpenAppOnClick()){
+		if(notification.openAppOnClick){
 			String packageName  = context.getPackageName();
 			Intent resultIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
 			
-			Object extraData = notification.getData();
+			Object extraData = notification.data;
 			if(extraData != null){
 				resultIntent.putExtra("geofence.notification.data", extraData.toString());
 			}
@@ -56,7 +56,7 @@ public class GeoNotificationNotifier {
 			mBuilder.setContentIntent(resultPendingIntent);
 		}
 		beepHelper.startTone("beep_beep_beep");
-		notificationManager.notify(notification.getNotificationId(), mBuilder.build());
-		logger.log(Log.DEBUG, "GeoNotification title: "+notification.getNotificationTitle()+" text: " +notification.getNotificationText());
+		notificationManager.notify(notification.id, mBuilder.build());
+		logger.log(Log.DEBUG, "GeoNotification title: "+notification.title +" text: " +notification.text);
 	}
 }

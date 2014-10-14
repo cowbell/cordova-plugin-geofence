@@ -18,7 +18,7 @@ public class GeoNotificationStore {
 	}
 	
 	public void setGeoNotification(GeoNotification geoNotification){
-		storage.setItem(geoNotification.getId(), new Gson().toJson(geoNotification));
+		storage.setItem(geoNotification.id, new Gson().toJson(geoNotification));
 	}
 	public GeoNotification getGeoNotification(String id){
 		String objectJson = storage.getItem(id);

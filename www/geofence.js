@@ -22,7 +22,15 @@ Geofence.prototype.remove = function (ids, success, error) {
 };
 
 Geofence.prototype.removeAll = function (success, error) {
-    return execPromise(success, error, 'GeofencePlugin', 'removeAll', [])
+    return execPromise(success, error, 'GeofencePlugin', 'removeAll', []);
+};
+
+Geofence.prototype.getWatched = function (success, error) {
+    return execPromise(success, error, 'GeofencePlugin', 'getWatched', []);
+};
+
+Geofence.prototype.recieveTransition = function (geofences) {
+
 };
 
 function execPromise(success, error, pluginName, method, args) {

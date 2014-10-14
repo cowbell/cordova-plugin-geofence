@@ -1,4 +1,5 @@
 package com.cowbell.cordova.geofence;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -40,14 +41,14 @@ public class ReceiveTransitionsIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
     	notifier = new GeoNotificationNotifier((NotificationManager)this.getSystemService(Context.NOTIFICATION_SERVICE), this);
-    	
+
     	Logger logger = Logger.getLogger();
     	// First check for errors
         if (LocationClient.hasError(intent)) {
             // Get the error code with a static method
             int errorCode = LocationClient.getErrorCode(intent);
             // Log the error
-            logger.log(Log.ERROR, 
+            logger.log(Log.ERROR,
                     "Location Services error: " +
                     Integer.toString(errorCode));
             /*
@@ -61,21 +62,26 @@ public class ReceiveTransitionsIntentService extends IntentService {
         } else {
             // Get the type of transition (entry or exit)
             int transitionType =
-                    LocationClient.getGeofenceTransition(intent);            		
+                    LocationClient.getGeofenceTransition(intent);
               if  ((transitionType == Geofence.GEOFENCE_TRANSITION_ENTER)
                  ||
                 (transitionType == Geofence.GEOFENCE_TRANSITION_EXIT)
                ) {
             	logger.log(Log.DEBUG, "Geofence transition detected");
                 List <Geofence> triggerList = LocationClient.getTriggeringGeofences(intent);
-                
+                List<GeoNotification> geoNotifications = new ArrayList<GeoNotification>();
                 for(Geofence fence : triggerList){
                 	String fenceId = fence.getRequestId();
                 	GeoNotification geoNotification = store.getGeoNotification(fenceId);
-                	
+
                 	if(geoNotification != null){
-                		notifier.notify(geoNotification, (transitionType == Geofence.GEOFENCE_TRANSITION_ENTER));
+                		notifier.notify(geoNotification.notification, (transitionType == Geofence.GEOFENCE_TRANSITION_ENTER));
+                        geoNotifications.add(geoNotification);
                 	}
+                }
+
+                if (geoNotifications.size() > 0) {
+                    GeofencePlugin.fireRecieveTransition(geoNotifications);
                 }
             }
             else {
@@ -83,6 +89,6 @@ public class ReceiveTransitionsIntentService extends IntentService {
                         "Geofence transition error: " +
                         transitionType);
             }
-        } 
+        }
     }
 }

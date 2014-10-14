@@ -60,6 +60,11 @@ public class GeoNotificationManager
 		googleServiceCommandExecutor.QueueToExecute(new AddGeofenceCommand(context,pendingIntent, geoFences));
 	}
 	
+	public List<GeoNotification> getWatched() {
+		List<GeoNotification> geoNotifications = geoNotificationStore.getAll();
+		return geoNotifications;
+	}
+	
 	private boolean areGoogleServicesAvailable() {
         // Check that Google Play services is available
         int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
@@ -115,7 +120,7 @@ public class GeoNotificationManager
 		List<GeoNotification> geoNotifications = geoNotificationStore.getAll();
 		List<String> geoNotificationsIds = new ArrayList<String>();
 		for(GeoNotification geo: geoNotifications){
-			geoNotificationsIds.add(geo.getId());
+			geoNotificationsIds.add(geo.id);
 		}
 		removeGeoNotifications(geoNotificationsIds, callback);
 	}
