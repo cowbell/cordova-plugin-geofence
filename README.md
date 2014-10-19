@@ -71,9 +71,9 @@ window.geofence.addOrUpdate({
         openAppOnClick: Boolean,//is main app activity should be opened after clicking on notification
         data:           Object  //Custom object associated with notification
     }
-}).done(function(){
+}).then(function(){
     console.log('Geofence successfully added');
-}).fail(function(reason){
+}, function(reason){
     console.log('Adding geofence failed', reason);
 })
 ```
