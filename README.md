@@ -63,7 +63,7 @@ window.geofence.addOrUpdate({
     latitude:       Number, //Geo latitude of geofence
     longitude:      Number, //Geo longitude of geofence
     radius:         Number, //Radius of geofence in meters
-    transitionType: Number, //Type of transition 1 - Enter, 0 - Exit
+    transitionType: Number, //Type of transition 1 - Enter, 2 - Exit
     notification: {         //Notification object
         id:             Number, //optional should be integer, id of notidication
         title:          String, //Title of notification
@@ -93,10 +93,10 @@ Notification could override the previously one with the same `notification.id`.
 Removing single geofence
 ```javascript
 window.geofence.remove(geofenceId)
-    .done(function(){
+    .then(function(){
         console.log('Geofence sucessfully removed')
-    })
-    .fail(function(reason){
+    }
+    , function(reason){
         console.log('Removing geofence failed', reason)
     })
 ```
@@ -109,10 +109,10 @@ window.geofence.remove([geofenceId1, geofenceId2, geofenceId3]);
 
 ```javascript
 window.geofence.removeAll()
-    .done(function(){ 
+    .then(function(){ 
         console.log('All geofences successfully removed.');
-    })
-    .fail(function(reason){
+    }
+    , function(reason){
         console.log('Removing geofences failed', reason);
     })
 ```
@@ -152,9 +152,9 @@ window.geofence.addOrUpdate({
         text:           "You just arrived to Gliwice city center.",
         openAppOnClick: true
     }
-}).done(function(){
+}).then(function(){
     console.log('Geofence successfully added');
-}).fail(function(reason){
+}, function(reason){
     console.log('Adding geofence failed', reason);
 })
 ```
