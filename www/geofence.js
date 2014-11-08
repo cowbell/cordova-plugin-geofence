@@ -1,7 +1,9 @@
-var exec = require("cordova/exec");
-var Geofence = function () {
+var exec = require("cordova/exec"),
+    Promise = require("com.vladstirbu.cordova.promise.Promise"),
+    geofence,
+    Geofence = function () {
 
-};
+    };
 
 Geofence.prototype.addOrUpdate = function (geofences, success, error) {
     if (!Array.isArray(geofences)) {
@@ -51,7 +53,7 @@ function execPromise(success, error, pluginName, method, args) {
             method,
             args);
     });
-};
+}
 
-var geofence = new Geofence();
+geofence = new Geofence();
 module.exports = geofence;
