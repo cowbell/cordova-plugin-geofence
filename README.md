@@ -73,34 +73,34 @@ window.geofence.addOrUpdate({
         openAppOnClick: Boolean,//is main app activity should be opened after clicking on notification
         data:           Object  //Custom object associated with notification
     }
-}).then(function(){
+}).then(function () {
     console.log('Geofence successfully added');
-}, function(reason){
+}, function (reason) {
     console.log('Adding geofence failed', reason);
-})
+});
 ```
 Adding more geofences at once
 ```javascript
 window.geofence.addOrUpdate([geofence1, geofence2, geofence3]);
 ```
 
-Geofence could override the previously one with the same `id`. 
+Geofence overrides the previously one with the same `id`. 
 
 *All geofences are stored on the device and restored to monitor after device reboot.*
 
-Notification could override the previously one with the same `notification.id`.
+Notification overrides the previously one with the same `notification.id`.
 
 ## Removing 
 
 Removing single geofence
 ```javascript
 window.geofence.remove(geofenceId)
-    .then(function(){
-        console.log('Geofence sucessfully removed')
+    .then(function () {
+        console.log('Geofence sucessfully removed');
     }
-    , function(reason){
-        console.log('Removing geofence failed', reason)
-    })
+    , function (reason){
+        console.log('Removing geofence failed', reason);
+    });
 ```
 Removing more than one geofence at once.
 ```javascript
@@ -111,12 +111,12 @@ window.geofence.remove([geofenceId1, geofenceId2, geofenceId3]);
 
 ```javascript
 window.geofence.removeAll()
-    .then(function(){ 
+    .then(function () { 
         console.log('All geofences successfully removed.');
     }
-    , function(reason){
+    , function (reason) {
         console.log('Removing geofences failed', reason);
-    })
+    });
 ```
 
 ## Getting watched geofences from device
@@ -154,9 +154,9 @@ window.geofence.addOrUpdate({
         text:           "You just arrived to Gliwice city center.",
         openAppOnClick: true
     }
-}).then(function(){
+}).then(function () {
     console.log('Geofence successfully added');
-}, function(reason){
+}, function (reason) {
     console.log('Adding geofence failed', reason);
 })
 ```
