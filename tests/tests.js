@@ -115,7 +115,7 @@ exports.defineAutoTests = function () {
 };
 
 exports.defineManualTests = function (contentEl, createActionButton) {
-    createActionButton('Test button', function () {
-        console.log('Test button clicked');
-    });
+    // createActionButton('Test button', function () {
+    //     console.log('Test button clicked');
+    // });
 };
