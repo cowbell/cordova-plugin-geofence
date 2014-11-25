@@ -43,6 +43,9 @@ public class RemoveGeofenceCommand extends AbstractGoogleServiceCommand
         //for some reason an exception is thrown when clearing an empty set of geofences
         } else if (geofencesIds != null && geofencesIds.size() > 0) {
             locationClient.removeGeofences(geofencesIds, this);
+        } else {
+            logger.log(Log.DEBUG, "Tried to remove Geofences when there were none");
+            CommandExecuted();
         }
     }
 
