@@ -4,19 +4,21 @@ import android.media.AudioManager;
 import android.media.ToneGenerator;
 
 public class BeepHelper {
-	private ToneGenerator toneGenerator;
-	
-	public BeepHelper(){
-		toneGenerator = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);	
-	}
-	/**
+    private ToneGenerator toneGenerator;
+
+    public BeepHelper() {
+        toneGenerator = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
+    }
+
+    /**
      * Plays debug sound
+     * 
      * @param name
      */
     public void startTone(String name) {
         int tone = 0;
         int duration = 1000;
-        
+
         if (name.equals("beep")) {
             tone = ToneGenerator.TONE_PROP_BEEP;
         } else if (name.equals("beep_beep_beep")) {

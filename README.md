@@ -1,5 +1,7 @@
 # Cordova Geofence Plugin
 
+[![Code Climate](https://codeclimate.com/github/cowbell/cordova-plugin-geofence/badges/gpa.svg)](https://codeclimate.com/github/cowbell/cordova-plugin-geofence)
+
 Plugin to monitor circular geofences using mobile devices. The purpose is to notify user if crossing the boundary of the monitored geofence.
 
 *Geofences persists after device reboot. You do not have to open your app first to monitor added geofences*
@@ -37,8 +39,12 @@ Cordova initialize plugin to `window.geofence` object.
 - window.geofence.addOrUpdate(geofences, onSuccess, onError)
 - window.geofence.remove(onSuccess, onError)
 - window.geofence.removeAll(onSuccess, onError)
+- window.geofence.getWatched(onSuccess, onError)
 
-All methods returing promises, but you can also use standard callback functions.
+All methods returning promises, but you can also use standard callback functions.
+
+For listening of geofence transistion you can override recieveTransition method
+- window.geofence.recieveTransition(geofences)
 
 ## Plugin initialization
 
@@ -59,7 +65,7 @@ window.geofence.addOrUpdate({
     latitude:       Number, //Geo latitude of geofence
     longitude:      Number, //Geo longitude of geofence
     radius:         Number, //Radius of geofence in meters
-    transitionType: Number, //Type of transition 1 - Enter, 0 - Exit
+    transitionType: Number, //Type of transition 1 - Enter, 2 - Exit
     notification: {         //Notification object
         id:             Number, //optional should be integer, id of notidication
         title:          String, //Title of notification
@@ -67,34 +73,34 @@ window.geofence.addOrUpdate({
         openAppOnClick: Boolean,//is main app activity should be opened after clicking on notification
         data:           Object  //Custom object associated with notification
     }
-}).done(function(){
+}).then(function () {
     console.log('Geofence successfully added');
-}).fail(function(reason){
+}, function (reason) {
     console.log('Adding geofence failed', reason);
-})
+});
 ```
 Adding more geofences at once
 ```javascript
 window.geofence.addOrUpdate([geofence1, geofence2, geofence3]);
 ```
 
-Geofence could override the previously one with the same `id`. 
+Geofence overrides the previously one with the same `id`. 
 
 *All geofences are stored on the device and restored to monitor after device reboot.*
 
-Notification could override the previously one with the same `notification.id`.
+Notification overrides the previously one with the same `notification.id`.
 
 ## Removing 
 
 Removing single geofence
 ```javascript
 window.geofence.remove(geofenceId)
-    .done(function(){
-        console.log('Geofence sucessfully removed')
-    })
-    .fail(function(reason){
-        console.log('Removing geofence failed', reason)
-    })
+    .then(function () {
+        console.log('Geofence sucessfully removed');
+    }
+    , function (reason){
+        console.log('Removing geofence failed', reason);
+    });
 ```
 Removing more than one geofence at once.
 ```javascript
@@ -105,12 +111,30 @@ window.geofence.remove([geofenceId1, geofenceId2, geofenceId3]);
 
 ```javascript
 window.geofence.removeAll()
-    .done(function(){ 
+    .then(function () { 
         console.log('All geofences successfully removed.');
-    })
-    .fail(function(reason){
+    }
+    , function (reason) {
         console.log('Removing geofences failed', reason);
-    })
+    });
+```
+
+## Getting watched geofences from device
+
+```javascript
+window.geofence.getWatched().then(function (geofencesJson) {
+    var geofences = JSON.parse(geofencesJson);
+});
+```
+
+## Listening for geofence transitions
+
+```javascript
+window.geofence.recieveTransition = function (geofences) {
+    geofences.forEach(function (geo) {
+        console.log('Geofence transition detected', geo);
+    });
+};
 ```
 
 #Example usage
@@ -130,9 +154,9 @@ window.geofence.addOrUpdate({
         text:           "You just arrived to Gliwice city center.",
         openAppOnClick: true
     }
-}).done(function(){
+}).then(function () {
     console.log('Geofence successfully added');
-}).fail(function(reason){
+}, function (reason) {
     console.log('Adding geofence failed', reason);
 })
 ```
