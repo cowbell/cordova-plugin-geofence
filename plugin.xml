@@ -17,8 +17,8 @@
 
     <dependency id="com.vladstirbu.cordova.promise" url="https://github.com/vstirbu/PromisesPlugin.git" />
 
-    <dependency id="android.support.v4" url="https://github.com/MobileChromeApps/cordova-plugin-android-support-v4" />
-    <dependency id="com.google.playservices" url="https://github.com/MobileChromeApps/google-play-services.git" />
+    <dependency id="android.support.v4" />
+    <dependency id="com.google.playservices" />
 
     <!-- android -->
     <platform name="android">
