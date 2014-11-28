@@ -8,13 +8,18 @@
 
 import Foundation
 
+let TAG = "GeofencePlugin"
+func log(message: String){
+    NSLog("%@ - %@", TAG, message)
+}
+
 @objc(HWPGeofencePlugin) class GeofencePlugin : CDVPlugin {
     let geoNotificationManager = GeoNotificationManager()
 
     func initialize(command: CDVInvokedUrlCommand) {
-        println("Plugin initialization");
+        log("Plugin initialization");
         var pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
-        commandDelegate.sendPluginResult(pluginResult, callbackId:command.callbackId)
+        commandDelegate.sendPluginResult(pluginResult, callbackId: command.callbackId)
     }
     
     func addOrUpdate(command: CDVInvokedUrlCommand) {
@@ -22,92 +27,113 @@ import Foundation
             geoNotificationManager.addOrUpdateGeoNotification(geo as NSDictionary)
         }
         var pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
-        commandDelegate.sendPluginResult(pluginResult, callbackId:command.callbackId)
+        commandDelegate.sendPluginResult(pluginResult, callbackId: command.callbackId)
+    }
+
+    func getWatched(command: CDVInvokedUrlCommand) {
+        var watched = geoNotificationManager.getWatchedGeoNotifications()
+        let watchedJsonString = JSON(watched).description
+        //println("watched \(JSON(watched).description)")
+        var pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAsString: watchedJsonString)
+        commandDelegate.sendPluginResult(pluginResult, callbackId: command.callbackId)
     }
     
     func remove(command: CDVInvokedUrlCommand) {
-        println("Helloł bitches");
         var pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
-        commandDelegate.sendPluginResult(pluginResult, callbackId:command.callbackId)
+        commandDelegate.sendPluginResult(pluginResult, callbackId: command.callbackId)
     }
     
     func removeAll(command: CDVInvokedUrlCommand) {
-        println("Helloł bitches");
         var pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
-        commandDelegate.sendPluginResult(pluginResult, callbackId:command.callbackId)
+        commandDelegate.sendPluginResult(pluginResult, callbackId: command.callbackId)
     }
 }
-
 
 class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     let locationManager = CLLocationManager()
     
     override init() {
-        println("Manager init")
+        log("GeoNotificationManager init")
         super.init()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         if (!CLLocationManager.locationServicesEnabled()) {
-            println("Location services is not enabled")
+            log("Location services is not enabled")
         }
         let status = CLLocationManager.authorizationStatus()
-        if(status == CLAuthorizationStatus.NotDetermined) {
+        if (status == CLAuthorizationStatus.NotDetermined) {
             
         }
         locationManager.requestAlwaysAuthorization()
+
         //locationManager.requestWhenInUseAuthorization()
-        if(!CLLocationManager.isMonitoringAvailableForClass(CLRegion)) {
-            println("Geofencing not available")
+        if (!CLLocationManager.isMonitoringAvailableForClass(CLRegion)) {
+            log("Geofencing not available")
         }
         //locationManager.startUpdatingLocation()
     }
 
     func addOrUpdateGeoNotification(geoNotification: NSDictionary) {
-        println("addOrUpdate")
-        
+        log("GeoNotificationManager addOrUpdate")
+
         if (!CLLocationManager.locationServicesEnabled()) {
-            println("locationservices is not enabled")
+            log("Locationservices is not enabled")
         }
-        
-        if (CLLocationManager.regionMonitoringAvailable()) {
-            
-        }
-        
+
         var location = CLLocationCoordinate2DMake(
             geoNotification["latitude"] as Double,
             geoNotification["longitude"] as Double
         )
+    
         var radius = geoNotification["radius"] as CLLocationDistance
-        let uuid = NSUUID().UUIDString
+        //let uuid = NSUUID().UUIDString
         
         var region = CLCircularRegion(
             circularRegionWithCenter: location,
             radius: radius,
-            identifier: uuid
+            identifier: geoNotification["id"] as String
         )
         region.notifyOnEntry = true
         region.notifyOnExit = true
+        log("Starting monitoring region")
         locationManager.startMonitoringForRegion(region)
+    }
+
+    func getWatchedGeoNotifications() -> [NSDictionary] {
+        var result = [NSDictionary]()
+
+        for object in locationManager.monitoredRegions {
+            let region = object as CLCircularRegion
+
+            var geoNot = [
+                "id": region.identifier,
+                "latitude": region.center.latitude,
+                "longitude": region.center.longitude,
+                "radius": region.radius
+            ]
+            result.append(geoNot)
+        }
+        return result
     }
     
     func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
-        println("update location")
+        log("update location")
     }
     
     func locationManager(manager: CLLocationManager!, didFailWithError error: NSError!) {
-        println("fail with error " + error.description)
+        log("fail with error " + error.description)
     }
     
     func locationManager(manager: CLLocationManager!, didFinishDeferredUpdatesWithError error: NSError!) {
-        println("deferred fail error " + error.description)
+        log("deferred fail error " + error.description)
     }
     
     func locationManager(manager: CLLocationManager!, didEnterRegion region: CLRegion!) {
-        println("Entering region " + region.identifier)
+        log("Entering region " + region.identifier)
     }
     
     func locationManager(manager: CLLocationManager!, didExitRegion region: CLRegion!) {
-        println("Exiting region " + region.identifier)
+        log("Exiting region " + region.identifier)
     }
     
     func locationManager(manager: CLLocationManager!, didStartMonitoringForRegion region: CLRegion!) {
@@ -115,16 +141,14 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         let lng = (region as CLCircularRegion).center.longitude
         let radius = (region as CLCircularRegion).radius
         
-        println("Starting monitoring for region \(region) lat \(lat) lng \(lng)")
+        log("Starting monitoring for region \(region) lat \(lat) lng \(lng)")
     }
     
     func locationManager(manager: CLLocationManager, didDetermineState state: CLRegionState, forRegion region: CLRegion) {
-        println("State for region " + region.identifier)
+        log("State for region " + region.identifier)
     }
     
     func locationManager(manager: CLLocationManager, monitoringDidFailForRegion region: CLRegion!, withError error: NSError!) {
-        println("Monitoring region " + region.identifier + " failed " + error.description)
+        log("Monitoring region " + region.identifier + " failed " + error.description)
     }
-    
-    
 }
