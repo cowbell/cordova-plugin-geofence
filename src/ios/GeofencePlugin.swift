@@ -21,8 +21,20 @@ func log(message: String){
         log("Plugin initialization");
         let faker = GeofenceFaker(manager: geoNotificationManager)
         faker.start()
+
+        //if (IsAtLeastiOSVersion("8.0")) {
+            promptForNotificationPermission()
+        //}
         var pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
         commandDelegate.sendPluginResult(pluginResult, callbackId: command.callbackId)
+    }
+
+    func promptForNotificationPermission() {
+        UIApplication.sharedApplication().registerUserNotificationSettings(UIUserNotificationSettings(
+            forTypes: UIUserNotificationType.Sound | UIUserNotificationType.Alert | UIUserNotificationType.Badge,
+            categories: nil
+            )
+        )
     }
     
     func addOrUpdate(command: CDVInvokedUrlCommand) {
@@ -217,10 +229,16 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     
     func locationManager(manager: CLLocationManager!, didEnterRegion region: CLRegion!) {
         log("Entering region \(region.identifier)")
+        if let geo = store.findById(region.identifier) {
+            notifyAbout(geo)
+        }
     }
     
     func locationManager(manager: CLLocationManager!, didExitRegion region: CLRegion!) {
         log("Exiting region \(region.identifier)")
+        if let geo = store.findById(region.identifier) {
+            notifyAbout(geo)
+        }
     }
     
     func locationManager(manager: CLLocationManager!, didStartMonitoringForRegion region: CLRegion!) {
@@ -237,6 +255,16 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     
     func locationManager(manager: CLLocationManager, monitoringDidFailForRegion region: CLRegion!, withError error: NSError!) {
         log("Monitoring region " + region.identifier + " failed " + error.description)
+    }
+
+    func notifyAbout(geo: JSON) {
+        log("Creating notification")
+        var notification = UILocalNotification()
+        notification.timeZone = NSTimeZone.defaultTimeZone()
+        var dateTime = NSDate()
+        notification.fireDate = dateTime
+        notification.alertBody = geo["notification"]["text"].asString!
+        UIApplication.sharedApplication().scheduleLocalNotification(notification)
     }
 }
 
