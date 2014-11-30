@@ -111,7 +111,9 @@
             <param name="ios-package" value="HWPGeofencePlugin"/>
           </feature>
         </config-file>
-        <header-file src="src/ios/Bridging-Header.h" />
+        <header-file src="src/ios/Geo-Bridging-Header.h" />
         <source-file src="src/ios/GeofencePlugin.swift"/>
+        <source-file src="src/ios/SwiftData.swift"/>
+        <source-file src="src/ios/SwiftyJSON.swift"/>
     </platform>
 </plugin>

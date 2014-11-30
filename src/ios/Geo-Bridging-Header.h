@@ -4,3 +4,4 @@
 
 #import <Cordova/CDV.h>
 #import <CoreLocation/CoreLocation.h>
+#import "sqlite3.h"
