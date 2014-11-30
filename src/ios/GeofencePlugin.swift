@@ -15,40 +15,101 @@ func log(message: String){
 
 @objc(HWPGeofencePlugin) class GeofencePlugin : CDVPlugin {
     let geoNotificationManager = GeoNotificationManager()
+    let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
 
     func initialize(command: CDVInvokedUrlCommand) {
         log("Plugin initialization");
+        let faker = GeofenceFaker(manager: geoNotificationManager)
+        faker.start()
         var pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
         commandDelegate.sendPluginResult(pluginResult, callbackId: command.callbackId)
     }
     
     func addOrUpdate(command: CDVInvokedUrlCommand) {
-        for geo in command.arguments {
-            geoNotificationManager.addOrUpdateGeoNotification(JSON(geo))
+        dispatch_async(dispatch_get_global_queue(priority, 0)) {
+            // do some task
+            for geo in command.arguments {
+                self.geoNotificationManager.addOrUpdateGeoNotification(JSON(geo))
+            }
+            dispatch_async(dispatch_get_main_queue()) {
+                var pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
+                self.commandDelegate.sendPluginResult(pluginResult, callbackId: command.callbackId)
+            }
         }
-        var pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
-        commandDelegate.sendPluginResult(pluginResult, callbackId: command.callbackId)
     }
 
     func getWatched(command: CDVInvokedUrlCommand) {
-        var watched = geoNotificationManager.getWatchedGeoNotifications()!
-        let watchedJsonString = watched.description
-        var pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAsString: watchedJsonString)
-        commandDelegate.sendPluginResult(pluginResult, callbackId: command.callbackId)
+        dispatch_async(dispatch_get_global_queue(priority, 0)) {
+            var watched = self.geoNotificationManager.getWatchedGeoNotifications()!
+            let watchedJsonString = watched.description
+            dispatch_async(dispatch_get_main_queue()) {
+                var pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAsString: watchedJsonString)
+                self.commandDelegate.sendPluginResult(pluginResult, callbackId: command.callbackId)
+            }
+        }
     }
     
     func remove(command: CDVInvokedUrlCommand) {
-        var pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
-        for id in command.arguments {
-            geoNotificationManager.removeGeoNotification(id as String)
+        dispatch_async(dispatch_get_global_queue(priority, 0)) {
+            for id in command.arguments {
+                self.geoNotificationManager.removeGeoNotification(id as String)
+            }
+            dispatch_async(dispatch_get_main_queue()) {
+                var pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
+                self.commandDelegate.sendPluginResult(pluginResult, callbackId: command.callbackId)
+            }
         }
-        commandDelegate.sendPluginResult(pluginResult, callbackId: command.callbackId)
     }
     
     func removeAll(command: CDVInvokedUrlCommand) {
-        var pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
-        geoNotificationManager.removeAllGeoNotifications()
-        commandDelegate.sendPluginResult(pluginResult, callbackId: command.callbackId)
+        dispatch_async(dispatch_get_global_queue(priority, 0)) {
+            self.geoNotificationManager.removeAllGeoNotifications()
+            dispatch_async(dispatch_get_main_queue()) {
+                var pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
+                self.commandDelegate.sendPluginResult(pluginResult, callbackId: command.callbackId)
+            }
+        }
+    }
+}
+
+// class for faking crossing geofences
+class GeofenceFaker {
+    let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
+    let geoNotificationManager: GeoNotificationManager
+
+    init(manager: GeoNotificationManager) {
+        geoNotificationManager = manager
+    }
+
+    func start() {
+         dispatch_async(dispatch_get_global_queue(priority, 0)) {
+            while (true) {
+                log("FAKER")
+                let notify = arc4random_uniform(4)
+                if notify == 0 {
+                    log("FAKER notify chosen, need to pick up some region")
+                    var geos = self.geoNotificationManager.getWatchedGeoNotifications()!
+                    //WTF Swift??
+                    let index = arc4random_uniform(UInt32(geos.count))
+                    var geo = geos[Int(index)]
+                    let id = geo["id"].asString!
+                    dispatch_async(dispatch_get_main_queue()) {
+                        if let region = self.geoNotificationManager.getMonitoredRegion(id) {
+                            log("FAKER Trigger didEnterRegion")
+                            self.geoNotificationManager.locationManager(
+                                self.geoNotificationManager.locationManager,
+                                didEnterRegion: region
+                            )
+                        }
+                    }
+                }
+                NSThread.sleepForTimeInterval(3);
+            }
+         }
+    }
+
+    func stop() {
+
     }
 }
 
@@ -88,21 +149,21 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         }
 
         var location = CLLocationCoordinate2DMake(
-            geoNotification["latitude"].double!,
-            geoNotification["longitude"].double!
+            geoNotification["latitude"].asDouble!,
+            geoNotification["longitude"].asDouble!
         )
-    
-        var radius = geoNotification["radius"].double! as CLLocationDistance
+        log("AddOrUpdate geo: \(geoNotification)")
+        var radius = geoNotification["radius"].asDouble! as CLLocationDistance
         //let uuid = NSUUID().UUIDString
-        let id = geoNotification["id"].string
+        let id = geoNotification["id"].asString
 
         var region = CLCircularRegion(
             circularRegionWithCenter: location,
             radius: radius,
             identifier: id
         )
-        region.notifyOnEntry = geoNotification["transitionType"].int! == 1 ? true: false
-        region.notifyOnExit = geoNotification["transitionType"].int! == 2 ? true: false
+        region.notifyOnEntry = geoNotification["transitionType"].asInt == 1 ? true: false
+        region.notifyOnExit = geoNotification["transitionType"].asInt == 2 ? true: false
         log("Starting monitoring region \(id)")
         //store
         store.addOrUpdate(geoNotification)
@@ -204,7 +265,7 @@ class GeoNotificationStore {
     }
 
     func addOrUpdate(geoNotification: JSON) {
-        if (findById(geoNotification["id"].string!) != nil) {
+        if (findById(geoNotification["id"].asString!) != nil) {
             update(geoNotification)
         }
         else {
@@ -213,7 +274,7 @@ class GeoNotificationStore {
     }
 
     func add(geoNotification: JSON) {
-        let id = geoNotification["id"].string!
+        let id = geoNotification["id"].asString!
         let err = SD.executeChange("INSERT INTO GeoNotifications (Id, Data) VALUES(?, ?)",
             withArgs: [id, geoNotification.description])
 
@@ -223,7 +284,7 @@ class GeoNotificationStore {
     }
 
     func update(geoNotification: JSON) {
-        let id = geoNotification["id"].string!
+        let id = geoNotification["id"].asString!
         let err = SD.executeChange("UPDATE GeoNotifications SET Data = ? WHERE Id = ?",
             withArgs: [geoNotification.description, id])
 
@@ -241,7 +302,7 @@ class GeoNotificationStore {
             return nil
         } else {
             if (resultSet.count > 0) {
-                return JSON(resultSet[0]["Data"]!.asString()!)
+                return JSON(string: resultSet[0]["Data"]!.asString()!)
             }
             else {
                 return nil
@@ -260,7 +321,7 @@ class GeoNotificationStore {
             var results = [JSON]()
             for row in resultSet {
                 if let data = row["Data"]?.asString() {
-                    results.append(JSON(data))
+                    results.append(JSON(string: data))
                 }
             }
             return results
