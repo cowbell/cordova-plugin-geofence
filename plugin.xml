@@ -102,7 +102,7 @@
         <js-module src="src/windows/GeofenceProxy.js" name="GeofenceProxy">
             <runs />
         </js-module>
-    </platform>   
+    </platform>
 
     <!-- ios -->
     <platform name="ios">
@@ -114,6 +114,6 @@
         <header-file src="src/ios/Geo-Bridging-Header.h" />
         <source-file src="src/ios/GeofencePlugin.swift"/>
         <source-file src="src/ios/SwiftData.swift"/>
-        <source-file src="src/ios/SwiftyJSON.swift"/>
+        <source-file src="src/ios/json.swift"/>
     </platform>
 </plugin>

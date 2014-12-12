@@ -7,6 +7,7 @@ var fs = require("fs"),
     shell = require("shelljs"),
     xcode = require('xcode'),
     xml = require("node-xml-lite"),
+    glob = require("glob"),
     COMMENT_KEY = /_comment$/,
     projectRoot = process.argv[2];
 
@@ -21,8 +22,9 @@ run(projectRoot);
 function run(projectRoot) {
     var projectName = getProjectName(projectRoot),
         xcodeProjectName = projectName + '.xcodeproj',
-        xcodeProjectPath = path.join(projectRoot, 'platforms', 'ios', xcodeProjectName, 'project.pbxproj'),
-        xcodeProject,
+        iosPlatformPath = path.join(projectRoot, 'platforms', 'ios'),
+        iosProjectFilesPath = path.join(iosPlatformPath, projectName),
+        xcodeProjectPath = path.join(iosPlatformPath, xcodeProjectName, 'project.pbxproj'),
         bridgingHeaderPath;
 
     if (!fs.existsSync(xcodeProjectPath)) {
@@ -37,7 +39,11 @@ function run(projectRoot) {
         if (err) {
             shell.echo('An error occured during parsing of [' + xcodeProjectPath + ']: ' + JSON.stringify(err));
         } else {
-            bridgingHeaderPath = path.join(projectName, "Classes", "Bridging-Header.h")
+            bridgingHeaderPath = getBridgingHeader(xcodeProject);
+            if(!bridgingHeaderPath) {
+                bridgingHeaderPath = createBridgingHeader(xcodeProject, iosProjectFilesPath);
+            }
+            importBridgingHeaders(bridgingHeaderPath, getPluginsBridgingHeaders(iosProjectFilesPath));
             var configurations = nonComments(xcodeProject.pbxXCBuildConfigurationSection()),
                 config, buildSettings;
 
@@ -45,7 +51,6 @@ function run(projectRoot) {
                 buildSettings = configurations[config].buildSettings;
                 buildSettings['IPHONEOS_DEPLOYMENT_TARGET'] = IOS_DEPLOYMENT_TARGET;
                 buildSettings['EMBEDDED_CONTENT_CONTAINS_SWIFT'] = "YES";
-                buildSettings['SWIFT_OBJC_BRIDGING_HEADER'] = bridgingHeaderPath;
             }
             shell.echo('[' + xcodeProjectPath + '] now has deployment target set as:[' + IOS_DEPLOYMENT_TARGET + '] ...');
             shell.echo('[' + xcodeProjectPath + '] option EMBEDDED_CONTENT_CONTAINS_SWIFT set as:[YES] ...');
@@ -55,12 +60,77 @@ function run(projectRoot) {
     });
 }
 
+function getBridgingHeader(xcodeProject) {
+    var configurations = nonComments(xcodeProject.pbxXCBuildConfigurationSection()),
+        config, buildSettings, bridgingHeader;
+
+    for (config in configurations) {
+        buildSettings = configurations[config].buildSettings;
+        bridgingHeader = buildSettings['SWIFT_OBJC_BRIDGING_HEADER'];
+        if (bridgingHeader) {
+            return unquote(bridgingHeader);
+        }
+    }
+}
+
+function createBridgingHeader(xcodeProject, xcodeProjectRootPath) {
+    var newBHPath = path.join(xcodeProjectRootPath, "Classes", "Bridging-Header.h"),
+        content = ["//",
+        "//  Use this file to import your target's public headers that you would like to expose to Swift.",
+        "//",
+        "#import<Cordova/CDV.h>"]
+
+    //fs.openSync(newBHPath, 'w');
+    shell.echo('Creating new Bridging-Header.h at path: ', newBHPath);
+    fs.writeFileSync(newBHPath, content.join("\n"), { encoding: 'utf-8', flag: 'w' });
+    xcodeProject.addSourceFile(newBHPath);
+    return newBHPath;
+}
+
+function setBridgingHeader(xcodeProject, headerPath) {
+    var configurations = nonComments(xcodeProject.pbxXCBuildConfigurationSection()),
+        config, buildSettings, bridgingHeader;
+
+    for (config in configurations) {
+        buildSettings = configurations[config].buildSettings;
+        buildSettings['SWIFT_OBJC_BRIDGING_HEADER'] = headerPathś;
+    }
+}
+
+function getPluginsBridgingHeaders(xcodeProjectRootPath) {
+    var searchPath = path.join(xcodeProjectRootPath, 'Plugins');
+    console.log(searchPath);
+    return glob.sync("**/*Bridging-Header*.h", { cwd: searchPath })
+        .map(function(filePath) {
+            return path.basename(path.join(searchPath, filePath));
+        })
+}
+
+function importBridgingHeaders(mainBridgingHeader, headers) {
+    var content = fs.readFileSync(mainBridgingHeader, 'utf-8');
+    console.log('Headers', headers);
+    headers.forEach(function (header) {
+        if(content.indexOf(header) < 0) {
+            if (content.charAt(content.length - 1) != '\n') {
+                content += "\n";
+            }
+            content += "#import<"+header+">\n"
+            shell.echo('Importing ' + header + ' into main bridging-header at: ' + mainBridgingHeader);
+        }
+    });
+    fs.writeFileSync(mainBridgingHeader, content, 'utf-8');
+}
+
 function getProjectName(protoPath) {
     var cordovaConfigPath = path.join(protoPath, 'config.xml'),
         xmlObject = xml.parseFileSync(cordovaConfigPath)
         //content = fs.readFileSync(cordovaConfigPath, 'utf-8'),
         //use better lib
     return xmlObject.childs[0].childs[0]
+}
+
+function addHeaderFile(xcodeProject, file) {
+
 }
 
 function nonComments(obj) {
@@ -75,4 +145,8 @@ function nonComments(obj) {
     }
 
     return newObj;
+}
+
+function unquote(str) {
+    if (str) return str.replace(/^"(.*)"$/, "$1");
 }
