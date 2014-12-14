@@ -106,6 +106,7 @@
 
     <!-- ios -->
     <platform name="ios">
+        <hook type="after_plugin_install" src="hooks/after_plugin_install/ios_swift_support.js" />
         <config-file target="config.xml" parent="/*">
           <feature name="GeofencePlugin">
             <param name="ios-package" value="HWPGeofencePlugin"/>
