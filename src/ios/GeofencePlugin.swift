@@ -13,6 +13,8 @@ func log(message: String){
     NSLog("%@ - %@", TAG, message)
 }
 
+var GeofencePluginWebView: UIWebView?
+
 @objc(HWPGeofencePlugin) class GeofencePlugin : CDVPlugin {
     let geoNotificationManager = GeoNotificationManager()
     let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
@@ -21,6 +23,7 @@ func log(message: String){
         log("Plugin initialization");
         let faker = GeofenceFaker(manager: geoNotificationManager)
         faker.start()
+        GeofencePluginWebView = self.webView
 
         //if (IsAtLeastiOSVersion("8.0")) {
             promptForNotificationPermission()
@@ -82,6 +85,15 @@ func log(message: String){
             }
         }
     }
+
+    class func fireRecieveTransition(geoNotification: JSON) {
+        var mustBeArray = [JSON]()
+        mustBeArray.append(geoNotification)
+        let js = "setTimeout('geofence.recieveTransition(" + mustBeArray.description + ")',0)";
+        if (GeofencePluginWebView != nil) {
+            GeofencePluginWebView!.stringByEvaluatingJavaScriptFromString(js);
+        }
+    }
 }
 
 // class for faking crossing geofences
@@ -101,17 +113,19 @@ class GeofenceFaker {
                 if notify == 0 {
                     log("FAKER notify chosen, need to pick up some region")
                     var geos = self.geoNotificationManager.getWatchedGeoNotifications()!
-                    //WTF Swift??
-                    let index = arc4random_uniform(UInt32(geos.count))
-                    var geo = geos[Int(index)]
-                    let id = geo["id"].asString!
-                    dispatch_async(dispatch_get_main_queue()) {
-                        if let region = self.geoNotificationManager.getMonitoredRegion(id) {
-                            log("FAKER Trigger didEnterRegion")
-                            self.geoNotificationManager.locationManager(
-                                self.geoNotificationManager.locationManager,
-                                didEnterRegion: region
-                            )
+                    if geos.count > 0 {
+                        //WTF Swift??
+                        let index = arc4random_uniform(UInt32(geos.count))
+                        var geo = geos[Int(index)]
+                        let id = geo["id"].asString!
+                        dispatch_async(dispatch_get_main_queue()) {
+                            if let region = self.geoNotificationManager.getMonitoredRegion(id) {
+                                log("FAKER Trigger didEnterRegion")
+                                self.geoNotificationManager.locationManager(
+                                    self.geoNotificationManager.locationManager,
+                                    didEnterRegion: region
+                                )
+                            }
                         }
                     }
                 }
@@ -229,16 +243,12 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     
     func locationManager(manager: CLLocationManager!, didEnterRegion region: CLRegion!) {
         log("Entering region \(region.identifier)")
-        if let geo = store.findById(region.identifier) {
-            notifyAbout(geo)
-        }
+        handleTransition(region)
     }
     
     func locationManager(manager: CLLocationManager!, didExitRegion region: CLRegion!) {
         log("Exiting region \(region.identifier)")
-        if let geo = store.findById(region.identifier) {
-            notifyAbout(geo)
-        }
+        handleTransition(region)
     }
     
     func locationManager(manager: CLLocationManager!, didStartMonitoringForRegion region: CLRegion!) {
@@ -255,6 +265,13 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     
     func locationManager(manager: CLLocationManager, monitoringDidFailForRegion region: CLRegion!, withError error: NSError!) {
         log("Monitoring region " + region.identifier + " failed " + error.description)
+    }
+
+    func handleTransition(region: CLRegion!) {
+        if let geo = store.findById(region.identifier) {
+            notifyAbout(geo)
+            GeofencePlugin.fireRecieveTransition(geo)
+        }
     }
 
     func notifyAbout(geo: JSON) {
