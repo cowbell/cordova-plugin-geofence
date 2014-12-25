@@ -1,5 +1,5 @@
-var exec = require("cordova/exec"),
-    Promise = require("com.vladstirbu.cordova.promise.Promise"),
+var exec = require('cordova/exec'),
+    Promise = require('com.vladstirbu.cordova.promise.Promise'),
     geofence,
     Geofence = function () {
 
