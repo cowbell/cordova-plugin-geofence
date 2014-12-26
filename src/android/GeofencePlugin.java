@@ -84,7 +84,7 @@ public class GeofencePlugin extends CordovaPlugin {
 
     public static void fireRecieveTransition(List<GeoNotification> notifications) {
         Gson gson = new Gson();
-        String js = "setTimeout('geofence.recieveTransition("
+        String js = "setTimeout('geofence.receiveTransition("
                 + gson.toJson(notifications) + ")',0)";
         if (webView == null) {
             Log.d(TAG, "Webview is null");

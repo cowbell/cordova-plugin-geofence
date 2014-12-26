@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
+import com.google.gson.Gson;
 
 public class GeoNotificationNotifier {
     private NotificationManager notificationManager;
@@ -37,8 +38,10 @@ public class GeoNotificationNotifier {
 
             Object extraData = notification.data;
             if (extraData != null) {
-                resultIntent.putExtra("geofence.notification.data",
-                        extraData.toString());
+                Gson gson = new Gson();
+                //convert java object to JSON format
+                String json = gson.toJson(extraData);
+                resultIntent.putExtra("geofence.notification.data", json);
             }
             // The stack builder object will contain an artificial back stack
             // for the
