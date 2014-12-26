@@ -10,7 +10,7 @@ module.exports = function(context) {
         projectRoot = process.argv[2];
 
     //if run for plugin projectRoot initialy is platform
-    projectRoot = path.join(projectRoot,'..');
+    projectRoot = path.resolve(path.join(projectRoot,'..'));
 
     run(projectRoot);
 
@@ -23,10 +23,9 @@ module.exports = function(context) {
             projectName = cfg.name(),
             iosPlatformPath = path.join(projectRoot, 'platforms', 'ios'),
             iosProjectFilesPath = path.join(iosPlatformPath, projectName),
-            xcodeProject = platforms['ios'].parseProjectFile(iosPlatformPath).xcode,
+            projectFile = platforms['ios'].parseProjectFile(iosPlatformPath),
+            xcodeProject = projectFile.xcode,
             bridgingHeaderPath;
-
-        shell.echo('Adjusting iOS deployment target for ' + projectName + ' to: [' + IOS_DEPLOYMENT_TARGET + '] ...');
 
         bridgingHeaderPath = getBridgingHeader(xcodeProject);
         if(bridgingHeaderPath) {
@@ -50,6 +49,7 @@ module.exports = function(context) {
         shell.echo('IOS project Runpath Search Paths set to: @executable_path/Frameworks ...');
         shell.echo('IOS project Adding libsqlite3...');
         xcodeProject.addFramework("libsqlite3.dylib");
+        projectFile.write();
     }
 
     function getBridgingHeader(xcodeProject) {
