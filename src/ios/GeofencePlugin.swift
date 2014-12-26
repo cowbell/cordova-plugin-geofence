@@ -39,7 +39,7 @@ var GeofencePluginWebView: UIWebView?
             )
         )
     }
-    
+
     func addOrUpdate(command: CDVInvokedUrlCommand) {
         dispatch_async(dispatch_get_global_queue(priority, 0)) {
             // do some task
@@ -63,7 +63,7 @@ var GeofencePluginWebView: UIWebView?
             }
         }
     }
-    
+
     func remove(command: CDVInvokedUrlCommand) {
         dispatch_async(dispatch_get_global_queue(priority, 0)) {
             for id in command.arguments {
@@ -75,7 +75,7 @@ var GeofencePluginWebView: UIWebView?
             }
         }
     }
-    
+
     func removeAll(command: CDVInvokedUrlCommand) {
         dispatch_async(dispatch_get_global_queue(priority, 0)) {
             self.geoNotificationManager.removeAllGeoNotifications()
@@ -86,10 +86,10 @@ var GeofencePluginWebView: UIWebView?
         }
     }
 
-    class func fireRecieveTransition(geoNotification: JSON) {
+    class func fireReceiveTransition(geoNotification: JSON) {
         var mustBeArray = [JSON]()
         mustBeArray.append(geoNotification)
-        let js = "setTimeout('geofence.recieveTransition(" + mustBeArray.description + ")',0)";
+        let js = "setTimeout('geofence.receiveTransition(" + mustBeArray.description + ")',0)";
         if (GeofencePluginWebView != nil) {
             GeofencePluginWebView!.stringByEvaluatingJavaScriptFromString(js);
         }
@@ -142,7 +142,7 @@ class GeofenceFaker {
 class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     let locationManager = CLLocationManager()
     let store = GeoNotificationStore()
-    
+
     override init() {
         log("GeoNotificationManager init")
         super.init()
@@ -156,7 +156,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         let status = CLLocationManager.authorizationStatus()
         //log("LocationManager authorizationStatus: \(status)")
         if (status == CLAuthorizationStatus.NotDetermined) {
-            
+
         }
         locationManager.requestAlwaysAuthorization()
 
@@ -228,41 +228,41 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
             locationManager.stopMonitoringForRegion(region)
         }
     }
-    
+
     func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
         log("update location")
     }
-    
+
     func locationManager(manager: CLLocationManager!, didFailWithError error: NSError!) {
         log("fail with error: \(error)")
     }
-    
+
     func locationManager(manager: CLLocationManager!, didFinishDeferredUpdatesWithError error: NSError!) {
         log("deferred fail error: \(error)")
     }
-    
+
     func locationManager(manager: CLLocationManager!, didEnterRegion region: CLRegion!) {
         log("Entering region \(region.identifier)")
         handleTransition(region)
     }
-    
+
     func locationManager(manager: CLLocationManager!, didExitRegion region: CLRegion!) {
         log("Exiting region \(region.identifier)")
         handleTransition(region)
     }
-    
+
     func locationManager(manager: CLLocationManager!, didStartMonitoringForRegion region: CLRegion!) {
         let lat = (region as CLCircularRegion).center.latitude
         let lng = (region as CLCircularRegion).center.longitude
         let radius = (region as CLCircularRegion).radius
-        
+
         log("Starting monitoring for region \(region) lat \(lat) lng \(lng)")
     }
-    
+
     func locationManager(manager: CLLocationManager, didDetermineState state: CLRegionState, forRegion region: CLRegion) {
         log("State for region " + region.identifier)
     }
-    
+
     func locationManager(manager: CLLocationManager, monitoringDidFailForRegion region: CLRegion!, withError error: NSError!) {
         log("Monitoring region " + region.identifier + " failed " + error.description)
     }
@@ -270,7 +270,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     func handleTransition(region: CLRegion!) {
         if let geo = store.findById(region.identifier) {
             notifyAbout(geo)
-            GeofencePlugin.fireRecieveTransition(geo)
+            GeofencePlugin.fireReceiveTransition(geo)
         }
     }
 
