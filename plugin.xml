@@ -11,6 +11,10 @@
         <engine name="cordova" version=">=3.0.0" />
     </engines>
 
+    <js-module src="www/TransitionType.js" name="TransitionType">
+        <clobbers target="TransitionType" />
+    </js-module>
+
     <js-module src="www/geofence.js" name="geofence">
         <clobbers target="geofence" />
     </js-module>

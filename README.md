@@ -46,6 +46,11 @@ All methods returning promises, but you can also use standard callback functions
 For listening of geofence transistion you can override receiveTransition method
 - window.geofence.receiveTransition(geofences)
 
+## Constants
+
+- `TransitionType.ENTER` = 1
+- `TransitionType.EXIT` = 2
+
 ## Plugin initialization
 
 The plugin is not available until `deviceready` event is fired.
@@ -147,7 +152,7 @@ window.geofence.addOrUpdate({
     latitude:       50.2980049, 
     longitude:      18.6593152, 
     radius:         3000, 
-    transitionType: 1, 
+    transitionType: TransitionType.ENTER, 
     notification: {    
         id:             1,     
         title:          "Welcome in Gliwice", 
