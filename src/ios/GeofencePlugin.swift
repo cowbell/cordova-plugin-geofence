@@ -9,6 +9,8 @@
 import Foundation
 
 let TAG = "GeofencePlugin"
+let iOS8 = NSOperatingSystemVersion(majorVersion: 8, minorVersion: 0, patchVersion: 0)
+
 func log(message: String){
     NSLog("%@ - %@", TAG, message)
 }
@@ -21,13 +23,13 @@ var GeofencePluginWebView: UIWebView?
 
     func initialize(command: CDVInvokedUrlCommand) {
         log("Plugin initialization");
-        let faker = GeofenceFaker(manager: geoNotificationManager)
-        faker.start()
+        //let faker = GeofenceFaker(manager: geoNotificationManager)
+        //faker.start()
         GeofencePluginWebView = self.webView
 
-        //if (IsAtLeastiOSVersion("8.0")) {
+        if NSProcessInfo().isOperatingSystemAtLeastVersion(iOS8) {
             promptForNotificationPermission()
-        //}
+        }
         var pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
         commandDelegate.sendPluginResult(pluginResult, callbackId: command.callbackId)
     }
@@ -153,18 +155,11 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         } else {
             log("Location services enabled")
         }
-        let status = CLLocationManager.authorizationStatus()
-        //log("LocationManager authorizationStatus: \(status)")
-        if (status == CLAuthorizationStatus.NotDetermined) {
-
-        }
         locationManager.requestAlwaysAuthorization()
 
-        //locationManager.requestWhenInUseAuthorization()
         if (!CLLocationManager.isMonitoringAvailableForClass(CLRegion)) {
             log("Geofencing not available")
         }
-        //locationManager.startUpdatingLocation()
     }
 
     func addOrUpdateGeoNotification(geoNotification: JSON) {
@@ -190,7 +185,6 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         )
         region.notifyOnEntry = geoNotification["transitionType"].asInt == 1 ? true: false
         region.notifyOnExit = geoNotification["transitionType"].asInt == 2 ? true: false
-        log("Starting monitoring region \(id)")
         //store
         store.addOrUpdate(geoNotification)
         locationManager.startMonitoringForRegion(region)
