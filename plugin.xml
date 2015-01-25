@@ -82,6 +82,7 @@
             <feature name="GeofencePlugin">
                 <param name="wp-package" value="GeofencePlugin" />
             </feature>
+
         </config-file>
         <framework src="src/wp8/libs/Newtonsoft.Json.dll" custom="true" />
         <framework src="src/wp8/GeofenceComponent.winmd" custom="true" />
@@ -107,4 +108,23 @@
         </js-module>
     </platform>
 
+    <!-- ios -->
+    <platform name="ios">
+        <hook type="after_plugin_install" src="hooks/add_swift_support.js" />
+        <config-file target="*-Info.plist" parent="NSLocationAlwaysUsageDescription">
+            <string>${EXECUTABLE_NAME} Would Like to Use Your Current Location Even In Background.</string>
+        </config-file>
+        <config-file target="*-Info.plist" parent="NSLocationWhenInUseUsageDescription">
+            <string>${EXECUTABLE_NAME} Would Like to Use Your Current Location When In Use.</string>
+        </config-file>
+        <config-file target="config.xml" parent="/*">
+          <feature name="GeofencePlugin">
+            <param name="ios-package" value="HWPGeofencePlugin"/>
+          </feature>
+        </config-file>
+        <header-file src="src/ios/Geo-Bridging-Header.h" />
+        <source-file src="src/ios/GeofencePlugin.swift"/>
+        <source-file src="src/ios/SwiftData.swift"/>
+        <source-file src="src/ios/json.swift"/>
+    </platform>
 </plugin>
