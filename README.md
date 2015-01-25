@@ -24,7 +24,7 @@ cordova plugin rm com.cowbell.cordova.geofence
 ## Supported Platforms
 
 - Android
-- iOS (coming soon)
+- iOS >=7.0
 - Windows Phone 8.1 
     - using Universal App (cordova windows platform)
     - using Silverlight App (cordova wp8 platform retargeted to WP 8.1)
@@ -166,6 +166,10 @@ window.geofence.addOrUpdate({
 Check out our [example application](https://github.com/cowbell/ionic-geofence) built with ionic framework.
 
 # Platform specifics
+
+##iOS
+
+Plugin is written in Swift. All xcode project options to enable swift support are set up automatically after plugin is installed.
 
 ##Windows phone 8.1
 
