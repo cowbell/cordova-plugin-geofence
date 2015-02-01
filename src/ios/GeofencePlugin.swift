@@ -9,7 +9,8 @@
 import Foundation
 
 let TAG = "GeofencePlugin"
-let iOS8 = NSOperatingSystemVersion(majorVersion: 8, minorVersion: 0, patchVersion: 0)
+let iOS8 = floor(NSFoundationVersionNumber) > floor(NSFoundationVersionNumber_iOS_7_1)
+let iOS7 = floor(NSFoundationVersionNumber) <= floor(NSFoundationVersionNumber_iOS_7_1)
 
 func log(message: String){
     NSLog("%@ - %@", TAG, message)
@@ -27,7 +28,7 @@ var GeofencePluginWebView: UIWebView?
         //faker.start()
         GeofencePluginWebView = self.webView
 
-        if NSProcessInfo().isOperatingSystemAtLeastVersion(iOS8) {
+        if iOS8 {
             promptForNotificationPermission()
         }
         var pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
@@ -155,7 +156,9 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         } else {
             log("Location services enabled")
         }
-        locationManager.requestAlwaysAuthorization()
+        if (iOS7) {
+            locationManager.requestAlwaysAuthorization()
+        }
 
         if (!CLLocationManager.isMonitoringAvailableForClass(CLRegion)) {
             log("Geofencing not available")
