@@ -1,10 +1,8 @@
-var fs = require('fs'),
-    path = require('path'),
-    shell = require('shelljs'),
-    glob = require('glob');
+var child_process = require('child_process'),
+    fs = require('fs'),
+    path = require('path');
 
 module.exports = function(context) {
-
     var IOS_DEPLOYMENT_TARGET = '7.0',
         COMMENT_KEY = /_comment$/,
         projectRoot = process.argv[2];
@@ -33,23 +31,26 @@ module.exports = function(context) {
         } else {
             bridgingHeaderPath = createBridgingHeader(xcodeProject, projectName, iosProjectFilesPath);
         }
-        importBridgingHeaders(bridgingHeaderPath, getPluginsBridgingHeaders(iosProjectFilesPath));
-        var configurations = nonComments(xcodeProject.pbxXCBuildConfigurationSection()),
+
+        getExistingBridgingHeaders(iosProjectFilesPath, function (headers) {
+            importBridgingHeaders(bridgingHeaderPath, headers);
+            var configurations = nonComments(xcodeProject.pbxXCBuildConfigurationSection()),
             config, buildSettings;
 
-        for (config in configurations) {
-            buildSettings = configurations[config].buildSettings;
-            buildSettings['IPHONEOS_DEPLOYMENT_TARGET'] = IOS_DEPLOYMENT_TARGET;
-            buildSettings['EMBEDDED_CONTENT_CONTAINS_SWIFT'] = "YES";
-            buildSettings['LD_RUNPATH_SEARCH_PATHS'] = '"@executable_path/Frameworks"'
-        }
-        shell.echo('IOS project now has deployment target set as:[' + IOS_DEPLOYMENT_TARGET + '] ...');
-        shell.echo('IOS project option EMBEDDED_CONTENT_CONTAINS_SWIFT set as:[YES] ...');
-        shell.echo('IOS project swift_objc Bridging-Header set to:[' + bridgingHeaderPath + '] ...');
-        shell.echo('IOS project Runpath Search Paths set to: @executable_path/Frameworks ...');
-        shell.echo('IOS project Adding libsqlite3...');
-        xcodeProject.addFramework("libsqlite3.dylib");
-        projectFile.write();
+            for (config in configurations) {
+                buildSettings = configurations[config].buildSettings;
+                buildSettings['IPHONEOS_DEPLOYMENT_TARGET'] = IOS_DEPLOYMENT_TARGET;
+                buildSettings['EMBEDDED_CONTENT_CONTAINS_SWIFT'] = "YES";
+                buildSettings['LD_RUNPATH_SEARCH_PATHS'] = '"@executable_path/Frameworks"'
+            }
+            console.log('IOS project now has deployment target set as:[' + IOS_DEPLOYMENT_TARGET + '] ...');
+            console.log('IOS project option EMBEDDED_CONTENT_CONTAINS_SWIFT set as:[YES] ...');
+            console.log('IOS project swift_objc Bridging-Header set to:[' + bridgingHeaderPath + '] ...');
+            console.log('IOS project Runpath Search Paths set to: @executable_path/Frameworks ...');
+            console.log('IOS project Adding libsqlite3...');
+            xcodeProject.addFramework("libsqlite3.dylib");
+            projectFile.write();
+        });
     }
 
     function getBridgingHeader(xcodeProject) {
@@ -73,7 +74,7 @@ module.exports = function(context) {
             "#import <Cordova/CDV.h>"]
 
         //fs.openSync(newBHPath, 'w');
-        shell.echo('Creating new Bridging-Header.h at path: ', newBHPath);
+        console.log('Creating new Bridging-Header.h at path: ', newBHPath);
         fs.writeFileSync(newBHPath, content.join("\n"), { encoding: 'utf-8', flag: 'w' });
         xcodeProject.addHeaderFile("Bridging-Header.h");
         setBridgingHeader(xcodeProject, path.join(projectName, "Plugins", "Bridging-Header.h"));
@@ -90,13 +91,15 @@ module.exports = function(context) {
         }
     }
 
-    function getPluginsBridgingHeaders(xcodeProjectRootPath) {
+    function getExistingBridgingHeaders(xcodeProjectRootPath, callback) {
         var searchPath = path.join(xcodeProjectRootPath, 'Plugins');
 
-        return glob.sync("**/*Bridging-Header*.h", { cwd: searchPath })
-            .map(function(filePath) {
-                return path.basename(path.join(searchPath, filePath));
-            })
+        child_process.exec('find . -name "*Bridging-Header*.h"', { cwd: searchPath }, function (error, stdout, stderr) {
+            var headers = stdout.toString().split('\n').map(function (filePath) {
+                return path.basename(filePath);
+            });
+            callback(headers);
+        });
     }
 
     function importBridgingHeaders(mainBridgingHeader, headers) {
@@ -109,7 +112,7 @@ module.exports = function(context) {
                     content += "\n";
                 }
                 content += "#import \""+header+"\"\n"
-                shell.echo('Importing ' + header + ' into main bridging-header at: ' + mainBridgingHeader);
+                console.log('Importing ' + header + ' into main bridging-header at: ' + mainBridgingHeader);
             }
         });
         fs.writeFileSync(mainBridgingHeader, content, 'utf-8');
