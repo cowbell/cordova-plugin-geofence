@@ -6,6 +6,10 @@ Plugin to monitor circular geofences using mobile devices. The purpose is to not
 
 *Geofences persists after device reboot. You do not have to open your app first to monitor added geofences*
 
+##Example application
+
+Check out our [example application](https://github.com/cowbell/ionic-geofence) built with ionic framework.
+
 ## Installation
 
 From master
@@ -165,10 +169,6 @@ window.geofence.addOrUpdate({
     console.log('Adding geofence failed', reason);
 })
 ```
-
-#Example application
-
-Check out our [example application](https://github.com/cowbell/ionic-geofence) built with ionic framework.
 
 # Platform specifics
 
