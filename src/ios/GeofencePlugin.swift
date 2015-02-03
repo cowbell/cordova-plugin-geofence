@@ -156,7 +156,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         } else {
             log("Location services enabled")
         }
-        if (iOS7) {
+        if iOS8 {
             locationManager.requestAlwaysAuthorization()
         }
 
