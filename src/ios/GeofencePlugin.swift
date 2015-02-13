@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 let TAG = "GeofencePlugin"
 let iOS8 = floor(NSFoundationVersionNumber) > floor(NSFoundationVersionNumber_iOS_7_1)
@@ -273,12 +274,106 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
 
     func notifyAbout(geo: JSON) {
         log("Creating notification")
-        var notification = UILocalNotification()
-        notification.timeZone = NSTimeZone.defaultTimeZone()
-        var dateTime = NSDate()
-        notification.fireDate = dateTime
-        notification.alertBody = geo["notification"]["text"].asString!
-        UIApplication.sharedApplication().scheduleLocalNotification(notification)
+        
+        checkRateLimit(geo)
+        
+        if validateTime(geo) == true{
+            var notification = UILocalNotification()
+            notification.timeZone = NSTimeZone.defaultTimeZone()
+            var dateTime = NSDate()
+            notification.fireDate = dateTime
+            notification.alertBody = geo["notification"]["text"].asString!
+            UIApplication.sharedApplication().scheduleLocalNotification(notification)
+            
+            //Store in data in user default
+            
+        }
+    }
+    
+    func validateTime(geo: JSON) -> Bool{
+        let currentDate = NSDate()
+        var startDate = NSDate(timeIntervalSince1970: geo["notification"]["start_date"].asNumber!)
+        var endDate = NSDate(timeIntervalSince1970: geo["notification"]["end_date"].asNumber!)
+        var startTime = geo["notification"]["start_time"].asString!
+        var startTimeArr = split(startTime) {$0 == ":"}
+        var endTime = geo["notification"]["end_time"].asString!
+        var endTimeArr = split(endTime) {$0 == ":"}
+        
+        let calendar = NSCalendar.currentCalendar()
+        let components = calendar.components(.CalendarUnitDay | .CalendarUnitMonth | .CalendarUnitYear, fromDate: currentDate)
+        
+        var componentsTwo = NSDateComponents()
+            componentsTwo.day = components.day
+            componentsTwo.month = components.month
+            componentsTwo.year = components.year
+            componentsTwo.hour = startTimeArr[0].toInt()!
+            componentsTwo.minute = startTimeArr[1].toInt()!
+        
+        var startTimeDate = calendar.dateFromComponents(componentsTwo)
+        
+            componentsTwo.hour = endTimeArr[0].toInt()!
+            componentsTwo.minute = endTimeArr[1].toInt()!
+        
+        
+        var endTimeDate = calendar.dateFromComponents(componentsTwo)
+        
+        var diffStart = startDate.compare(currentDate)
+        var diffEnd = endDate.compare(currentDate)
+        var diffStartTime = currentDate.compare(startTimeDate!)
+        var diffEndTime = currentDate.compare(endTimeDate!)
+        
+        if diffStart == NSComparisonResult.OrderedAscending && diffEnd == NSComparisonResult.OrderedDescending{
+            if diffStartTime == NSComparisonResult.OrderedDescending && diffEndTime == NSComparisonResult.OrderedAscending{
+                setNotificationTimestamp(geo["id"].asString!,date: currentDate)
+                return true
+            }
+            else{
+                return false
+            }
+        }
+        else{
+            return false
+        }
+    }
+    
+    func checkRateLimit(geo: JSON) -> Bool{
+        var date = NSDate()
+        var previousDate = getNotificationTimestamp(geo["id"].asString!)
+        var rateLimit = geo["period_milliseconds"].asString!
+        
+        if previousDate == "empty" {
+            //setNotificationTimestamp(geo["id"].asString!, date: date)
+            return true
+        } else {
+        
+            let dateFormatter = NSDateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd hh:mm:ss.SSSSSxxx"
+            let convertedPreviousDate = dateFormatter.dateFromString(previousDate!)
+        
+            let elapsedTime = NSDate().timeIntervalSinceDate(convertedPreviousDate!)
+            
+            log("ADDDDD: \(elapsedTime)")
+            
+            return false
+        }
+    }
+    
+    func setNotificationTimestamp(regionId: String,date: NSDate){
+        let defaults = NSUserDefaults.standardUserDefaults()
+        defaults.setObject(date, forKey: regionId)
+    }
+    
+    func getNotificationTimestamp(regionId: String) -> String?{
+        log("\(regionId)")
+        let defaults = NSUserDefaults.standardUserDefaults()
+        let variable = defaults.objectForKey("\(regionId)") as? String
+        log("\(variable)")
+        if variable != nil{
+            return variable
+        }
+        else{
+            return "empty"
+        }
     }
 }
 
