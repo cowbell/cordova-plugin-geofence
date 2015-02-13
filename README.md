@@ -81,6 +81,11 @@ window.geofence.addOrUpdate({
         text:           String, //Text of notification
         openAppOnClick: Boolean,//is main app activity should be opened after clicking on notification
         data:           Object  //Custom object associated with notification
+        start_date :    Int, // Timestamp in Seconds
+        end_date :      Int, // Timestamp in Seconds
+        start_time :    String, // HH:MM:SS
+        end_time :      String, // HH:MM:SS
+        period_milliseconds : Int, // Timestamp in milliseconds
     }
 }).then(function () {
     console.log('Geofence successfully added');
