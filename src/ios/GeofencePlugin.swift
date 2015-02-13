@@ -275,18 +275,18 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     func notifyAbout(geo: JSON) {
         log("Creating notification")
         
-        checkRateLimit(geo)
+        //Qui chiamo il controllo dei millisecondi
+        var tryVar : Bool = checkRateLimit(geo)
         
-        if validateTime(geo) == true{
-            var notification = UILocalNotification()
-            notification.timeZone = NSTimeZone.defaultTimeZone()
-            var dateTime = NSDate()
-            notification.fireDate = dateTime
-            notification.alertBody = geo["notification"]["text"].asString!
-            UIApplication.sharedApplication().scheduleLocalNotification(notification)
-            
-            //Store in data in user default
-            
+        if tryVar == true {
+            if validateTime(geo) == true{
+                var notification = UILocalNotification()
+                notification.timeZone = NSTimeZone.defaultTimeZone()
+                var dateTime = NSDate()
+                notification.fireDate = dateTime
+                notification.alertBody = geo["notification"]["text"].asString!
+                UIApplication.sharedApplication().scheduleLocalNotification(notification)
+            }
         }
     }
     
@@ -324,7 +324,8 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         
         if diffStart == NSComparisonResult.OrderedAscending && diffEnd == NSComparisonResult.OrderedDescending{
             if diffStartTime == NSComparisonResult.OrderedDescending && diffEndTime == NSComparisonResult.OrderedAscending{
-                setNotificationTimestamp(geo["id"].asString!,date: currentDate)
+                var currentDateFromString = convertDateToString(currentDate)
+                setNotificationTimestamp(geo["id"].asString!,date: currentDateFromString!)
                 return true
             }
             else{
@@ -337,42 +338,53 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     }
     
     func checkRateLimit(geo: JSON) -> Bool{
-        var date = NSDate()
+        var currentDate : String? = convertDateToString(NSDate())
+        
         var previousDate = getNotificationTimestamp(geo["id"].asString!)
-        var rateLimit = geo["period_milliseconds"].asString!
+        
+        let rateLimit = geo["notification"]["period_milliseconds"].asDouble
         
         if previousDate == "empty" {
-            //setNotificationTimestamp(geo["id"].asString!, date: date)
+            //no previous timestamp
             return true
         } else {
-        
             let dateFormatter = NSDateFormatter()
-            dateFormatter.dateFormat = "yyyy-MM-dd hh:mm:ss.SSSSSxxx"
+            dateFormatter.dateFormat = "yyyy-MM-dd hh:mm:ss"
             let convertedPreviousDate = dateFormatter.dateFromString(previousDate!)
         
-            let elapsedTime = NSDate().timeIntervalSinceDate(convertedPreviousDate!)
+            var elapsedTime = NSDate().timeIntervalSinceDate(convertedPreviousDate!)
+            elapsedTime = elapsedTime * 1000 //convert seconds to milliseconds
             
-            log("ADDDDD: \(elapsedTime)")
-            
-            return false
+            if (elapsedTime > rateLimit) {
+                return true
+            } else {
+                return false
+            }
         }
     }
     
-    func setNotificationTimestamp(regionId: String,date: NSDate){
+    func convertDateToString(date: NSDate) -> String? {
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd hh:mm:ss"
+        return dateFormatter.stringFromDate(date)
+    }
+    
+    func setNotificationTimestamp(regionId: String,date: String){
         let defaults = NSUserDefaults.standardUserDefaults()
         defaults.setObject(date, forKey: regionId)
+        NSUserDefaults.standardUserDefaults().synchronize()
     }
     
     func getNotificationTimestamp(regionId: String) -> String?{
-        log("\(regionId)")
         let defaults = NSUserDefaults.standardUserDefaults()
-        let variable = defaults.objectForKey("\(regionId)") as? String
-        log("\(variable)")
+        var variable = defaults.objectForKey(regionId) as? String
+        
         if variable != nil{
             return variable
         }
         else{
-            return "empty"
+            let returnValue : String = "empty"
+            return returnValue
         }
     }
 }
