@@ -63,7 +63,7 @@ public class ReceiveTransitionsIntentService extends IntentService {
             int transitionType = LocationClient.getGeofenceTransition(intent);
             if ((transitionType == Geofence.GEOFENCE_TRANSITION_ENTER)
                     || (transitionType == Geofence.GEOFENCE_TRANSITION_EXIT)) {
-                logger.log(Log.DEBUG, "Geofence transition detected");
+
                 List<Geofence> triggerList = LocationClient
                         .getTriggeringGeofences(intent);
                 List<GeoNotification> geoNotifications = new ArrayList<GeoNotification>();
@@ -72,7 +72,12 @@ public class ReceiveTransitionsIntentService extends IntentService {
                     GeoNotification geoNotification = store
                             .getGeoNotification(fenceId);
 
+                    if (Notification.timeValidation(geoNotification) == false){
+                        return;
+                    }
+
                     if (geoNotification != null) {
+
                         notifier.notify(
                                 geoNotification.notification,
                                 (transitionType == Geofence.GEOFENCE_TRANSITION_ENTER));

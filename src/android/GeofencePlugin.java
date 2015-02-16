@@ -1,7 +1,9 @@
 package com.cowbell.cordova.geofence;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.content.Context;
+import android.util.Log;
+
+import com.google.gson.Gson;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
@@ -10,11 +12,10 @@ import org.apache.cordova.CordovaWebView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import com.cowbell.cordova.geofence.GeoNotification;
 
-import android.content.Context;
-import android.util.Log;
-
-import com.google.gson.Gson;
+import java.util.List;
+import java.util.ArrayList;
 
 public class GeofencePlugin extends CordovaPlugin {
     public static final String TAG = "GeofencePlugin";
