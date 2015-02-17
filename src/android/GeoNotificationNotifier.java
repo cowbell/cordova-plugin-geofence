@@ -1,6 +1,6 @@
 package com.cowbell.cordova.geofence;
 
-import android.R;
+import com.mippin.newtemplate.R;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -26,7 +26,7 @@ public class GeoNotificationNotifier {
 
     public void notify(Notification notification, boolean isEntered) {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
-                context).setSmallIcon(R.drawable.ic_menu_mylocation)
+                context).setSmallIcon(R.drawable.icon)
                 .setVibrate(new long[] { 1000, 1000, 1000 })
                 .setAutoCancel(true).setContentTitle(notification.title)
                 .setContentText(notification.text);
