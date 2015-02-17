@@ -1,13 +1,16 @@
 package com.cowbell.cordova.geofence;
 
 import android.util.Log;
+import android.content.SharedPreferences;
+import android.content.Context;
 
+import java.lang.Long;
 import java.lang.System;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
-public class Notification {
+public class Notification{
     public int id;
     public String title;
     public String text;
@@ -17,10 +20,11 @@ public class Notification {
     public int end_date;
     public String start_time;
     public String end_time;
-    public int period_milliseconds;
-    
-    
-    public static boolean timeValidation (GeoNotification geoNotification){
+    public long period_milliseconds;
+    private SharedPreferences sharedPreferences;
+    private static Context context;
+
+    public static boolean timeValidation (GeoNotification geoNotification, Context context){
         Logger logger = Logger.getLogger();
 
         if(geoNotification==null) return false;
@@ -34,7 +38,7 @@ public class Notification {
             Timestamp endTimeTimestamp = parseTime(end_time);
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
             
-            return startTimeTimestamp != null && endTimeTimestamp != null && startTimeTimestamp.before(currentTime) && endTimeTimestamp.after(currentTime);
+            return startTimeTimestamp != null && endTimeTimestamp != null && startTimeTimestamp.before(currentTime) && endTimeTimestamp.after(currentTime) && checkRateLimit((Context) context, geoNotification);
         }
         else return false;
     }
@@ -62,6 +66,41 @@ public class Notification {
             logger.log(Log.ERROR, "Error parsing time for time: " + time);
             return null;
         }
+    }
+
+    private static boolean checkRateLimit(Context context, GeoNotification geoNotification){
+        SharedPreferences settings = context.getSharedPreferences(context.getPackageName(), 0);
+        SharedPreferences.Editor editor = settings.edit();
+        long time;
+
+        String lastTime = settings.getString(geoNotification.id.concat("_time"),null);
+        String message = settings.getString(geoNotification.id.concat("_message"),null);
+
+        if(lastTime == null){
+            editor.putString(geoNotification.id.concat("_time"), Long.toString(System.currentTimeMillis()));
+            editor.putString(geoNotification.id.concat("_message"), geoNotification.notification.text);
+            editor.apply();
+        }
+        else{
+
+            if(message.equals(geoNotification.notification.text)){
+                time = Long.parseLong(lastTime)/1000 + geoNotification.notification.period_milliseconds/1000;
+                if (time > TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())){
+                    return false;
+                }
+                else{
+                    editor.putString(geoNotification.id, Long.toString(System.currentTimeMillis()));
+                    editor.apply();
+                }
+            }
+            else{
+                editor.putString(geoNotification.id.concat("_time"), Long.toString(System.currentTimeMillis()));
+                editor.putString(geoNotification.id.concat("_message"), geoNotification.notification.text);
+                editor.apply();
+            }
+        }
+
+        return true;
     }
     
 }

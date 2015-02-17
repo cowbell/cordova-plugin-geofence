@@ -8,6 +8,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.content.Context;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient;
@@ -16,6 +17,7 @@ public class ReceiveTransitionsIntentService extends IntentService {
     protected BeepHelper beepHelper;
     protected GeoNotificationNotifier notifier;
     protected GeoNotificationStore store;
+    private Context context;
 
     /**
      * Sets an identifier for the service
@@ -24,6 +26,7 @@ public class ReceiveTransitionsIntentService extends IntentService {
         super("ReceiveTransitionsIntentService");
         beepHelper = new BeepHelper();
         store = new GeoNotificationStore(this);
+        this.context = this;
         Logger.setLogger(new Logger(GeofencePlugin.TAG, this, false));
     }
 
@@ -72,7 +75,8 @@ public class ReceiveTransitionsIntentService extends IntentService {
                     GeoNotification geoNotification = store
                             .getGeoNotification(fenceId);
 
-                    if (Notification.timeValidation(geoNotification) == false){
+
+                    if (Notification.timeValidation(geoNotification, (Context) context) == false){
                         return;
                     }
 
