@@ -325,7 +325,9 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         if diffStart == NSComparisonResult.OrderedAscending && diffEnd == NSComparisonResult.OrderedDescending{
             if diffStartTime == NSComparisonResult.OrderedDescending && diffEndTime == NSComparisonResult.OrderedAscending{
                 var currentDateFromString = convertDateToString(currentDate)
-                setNotificationTimestamp(geo["id"].asString!,date: currentDateFromString!)
+                var tryText = geo["notification"]["text"].asString!
+                log("STAMPO IL TESTO DELLA NOTIFICA: \(tryText)")
+                setNotificationTimestamp(geo["id"].asString!,date: currentDateFromString!,msg: geo["notification"]["text"].asString!)
                 return true
             }
             else{
@@ -339,13 +341,15 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     
     func checkRateLimit(geo: JSON) -> Bool{
         var currentDate : String? = convertDateToString(NSDate())
+        var currentText : String? = geo["notification"]["text"].asString!
         
         var previousDate = getNotificationTimestamp(geo["id"].asString!)
+        var previousText = getNotificationSavedText(geo["id"].asString!)
         
         let rateLimit = geo["notification"]["period_milliseconds"].asDouble
         
         if previousDate == "empty" {
-            //no previous timestamp
+            //no previous timestamp and no previous text message
             return true
         } else {
             let dateFormatter = NSDateFormatter()
@@ -355,10 +359,14 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
             var elapsedTime = NSDate().timeIntervalSinceDate(convertedPreviousDate!)
             elapsedTime = elapsedTime * 1000 //convert seconds to milliseconds
             
-            if (elapsedTime > rateLimit) {
-                return true
+            if currentText == previousText {
+                if (elapsedTime > rateLimit) {
+                    return true
+                } else {
+                    return false
+                }
             } else {
-                return false
+                return true
             }
         }
     }
@@ -369,15 +377,18 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         return dateFormatter.stringFromDate(date)
     }
     
-    func setNotificationTimestamp(regionId: String,date: String){
+    func setNotificationTimestamp(regionId: String,date: String,msg: String){
         let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.setObject(date, forKey: regionId)
+        var labelTime = regionId + "_time"
+        var labelMessage = regionId + "_message"
+        defaults.setObject(date, forKey: labelTime)
+        defaults.setObject(msg, forKey: labelMessage)
         NSUserDefaults.standardUserDefaults().synchronize()
     }
     
     func getNotificationTimestamp(regionId: String) -> String?{
         let defaults = NSUserDefaults.standardUserDefaults()
-        var variable = defaults.objectForKey(regionId) as? String
+        var variable = defaults.objectForKey(regionId + "_time") as? String
         
         if variable != nil{
             return variable
@@ -387,6 +398,19 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
             return returnValue
         }
     }
+    
+    func getNotificationSavedText(regionId: String) -> String?{
+        let defaults = NSUserDefaults.standardUserDefaults()
+        var textMessage = defaults.objectForKey(regionId + "_message") as? String
+        
+        if textMessage != nil {
+            return textMessage
+        } else {
+            let returnMessage : String = "empty"
+            return returnMessage
+        }
+    }
+    
 }
 
 class GeoNotificationStore {
