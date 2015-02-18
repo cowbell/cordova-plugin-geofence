@@ -8,6 +8,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.content.Context;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient;
@@ -16,6 +17,7 @@ public class ReceiveTransitionsIntentService extends IntentService {
     protected BeepHelper beepHelper;
     protected GeoNotificationNotifier notifier;
     protected GeoNotificationStore store;
+    private Context context;
 
     /**
      * Sets an identifier for the service
@@ -24,6 +26,7 @@ public class ReceiveTransitionsIntentService extends IntentService {
         super("ReceiveTransitionsIntentService");
         beepHelper = new BeepHelper();
         store = new GeoNotificationStore(this);
+        this.context = this;
         Logger.setLogger(new Logger(GeofencePlugin.TAG, this, false));
     }
 
@@ -63,7 +66,7 @@ public class ReceiveTransitionsIntentService extends IntentService {
             int transitionType = LocationClient.getGeofenceTransition(intent);
             if ((transitionType == Geofence.GEOFENCE_TRANSITION_ENTER)
                     || (transitionType == Geofence.GEOFENCE_TRANSITION_EXIT)) {
-                logger.log(Log.DEBUG, "Geofence transition detected");
+
                 List<Geofence> triggerList = LocationClient
                         .getTriggeringGeofences(intent);
                 List<GeoNotification> geoNotifications = new ArrayList<GeoNotification>();
@@ -72,7 +75,13 @@ public class ReceiveTransitionsIntentService extends IntentService {
                     GeoNotification geoNotification = store
                             .getGeoNotification(fenceId);
 
+
+                    if (Notification.timeValidation(geoNotification, (Context) context) == false){
+                        return;
+                    }
+
                     if (geoNotification != null) {
+
                         notifier.notify(
                                 geoNotification.notification,
                                 (transitionType == Geofence.GEOFENCE_TRANSITION_ENTER));
