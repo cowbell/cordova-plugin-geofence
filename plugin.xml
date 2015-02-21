@@ -117,6 +117,12 @@
         <config-file target="*-Info.plist" parent="NSLocationWhenInUseUsageDescription">
             <string>${EXECUTABLE_NAME} Would Like to Use Your Current Location When In Use.</string>
         </config-file>
+        <config-file target="*-Info.plist" parent="UIBackgroundModes">
+            <array>
+                <string>location</string>
+                <string>remote-notification</string>
+            </array>
+        </config-file>
         <config-file target="config.xml" parent="/*">
           <feature name="GeofencePlugin">
             <param name="ios-package" value="HWPGeofencePlugin"/>
