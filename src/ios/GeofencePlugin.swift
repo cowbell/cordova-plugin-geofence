@@ -277,6 +277,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         notification.timeZone = NSTimeZone.defaultTimeZone()
         var dateTime = NSDate()
         notification.fireDate = dateTime
+        notification.soundName = UILocalNotificationDefaultSoundName
         notification.alertBody = geo["notification"]["text"].asString!
         UIApplication.sharedApplication().scheduleLocalNotification(notification)
     }
