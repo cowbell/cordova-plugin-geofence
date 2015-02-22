@@ -20,6 +20,7 @@
     </js-module>
 
     <dependency id="com.vladstirbu.cordova.promise" url="https://github.com/vstirbu/PromisesPlugin.git" />
+    <dependency id="com.google.playservices" />
     <!-- android -->
     <platform name="android">
         <source-file src="src/android/AbstractGoogleServiceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
@@ -43,7 +44,6 @@
 
         <lib-file src="src/android/libs/gson-2.3.jar" />
         <lib-file src="src/android/libs/android-support-v4.jar" />
-        <lib-file src="src/android/libs/google-play-services.jar" />
 
         <config-file target="config.xml" parent="/*">
             <feature name="GeofencePlugin">
@@ -52,7 +52,6 @@
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <meta-data android:name="com.google.android.gms.version" android:value="5089000" />
             <service android:name="com.cowbell.cordova.geofence.ReceiveTransitionsIntentService" android:label="@string/app_name" android:exported="false">
             </service>
         </config-file>
