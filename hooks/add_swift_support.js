@@ -49,7 +49,6 @@ module.exports = function(context) {
             console.log('IOS project Runpath Search Paths set to: @executable_path/Frameworks ...');
             console.log('IOS project Adding libsqlite3...');
             xcodeProject.addFramework("libsqlite3.dylib");
-            projectFile.write();
         });
     }
 
