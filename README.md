@@ -29,7 +29,7 @@ cordova plugin rm com.cowbell.cordova.geofence
 
 - Android
 - iOS >=7.0
-- Windows Phone 8.1 
+- Windows Phone 8.1
     - using Universal App (cordova windows platform)
     - using Silverlight App (cordova wp8 platform retargeted to WP 8.1)
 
@@ -54,6 +54,7 @@ For listening of geofence transistion you can override receiveTransition method
 
 - `TransitionType.ENTER` = 1
 - `TransitionType.EXIT` = 2
+- `TransitionType.BOTH` = 3
 
 ## Plugin initialization
 
@@ -74,9 +75,9 @@ window.geofence.addOrUpdate({
     latitude:       Number, //Geo latitude of geofence
     longitude:      Number, //Geo longitude of geofence
     radius:         Number, //Radius of geofence in meters
-    transitionType: Number, //Type of transition 1 - Enter, 2 - Exit
+    transitionType: Number, //Type of transition 1 - Enter, 2 - Exit, 3 - Both
     notification: {         //Notification object
-        id:             Number, //optional should be integer, id of notidication
+        id:             Number, //optional should be integer, id of notification
         title:          String, //Title of notification
         text:           String, //Text of notification
         openAppOnClick: Boolean,//is main app activity should be opened after clicking on notification
@@ -93,13 +94,13 @@ Adding more geofences at once
 window.geofence.addOrUpdate([geofence1, geofence2, geofence3]);
 ```
 
-Geofence overrides the previously one with the same `id`. 
+Geofence overrides the previously one with the same `id`.
 
 *All geofences are stored on the device and restored to monitor after device reboot.*
 
 Notification overrides the previously one with the same `notification.id`.
 
-## Removing 
+## Removing
 
 Removing single geofence
 ```javascript
@@ -120,7 +121,7 @@ window.geofence.remove([geofenceId1, geofenceId2, geofenceId3]);
 
 ```javascript
 window.geofence.removeAll()
-    .then(function () { 
+    .then(function () {
         console.log('All geofences successfully removed.');
     }
     , function (reason) {
@@ -153,13 +154,13 @@ Adding geofence to monitor entering Gliwice city center area of radius 3km
 ```javascript
 window.geofence.addOrUpdate({
     id:             "69ca1b88-6fbe-4e80-a4d4-ff4d3748acdb",
-    latitude:       50.2980049, 
-    longitude:      18.6593152, 
-    radius:         3000, 
-    transitionType: TransitionType.ENTER, 
-    notification: {    
-        id:             1,     
-        title:          "Welcome in Gliwice", 
+    latitude:       50.2980049,
+    longitude:      18.6593152,
+    radius:         3000,
+    transitionType: TransitionType.ENTER,
+    notification: {
+        id:             1,
+        title:          "Welcome in Gliwice",
         text:           "You just arrived to Gliwice city center.",
         openAppOnClick: true
     }
@@ -190,7 +191,7 @@ If you are retargeting WP 8.0 to WP 8.1 you need to register background task to 
         <m2:Task Type="location" />
     </BackgroundTasks>
 </Extension>
-``` 
+```
 
 ##License
 
