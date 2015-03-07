@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import AudioToolbox
 
 let TAG = "GeofencePlugin"
 let iOS8 = floor(NSFoundationVersionNumber) > floor(NSFoundationVersionNumber_iOS_7_1)
@@ -272,7 +273,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
 
     func handleTransition(region: CLRegion!) {
         if let geo = store.findById(region.identifier) {
-            if (geo["notification"] != nil) {
+            if let notification = geo["notification"].asDictionary {
                 notifyAbout(geo)
             }
             GeofencePlugin.fireReceiveTransition(geo)
@@ -288,6 +289,12 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         notification.soundName = UILocalNotificationDefaultSoundName
         notification.alertBody = geo["notification"]["text"].asString!
         UIApplication.sharedApplication().scheduleLocalNotification(notification)
+
+        if let vibrate = geo["notification"]["vibrate"].asArray {
+            if (!vibrate.isEmpty && vibrate[0].asInt > 0) {
+                AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
+            }
+        }
     }
 }
 
