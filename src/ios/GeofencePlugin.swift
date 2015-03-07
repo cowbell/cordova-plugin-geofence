@@ -186,8 +186,14 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
             radius: radius,
             identifier: id
         )
-        region.notifyOnEntry = geoNotification["transitionType"].asInt == 1 ? true: false
-        region.notifyOnExit = geoNotification["transitionType"].asInt == 2 ? true: false
+
+        var transitionType = 0
+        if let i = geoNotification["transitionType"].asInt {
+            transitionType = i
+        }
+        region.notifyOnEntry = 0 != transitionType & 1
+        region.notifyOnExit = 0 != transitionType & 2
+
         //store
         store.addOrUpdate(geoNotification)
         locationManager.startMonitoringForRegion(region)
