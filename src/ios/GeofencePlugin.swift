@@ -272,7 +272,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
 
     func handleTransition(region: CLRegion!) {
         if let geo = store.findById(region.identifier) {
-            if (geo["notification"] != nil) {
+            if let notification = geo["notification"].asDictionary {
                 notifyAbout(geo)
             }
             GeofencePlugin.fireReceiveTransition(geo)
