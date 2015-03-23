@@ -272,12 +272,16 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
 
     func handleTransition(region: CLRegion!) {
         if let geo = store.findById(region.identifier) {
-            notifyAbout(geo)
+            // notifyAbout(geo)
             GeofencePlugin.fireReceiveTransition(geo)
         }
     }
 
     func notifyAbout(geo: JSON) {
+        if (geo["notification"] == nil) {
+            return
+        }
+
         log("Creating notification")
         var notification = UILocalNotification()
         notification.timeZone = NSTimeZone.defaultTimeZone()
