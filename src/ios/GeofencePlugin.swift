@@ -278,6 +278,10 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     }
 
     func notifyAbout(geo: JSON) {
+        if (geo["notification"] == nil) {
+            return
+        }
+
         log("Creating notification")
         var notification = UILocalNotification()
         notification.timeZone = NSTimeZone.defaultTimeZone()

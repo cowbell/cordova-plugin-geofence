@@ -73,9 +73,11 @@ public class ReceiveTransitionsIntentService extends IntentService {
                             .getGeoNotification(fenceId);
 
                     if (geoNotification != null) {
-                        notifier.notify(
-                                geoNotification.notification,
-                                (transitionType == Geofence.GEOFENCE_TRANSITION_ENTER));
+                        if (geoNotification.notification) {
+                            notifier.notify(
+                                    geoNotification.notification,
+                                    (transitionType == Geofence.GEOFENCE_TRANSITION_ENTER));
+                        }
                         geoNotifications.add(geoNotification);
                     }
                 }
