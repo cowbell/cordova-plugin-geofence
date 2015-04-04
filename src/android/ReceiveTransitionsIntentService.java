@@ -82,7 +82,7 @@ public class ReceiveTransitionsIntentService extends IntentService {
                 }
 
                 if (geoNotifications.size() > 0) {
-                    GeofencePlugin.fireRecieveTransition(geoNotifications);
+                    GeofencePlugin.fireReceiveTransition(geoNotifications);
                 }
             } else {
                 logger.log(Log.ERROR, "Geofence transition error: "

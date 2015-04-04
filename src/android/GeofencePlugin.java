@@ -82,7 +82,7 @@ public class GeofencePlugin extends CordovaPlugin {
         return geo;
     }
 
-    public static void fireRecieveTransition(List<GeoNotification> notifications) {
+    public static void fireReceiveTransition(List<GeoNotification> notifications) {
         Gson gson = new Gson();
         String js = "setTimeout('geofence.receiveTransition("
                 + gson.toJson(notifications) + ")',0)";
