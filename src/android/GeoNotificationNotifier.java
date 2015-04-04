@@ -24,7 +24,7 @@ public class GeoNotificationNotifier {
         this.logger = Logger.getLogger();
     }
 
-    public void notify(Notification notification, boolean isEntered) {
+    public void notify(Notification notification) {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
                 context).setSmallIcon(R.drawable.ic_menu_mylocation)
                 .setVibrate(new long[] { 1000, 1000, 1000 })
