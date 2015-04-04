@@ -81,6 +81,7 @@ window.geofence.addOrUpdate({
         title:          String, //Title of notification
         text:           String, //Text of notification
         openAppOnClick: Boolean,//is main app activity should be opened after clicking on notification
+        vibration:      [Integer], //Optional vibration pattern - see description
         data:           Object  //Custom object associated with notification
     }
 }).then(function () {
@@ -99,6 +100,30 @@ Geofence overrides the previously one with the same `id`.
 *All geofences are stored on the device and restored to monitor after device reboot.*
 
 Notification overrides the previously one with the same `notification.id`.
+
+## Notification vibrations
+
+You can set vibration pattern for the notification or disable default vibrations.
+
+To change vibration pattern set `vibrate` property of `notification` object in geofence. 
+
+###Examples
+
+```
+//disable vibrations
+notification: {
+    vibrate: [0]
+}
+```
+
+```
+//Vibrate for 1 sec
+//Wait for 0.5 sec
+//Vibrate for 2 sec
+notification: {
+    vibrate: [1000, 500, 2000]
+}
+```
 
 ## Removing
 
