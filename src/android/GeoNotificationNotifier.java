@@ -27,8 +27,9 @@ public class GeoNotificationNotifier {
     public void notify(Notification notification) {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
                 context).setSmallIcon(R.drawable.ic_menu_mylocation)
-                .setVibrate(new long[] { 1000, 1000, 1000 })
-                .setAutoCancel(true).setContentTitle(notification.title)
+                .setVibrate(concat(new long[] {0}, notification.vibrate))
+                .setAutoCancel(true)
+                .setContentTitle(notification.title)
                 .setContentText(notification.text);
 
         if (notification.openAppOnClick) {
@@ -61,5 +62,12 @@ public class GeoNotificationNotifier {
         notificationManager.notify(notification.id, mBuilder.build());
         logger.log(Log.DEBUG, "GeoNotification title: " + notification.title
                 + " text: " + notification.text);
+    }
+
+    private long[] concat(long[] a, long[] b) {
+        long[] c = new long[a.length + b.length];
+        System.arraycopy(a, 0, c, 0, a.length);
+        System.arraycopy(b, 0, c, a.length, b.length);
+        return c;
     }
 }
