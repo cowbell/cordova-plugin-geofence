@@ -105,7 +105,7 @@ Notification overrides the previously one with the same `notification.id`.
 
 You can set vibration pattern for the notification or disable default vibrations.
 
-To change vibration pattern set `vibrate` property of `notification` object in geofence. 
+To change vibration pattern set `vibrate` property of `notification` object in geofence.
 
 ###Examples
 
@@ -124,6 +124,14 @@ notification: {
     vibrate: [1000, 500, 2000]
 }
 ```
+
+###Platforms quircks
+
+Fully working only on Android.
+
+On iOS vibration pattern doesn't work. Plugin only allow to vibrate with default system pattern.
+
+Windows Phone - current status is TODO
 
 ## Removing
 
