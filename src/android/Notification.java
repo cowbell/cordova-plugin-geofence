@@ -55,16 +55,27 @@ public class Notification {
         return bmp;
     }
 
-//    public String getDataJson() {
-//        if (this.data == null) {
-//            return "";
-//        }
-//
-//        return new Gson().toJson(this.data);
-//    }
+    public String getDataJson() {
+        if (this.data == null) {
+            return "";
+        }
+
+        return Gson.get().toJson(this.data);
+    }
+
+    public long[] getVibrate() {
+        return new long[] {0}, vibrate);
+    }
 
     public String toString() {
         return "Notification title: " + getTitle()
             + " text: " + getText();
+    }
+
+    private long[] concat(long[] a, long[] b) {
+        long[] c = new long[a.length + b.length];
+        System.arraycopy(a, 0, c, 0, a.length);
+        System.arraycopy(b, 0, c, a.length, b.length);
+        return c;
     }
 }
