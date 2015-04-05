@@ -25,6 +25,7 @@
     <platform name="android">
         <source-file src="src/android/AbstractGoogleServiceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/AddGeofenceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/AssetUtil.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/BeepHelper.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/BootReceiver.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/GeoNotification.java" target-dir="src/com/cowbell/cordova/geofence" />
@@ -69,7 +70,8 @@
             <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
             <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
             <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-            <uses-permission android:name="android.permission.VIBRATE" />
+			<uses-permission android:name="android.permission.VIBRATE" />            
+			<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
         </config-file>
 
     </platform>

@@ -5,8 +5,6 @@ import java.util.List;
 
 import android.content.Context;
 
-import com.google.gson.Gson;
-
 public class GeoNotificationStore {
     private LocalStorage storage;
 
@@ -15,7 +13,7 @@ public class GeoNotificationStore {
     }
 
     public void setGeoNotification(GeoNotification geoNotification) {
-        storage.setItem(geoNotification.id, new Gson().toJson(geoNotification));
+        storage.setItem(geoNotification.id, Gson.get().toJson(geoNotification));
     }
 
     public GeoNotification getGeoNotification(String id) {
