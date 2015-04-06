@@ -80,6 +80,8 @@ window.geofence.addOrUpdate({
         id:             Number, //optional should be integer, id of notification
         title:          String, //Title of notification
         text:           String, //Text of notification
+        smallIcon:      String, //Small icon showed in notification area, only res URI
+        icon:           String, //icon showed in notification drawer
         openAppOnClick: Boolean,//is main app activity should be opened after clicking on notification
         vibration:      [Integer], //Optional vibration pattern - see description
         data:           Object  //Custom object associated with notification
@@ -125,13 +127,36 @@ notification: {
 }
 ```
 
-###Platforms quircks
+###Platform quirks
 
 Fully working only on Android.
 
 On iOS vibration pattern doesn't work. Plugin only allow to vibrate with default system pattern.
 
 Windows Phone - current status is TODO
+
+## Notification icons
+
+To set notification icons use `icon` and `smallIcon` property in `notification` object.
+
+As a value you can enter:
+- name of native resource or your application resource e.g. `res://ic_menu_mylocation`, `res://icon`, `res://ic_menu_call`
+- relative path to file in `www` directory e.g. `file://img/ionic.png`
+
+`smallIcon` - supports only resources URI
+
+###Examples
+
+```
+notification: {
+    smallIcon: 'res://my_location_icon',
+    icon: 'file://img/geofence.png'
+}
+```
+
+###Platform quirks
+
+Works only on Android platform so far.
 
 ## Removing
 
