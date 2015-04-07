@@ -2,6 +2,8 @@
 
 [![Code Climate](https://codeclimate.com/github/cowbell/cordova-plugin-geofence/badges/gpa.svg)](https://codeclimate.com/github/cowbell/cordova-plugin-geofence)
 
+iOS Build [![Build Status](https://travis-ci.org/cowbell/cordova-plugin-geofence.svg?branch=master)](https://travis-ci.org/cowbell/cordova-plugin-geofence)
+
 Plugin to monitor circular geofences using mobile devices. The purpose is to notify user if crossing the boundary of the monitored geofence.
 
 *Geofences persists after device reboot. You do not have to open your app first to monitor added geofences*
