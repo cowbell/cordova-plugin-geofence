@@ -64,7 +64,7 @@ public class Notification {
     }
 
     public long[] getVibrate() {
-        return new long[] {0}, vibrate);
+        return concat(new long[] {0}, vibrate);
     }
 
     public String toString() {

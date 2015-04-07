@@ -35,6 +35,7 @@
         <source-file src="src/android/GeofencePlugin.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/GoogleServiceCommandExecutor.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/IGoogleServiceCommandListener.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/Gson.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/JSONHelper.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/LocalStorage.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/LocalStorageDBHelper.java" target-dir="src/com/cowbell/cordova/geofence" />
@@ -70,7 +71,7 @@
             <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
             <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
             <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-			<uses-permission android:name="android.permission.VIBRATE" />            
+			<uses-permission android:name="android.permission.VIBRATE" />
 			<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
         </config-file>
 

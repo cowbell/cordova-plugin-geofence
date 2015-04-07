@@ -25,7 +25,7 @@ public class GeoNotificationNotifier {
     public void notify(Notification notification) {
         notification.setContext(context);
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
-                .setVibrate(concat(notification.getVibrate())
+                .setVibrate(notification.getVibrate())
                 .setSmallIcon(notification.getSmallIcon())
                 .setLargeIcon(notification.getLargeIcon())
                 .setAutoCancel(true)
