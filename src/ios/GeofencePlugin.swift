@@ -275,7 +275,6 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     func notifyAbout(geo: JSON) {
         log("Creating notification")
         
-        //Qui chiamo il controllo dei millisecondi
         var tryVar : Bool = checkRateLimit(geo)
         
         if tryVar == true {
@@ -326,7 +325,6 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
             if diffStartTime == NSComparisonResult.OrderedDescending && diffEndTime == NSComparisonResult.OrderedAscending{
                 var currentDateFromString = convertDateToString(currentDate)
                 var tryText = geo["notification"]["text"].asString!
-                log("STAMPO IL TESTO DELLA NOTIFICA: \(tryText)")
                 setNotificationTimestamp(geo["id"].asString!,date: currentDateFromString!,msg: geo["notification"]["text"].asString!)
                 return true
             }
