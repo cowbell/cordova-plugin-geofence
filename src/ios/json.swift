@@ -43,7 +43,7 @@ extension JSON {
         var enc:NSStringEncoding = NSUTF8StringEncoding
         var err:NSError?
         let str:String? =
-        NSString(
+        String(
             contentsOfURL:nsurl, usedEncoding:&enc, error:&err
         )
         if err != nil { self.init(err!) }
@@ -106,7 +106,7 @@ extension JSON {
                 domain:"JSONErrorDomain", code:500, userInfo:[
                     NSLocalizedDescriptionKey: "not an array"
                 ]))
-            }
+        }
     }
     /// access the element like dictionary
     public subscript(key:String)->JSON {
@@ -125,7 +125,7 @@ extension JSON {
                 domain:"JSONErrorDomain", code:500, userInfo:[
                     NSLocalizedDescriptionKey: "not an object"
                 ]))
-            }
+        }
     }
     /// access json data object
     public var data:AnyObject? {
@@ -135,20 +135,20 @@ extension JSON {
     /// e.g.  if it returns "Double"
     ///       .asDouble returns Double
     public var type:String {
-    switch _value {
-    case is NSError:        return "NSError"
-    case is NSNull:         return "NSNull"
-    case let o as NSNumber:
-        switch String.fromCString(o.objCType)! {
-        case "c", "C":              return "Bool"
-        case "q", "l", "i", "s":    return "Int"
-        case "Q", "L", "I", "S":    return "UInt"
-        default:                    return "Double"
-        }
-    case is NSString:               return "String"
-    case is NSArray:                return "Array"
-    case is NSDictionary:           return "Dictionary"
-    default:                        return "NSError"
+        switch _value {
+        case is NSError:        return "NSError"
+        case is NSNull:         return "NSNull"
+        case let o as NSNumber:
+            switch String.fromCString(o.objCType)! {
+            case "c", "C":              return "Bool"
+            case "q", "l", "i", "s":    return "Int"
+            case "Q", "L", "I", "S":    return "UInt"
+            default:                    return "Double"
+            }
+        case is NSString:               return "String"
+        case is NSArray:                return "Array"
+        case is NSDictionary:           return "Dictionary"
+        default:                        return "NSError"
         }
     }
     /// check if self is NSError
@@ -165,11 +165,11 @@ extension JSON {
     public var isDouble:     Bool { return type == "Double" }
     /// check if self is any type of number
     public var isNumber:     Bool {
-    if let o = _value as? NSNumber {
-        let t = String.fromCString(o.objCType)!
-        return  t != "c" && t != "C"
-    }
-    return false
+        if let o = _value as? NSNumber {
+            let t = String.fromCString(o.objCType)!
+            return  t != "c" && t != "C"
+        }
+        return false
     }
     /// check if self is String
     public var isString:     Bool { return _value is NSString }
@@ -183,83 +183,83 @@ extension JSON {
     }
     /// gives NSError if it holds the error. nil otherwise
     public var asError:NSError? {
-    return _value as? NSError
+        return _value as? NSError
     }
     /// gives NSNull if self holds it. nil otherwise
     public var asNull:NSNull? {
-    return _value is NSNull ? JSON.null : nil
+        return _value is NSNull ? JSON.null : nil
     }
     /// gives Bool if self holds it. nil otherwise
     public var asBool:Bool? {
-    switch _value {
-    case let o as NSNumber:
-        switch String.fromCString(o.objCType)! {
-        case "c", "C":  return Bool(o.boolValue)
-        default:
-            return nil
-        }
-    default: return nil
+        switch _value {
+        case let o as NSNumber:
+            switch String.fromCString(o.objCType)! {
+            case "c", "C":  return Bool(o.boolValue)
+            default:
+                return nil
+            }
+        default: return nil
         }
     }
     /// gives Int if self holds it. nil otherwise
     public var asInt:Int? {
-    switch _value {
-    case let o as NSNumber:
-        switch String.fromCString(o.objCType)! {
-        case "c", "C":
-            return nil
-        default:
-            return Int(o.longLongValue)
-        }
-    default: return nil
+        switch _value {
+        case let o as NSNumber:
+            switch String.fromCString(o.objCType)! {
+            case "c", "C":
+                return nil
+            default:
+                return Int(o.longLongValue)
+            }
+        default: return nil
         }
     }
     /// gives Double if self holds it. nil otherwise
     public var asDouble:Double? {
-    switch _value {
-    case let o as NSNumber:
-        switch String.fromCString(o.objCType)! {
-        case "c", "C":
-            return nil
-        default:
-            return Double(o.doubleValue)
-        }
-    default: return nil
+        switch _value {
+        case let o as NSNumber:
+            switch String.fromCString(o.objCType)! {
+            case "c", "C":
+                return nil
+            default:
+                return Double(o.doubleValue)
+            }
+        default: return nil
         }
     }
     // an alias to asDouble
     public var asNumber:Double? { return asDouble }
     /// gives String if self holds it. nil otherwise
     public var asString:String? {
-    switch _value {
-    case let o as NSString:
-        return o as String
-    default: return nil
+        switch _value {
+        case let o as NSString:
+            return o as String
+        default: return nil
         }
     }
     /// if self holds NSArray, gives a [JSON]
     /// with elements therein. nil otherwise
     public var asArray:[JSON]? {
-    switch _value {
-    case let o as NSArray:
-        var result = [JSON]()
-        for v:AnyObject in o { result.append(JSON(v)) }
-        return result
-    default:
-        return nil
+        switch _value {
+        case let o as NSArray:
+            var result = [JSON]()
+            for v:AnyObject in o { result.append(JSON(v)) }
+            return result
+        default:
+            return nil
         }
     }
     /// if self holds NSDictionary, gives a [String:JSON]
     /// with elements therein. nil otherwise
     public var asDictionary:[String:JSON]? {
-    switch _value {
-    case let o as NSDictionary:
-        var result = [String:JSON]()
-        for (k:AnyObject, v:AnyObject) in o {
-            result[k as String] = JSON(v)
-        }
-        return result
-    default: return nil
+        switch _value {
+        case let o as NSDictionary:
+            var result = [String:JSON]()
+            for (k:AnyObject, v:AnyObject) in o {
+                result[k as! String] = JSON(v)
+            }
+            return result
+        default: return nil
         }
     }
     /// Yields date from string
@@ -267,17 +267,17 @@ extension JSON {
         if let dateString = _value as? NSString {
             let dateFormatter = NSDateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZ"
-            return dateFormatter.dateFromString(dateString)
+            return dateFormatter.dateFromString(dateString as String)
         }
         return nil
     }
     /// gives the number of elements if an array or a dictionary.
     /// you can use this to check if you can iterate.
     public var length:Int {
-    switch _value {
-    case let o as NSArray:      return o.count
-    case let o as NSDictionary: return o.count
-    default: return 0
+        switch _value {
+        case let o as NSArray:      return o.count
+        case let o as NSDictionary: return o.count
+        default: return 0
         }
     }
 }
@@ -294,7 +294,7 @@ extension JSON : SequenceType {
             var ks = o.allKeys.reverse()
             return GeneratorOf<(AnyObject, JSON)> {
                 if ks.isEmpty { return nil }
-                let k = ks.removeLast() as String
+                let k = ks.removeLast() as! String
                 return (k, JSON(o.valueForKey(k)!))
             }
         default:
@@ -336,12 +336,12 @@ extension JSON : Printable {
                 ? NSJSONWritingOptions.PrettyPrinted : nil
             if let data = NSJSONSerialization.dataWithJSONObject(
                 _value, options:opts, error:nil
-            ) as NSData? {
-                if let nsstring = NSString(
-                    data:data, encoding:NSUTF8StringEncoding
-                ) as NSString? {
-                    return nsstring
-                }
+                ) as NSData? {
+                    if let nsstring = NSString(
+                        data:data, encoding:NSUTF8StringEncoding
+                        ) as NSString? {
+                            return nsstring as String
+                    }
             }
             return "YOU ARE NOT SUPPOSED TO SEE THIS!"
         }
