@@ -71,7 +71,7 @@ var GeofencePluginWebView: UIWebView?
     func remove(command: CDVInvokedUrlCommand) {
         dispatch_async(dispatch_get_global_queue(priority, 0)) {
             for id in command.arguments {
-                self.geoNotificationManager.removeGeoNotification(id as String)
+                self.geoNotificationManager.removeGeoNotification(id as! String)
             }
             dispatch_async(dispatch_get_main_queue()) {
                 var pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
@@ -206,7 +206,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
 
     func getMonitoredRegion(id: String) -> CLRegion? {
         for object in locationManager.monitoredRegions {
-            let region = object as CLRegion
+            let region = object as! CLRegion
 
             if (region.identifier == id) {
                 return region
@@ -227,7 +227,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     func removeAllGeoNotifications() {
         store.clear()
         for object in locationManager.monitoredRegions {
-            let region = object as CLRegion
+            let region = object as! CLRegion
             log("Stoping monitoring region \(region.identifier)")
             locationManager.stopMonitoringForRegion(region)
         }
@@ -256,9 +256,9 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     }
 
     func locationManager(manager: CLLocationManager!, didStartMonitoringForRegion region: CLRegion!) {
-        let lat = (region as CLCircularRegion).center.latitude
-        let lng = (region as CLCircularRegion).center.longitude
-        let radius = (region as CLCircularRegion).radius
+        let lat = (region as! CLCircularRegion).center.latitude
+        let lng = (region as! CLCircularRegion).center.longitude
+        let radius = (region as! CLCircularRegion).radius
 
         log("Starting monitoring for region \(region) lat \(lat) lng \(lng)")
     }
