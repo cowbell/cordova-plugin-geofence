@@ -278,10 +278,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
             }
             GeofencePlugin.fireReceiveTransition(geo)
 
-            let canCustomMethod = GeofencePluginWebView.respondsToSelector(Selector("customMethod"))
-
-            log("Custom Method Exists")
-            log(canCustomMethod)
+            NSNotificationCenter.defaultCenter().postNotificationName("handleTransition", object: geo);
         }
     }
 
