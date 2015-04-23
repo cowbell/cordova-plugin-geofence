@@ -1,9 +1,7 @@
 package com.cowbell.cordova.geofence;
 
-import android.content.Context;
-import android.util.Log;
-
-import com.google.gson.Gson;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
@@ -12,10 +10,9 @@ import org.apache.cordova.CordovaWebView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import com.cowbell.cordova.geofence.GeoNotification;
 
-import java.util.List;
-import java.util.ArrayList;
+import android.content.Context;
+import android.util.Log;
 
 public class GeofencePlugin extends CordovaPlugin {
     public static final String TAG = "GeofencePlugin";
@@ -66,8 +63,7 @@ public class GeofencePlugin extends CordovaPlugin {
         } else if (action.equals("getWatched")) {
             List<GeoNotification> geoNotifications = geoNotificationManager
                     .getWatched();
-            Gson gson = new Gson();
-            callbackContext.success(gson.toJson(geoNotifications));
+            callbackContext.success(Gson.get().toJson(geoNotifications));
         } else if (action.equals("initialize")) {
 
         } else {
@@ -83,10 +79,9 @@ public class GeofencePlugin extends CordovaPlugin {
         return geo;
     }
 
-    public static void fireRecieveTransition(List<GeoNotification> notifications) {
-        Gson gson = new Gson();
+    public static void fireReceiveTransition(List<GeoNotification> notifications) {
         String js = "setTimeout('geofence.receiveTransition("
-                + gson.toJson(notifications) + ")',0)";
+                + Gson.get().toJson(notifications) + ")',0)";
         if (webView == null) {
             Log.d(TAG, "Webview is null");
         } else {

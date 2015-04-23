@@ -1,8 +1,10 @@
 package com.cowbell.cordova.geofence;
 
-import android.util.Log;
-import android.content.SharedPreferences;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.content.SharedPreferences;
+import android.util.Log;
 
 import java.lang.Long;
 import java.lang.System;
@@ -10,19 +12,88 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
-public class Notification{
-    public int id;
-    public String title;
-    public String text;
-    public Object data;
-    public boolean openAppOnClick;
-    public int start_date;
-    public int end_date;
-    public String start_time;
-    public String end_time;
-    public long period_milliseconds;
-    private SharedPreferences sharedPreferences;
-    private static Context context;
+import com.google.gson.annotations.Expose;
+
+public class Notification {
+    private Context context;
+    private AssetUtil assets;
+
+    @Expose public int id;
+    @Expose public String title;
+    @Expose public String text;
+	@Expose public long[] vibrate = new long[] { 1000 };
+    @Expose public String icon = "";
+    @Expose public String smallIcon = "";
+    @Expose public Object data;
+    @Expose public boolean openAppOnClick;
+    @Expose public int start_date;
+    @Expose public int end_date;
+    @Expose public String start_time;
+    @Expose public String end_time;
+    @Expose public long period_milliseconds;
+    @Expose private SharedPreferences sharedPreferences;
+    @Expose private static Context context;
+
+
+    public void setContext(Context context) {
+        this.context = context;
+        this.assets = AssetUtil.getInstance(context);
+    }
+
+    public String getText() {
+        return this.text;
+    }
+
+    public String getTitle() {
+        return this.title;
+    }
+
+    public int getSmallIcon() {
+        int resId = assets.getResIdForDrawable(this.smallIcon);
+
+        if (resId == 0) {
+            resId = android.R.drawable.ic_menu_mylocation;
+        }
+
+        return resId;
+    }
+
+    public Bitmap getLargeIcon() {
+        Bitmap bmp;
+
+        try{
+            Uri uri = assets.parse(this.icon);
+            bmp = assets.getIconFromUri(uri);
+        } catch (Exception e){
+            bmp = assets.getIconFromDrawable(this.icon);
+        }
+
+        return bmp;
+    }
+
+    public String getDataJson() {
+        if (this.data == null) {
+            return "";
+        }
+
+        return Gson.get().toJson(this.data);
+    }
+
+    public long[] getVibrate() {
+        return concat(new long[] {0}, vibrate);
+    }
+
+    public String toString() {
+        return "Notification title: " + getTitle()
+            + " text: " + getText();
+    }
+
+    private long[] concat(long[] a, long[] b) {
+        long[] c = new long[a.length + b.length];
+        System.arraycopy(a, 0, c, 0, a.length);
+        System.arraycopy(b, 0, c, a.length, b.length);
+        return c;
+    }
 
     public static boolean timeValidation (GeoNotification geoNotification, Context context){
         Logger logger = Logger.getLogger();
@@ -32,12 +103,12 @@ public class Notification{
         String[] start_time = geoNotification.notification.start_time.split(":");
         String[] end_time = geoNotification.notification.end_time.split(":");
         long currentDateTime = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
-        
+
         if( geoNotification.notification.start_date < currentDateTime && geoNotification.notification.end_date > currentDateTime){
             Timestamp startTimeTimestamp = parseTime(start_time);
             Timestamp endTimeTimestamp = parseTime(end_time);
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-            
+
             return startTimeTimestamp != null && endTimeTimestamp != null && startTimeTimestamp.before(currentTime) && endTimeTimestamp.after(currentTime) && checkRateLimit((Context) context, geoNotification);
         }
         else return false;
@@ -102,5 +173,6 @@ public class Notification{
 
         return true;
     }
-    
+
+
 }

@@ -46,8 +46,10 @@ public class GeoNotificationManager {
         for (GeoNotification geo : geoNotifications) {
             geoFences.add(geo.toGeofence());
         }
-        googleServiceCommandExecutor.QueueToExecute(new AddGeofenceCommand(
-                context, pendingIntent, geoFences));
+        if (!geoFences.isEmpty()) {
+        	googleServiceCommandExecutor.QueueToExecute(new AddGeofenceCommand(
+        			context, pendingIntent, geoFences));
+        }	
     }
 
     public List<GeoNotification> getWatched() {
