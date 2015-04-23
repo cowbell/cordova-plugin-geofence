@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import AudioToolbox
 
 let TAG = "GeofencePlugin"
 let iOS8 = floor(NSFoundationVersionNumber) > floor(NSFoundationVersionNumber_iOS_7_1)
@@ -187,8 +188,14 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
             radius: radius,
             identifier: id
         )
-        region.notifyOnEntry = geoNotification["transitionType"].asInt == 1 ? true: false
-        region.notifyOnExit = geoNotification["transitionType"].asInt == 2 ? true: false
+        
+        var transitionType = 0
+        if let i = geoNotification["transitionType"].asInt {
+            transitionType = i
+        }
+        region.notifyOnEntry = 0 != transitionType & 1
+        region.notifyOnExit = 0 != transitionType & 2
+        
         //store
         store.addOrUpdate(geoNotification)
         locationManager.startMonitoringForRegion(region)
@@ -267,7 +274,9 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     
     func handleTransition(region: CLRegion!) {
         if let geo = store.findById(region.identifier) {
-            notifyAbout(geo)
+            if let notification = geo["notification"].asDictionary {
+                notifyAbout(geo)
+            }
             GeofencePlugin.fireReceiveTransition(geo)
         }
     }
@@ -279,12 +288,20 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         
         if tryVar == true {
             if validateTime(geo) == true{
+                
                 var notification = UILocalNotification()
                 notification.timeZone = NSTimeZone.defaultTimeZone()
                 var dateTime = NSDate()
                 notification.fireDate = dateTime
+                notification.soundName = UILocalNotificationDefaultSoundName
                 notification.alertBody = geo["notification"]["text"].asString!
                 UIApplication.sharedApplication().scheduleLocalNotification(notification)
+                
+                if let vibrate = geo["notification"]["vibrate"].asArray {
+                    if (!vibrate.isEmpty && vibrate[0].asInt > 0) {
+                        AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
+                    }
+                }
             }
         }
     }
