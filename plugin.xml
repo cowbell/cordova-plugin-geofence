@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="com.cowbell.cordova.geofence" version="0.3.2">
+<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest" xmlns:android="http://schemas.android.com/apk/res/android" id="com.cowbell.cordova.geofence" version="0.3.3">
     <name>geofence</name>
     <description>Geofence plugin</description>
     <license>Apache 2.0</license>
@@ -20,10 +20,12 @@
     </js-module>
 
     <dependency id="com.vladstirbu.cordova.promise" url="https://github.com/vstirbu/PromisesPlugin.git" />
+    <dependency id="com.google.playservices" />
     <!-- android -->
     <platform name="android">
         <source-file src="src/android/AbstractGoogleServiceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/AddGeofenceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/AssetUtil.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/BeepHelper.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/BootReceiver.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/GeoNotification.java" target-dir="src/com/cowbell/cordova/geofence" />
@@ -33,6 +35,7 @@
         <source-file src="src/android/GeofencePlugin.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/GoogleServiceCommandExecutor.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/IGoogleServiceCommandListener.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/Gson.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/JSONHelper.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/LocalStorage.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/LocalStorageDBHelper.java" target-dir="src/com/cowbell/cordova/geofence" />
@@ -43,7 +46,6 @@
 
         <lib-file src="src/android/libs/gson-2.3.jar" />
         <lib-file src="src/android/libs/android-support-v4.jar" />
-        <lib-file src="src/android/libs/google-play-services.jar" />
 
         <config-file target="config.xml" parent="/*">
             <feature name="GeofencePlugin">
@@ -52,7 +54,6 @@
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <meta-data android:name="com.google.android.gms.version" android:value="5089000" />
             <service android:name="com.cowbell.cordova.geofence.ReceiveTransitionsIntentService" android:label="@string/app_name" android:exported="false">
             </service>
         </config-file>
@@ -70,6 +71,8 @@
             <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
             <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
             <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+			<uses-permission android:name="android.permission.VIBRATE" />
+			<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
         </config-file>
 
     </platform>
@@ -116,6 +119,12 @@
         </config-file>
         <config-file target="*-Info.plist" parent="NSLocationWhenInUseUsageDescription">
             <string>${EXECUTABLE_NAME} Would Like to Use Your Current Location When In Use.</string>
+        </config-file>
+        <config-file target="*-Info.plist" parent="UIBackgroundModes">
+            <array>
+                <string>location</string>
+                <string>remote-notification</string>
+            </array>
         </config-file>
         <config-file target="config.xml" parent="/*">
           <feature name="GeofencePlugin">
