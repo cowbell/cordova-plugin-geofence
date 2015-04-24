@@ -21,7 +21,7 @@ public class Notification {
     @Expose public int id;
     @Expose public String title;
     @Expose public String text;
-	@Expose public long[] vibrate = new long[] { 1000 };
+    @Expose public long[] vibrate = new long[] { 1000 };
     @Expose public String icon = "";
     @Expose public String smallIcon = "";
     @Expose public Object data;
@@ -32,8 +32,6 @@ public class Notification {
     @Expose public String end_time;
     @Expose public long period_milliseconds;
     @Expose private SharedPreferences sharedPreferences;
-    @Expose private static Context context;
-
 
     public void setContext(Context context) {
         this.context = context;
