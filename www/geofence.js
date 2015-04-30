@@ -1,5 +1,6 @@
 var exec = require('cordova/exec'),
     Promise = require('com.vladstirbu.cordova.promise.Promise'),
+    channel = require('cordova/channel'),
     geofence,
     Geofence = function () {
 
@@ -76,6 +77,16 @@ Geofence.prototype.getWatched = function (success, error) {
     return execPromise(success, error, 'GeofencePlugin', 'getWatched', []);
 };
 
+/**
+ * Called when app is opened via Notification bar
+ *
+ * @name onNotificationClicked
+ * @param {JSON} notificationData user data from notification
+ */
+Geofence.prototype.onNotificationClicked = function(notificationData){
+
+};
+
 function execPromise(success, error, pluginName, method, args) {
     return new Promise(function (resolve, reject) {
         exec(function (result) {
@@ -95,6 +106,14 @@ function execPromise(success, error, pluginName, method, args) {
             args);
     });
 }
+
+
+// Called after 'deviceready' event
+channel.deviceready.subscribe(function () {
+    // Device is ready now, the listeners are registered
+    // and all queued events can be executed.
+    exec(null, null, 'GeofencePlugin', 'deviceready', []);
+});
 
 geofence = new Geofence();
 module.exports = geofence;
