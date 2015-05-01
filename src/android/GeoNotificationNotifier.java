@@ -4,6 +4,9 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
@@ -54,7 +57,14 @@ public class GeoNotificationNotifier {
                     0, PendingIntent.FLAG_UPDATE_CURRENT);
             mBuilder.setContentIntent(resultPendingIntent);
         }
-        beepHelper.startTone("beep_beep_beep");
+        try {
+            Uri notificationSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            Ringtone r = RingtoneManager.getRingtone(context, notificationSound);
+            r.play();
+        } catch (Exception e) {
+        	beepHelper.startTone("beep_beep_beep");
+            e.printStackTrace();
+        }
         notificationManager.notify(notification.id, mBuilder.build());
         logger.log(Log.DEBUG, notification.toString());
     }
