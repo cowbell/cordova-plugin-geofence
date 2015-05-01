@@ -207,6 +207,16 @@ window.geofence.receiveTransition = function (geofences) {
 };
 ```
 
+## When the app is opened via Notification click
+
+Currently Android only.
+
+```javascript
+window.geofence.onNotificationClicked = function (notificationData) {
+    console.log('App opened from Geo Notification!', notificationData);
+};
+```
+
 #Example usage
 
 Adding geofence to monitor entering Gliwice city center area of radius 3km
