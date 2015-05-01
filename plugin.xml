@@ -20,7 +20,9 @@
     </js-module>
 
     <dependency id="com.vladstirbu.cordova.promise" url="https://github.com/vstirbu/PromisesPlugin.git" />
+    <dependency id="android.support.v4" />
     <dependency id="com.google.playservices" />
+
     <!-- android -->
     <platform name="android">
         <source-file src="src/android/AbstractGoogleServiceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
@@ -45,7 +47,6 @@
         <source-file src="src/android/RemoveGeofenceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
 
         <lib-file src="src/android/libs/gson-2.3.jar" />
-        <lib-file src="src/android/libs/android-support-v4.jar" />
 
         <config-file target="config.xml" parent="/*">
             <feature name="GeofencePlugin">
@@ -85,7 +86,6 @@
             <feature name="GeofencePlugin">
                 <param name="wp-package" value="GeofencePlugin" />
             </feature>
-
         </config-file>
         <framework src="src/wp8/libs/Newtonsoft.Json.dll" custom="true" />
         <framework src="src/wp8/GeofenceComponent.winmd" custom="true" />
