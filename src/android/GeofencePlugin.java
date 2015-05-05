@@ -68,7 +68,7 @@ public class GeofencePlugin extends CordovaPlugin {
         } else if (action.equals("initialize")) {
 
         } else if (action.equals("deviceready")) {
-			deviceReady();
+            deviceReady();
         } else {
             return false;
         }
@@ -91,20 +91,17 @@ public class GeofencePlugin extends CordovaPlugin {
             webView.sendJavascript(js);
         }
     }
-    
+
     private void deviceReady() {
-    	
-    	Intent intent = cordova.getActivity().getIntent();
-    	
-    	String data = intent.getStringExtra("geofence.notification.data");
-    	
+        Intent intent = cordova.getActivity().getIntent();
+        String data = intent.getStringExtra("geofence.notification.data");
         String js = "setTimeout('geofence.onNotificationClicked("
                 + data + ")',0)";
+
         if (data == null) {
             Log.d(TAG, "No notifications clicked.");
         } else {
             webView.sendJavascript(js);
         }
     }
-
 }
