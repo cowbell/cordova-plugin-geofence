@@ -277,6 +277,8 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
                 notifyAbout(geo)
             }
             GeofencePlugin.fireReceiveTransition(geo)
+
+            NSNotificationCenter.defaultCenter().postNotificationName("handleTransition", object: geo.description)
         }
     }
 
