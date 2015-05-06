@@ -17,21 +17,41 @@ func log(message: String){
     NSLog("%@ - %@", TAG, message)
 }
 
-var GeofencePluginWebView: UIWebView?
-
 @objc(HWPGeofencePlugin) class GeofencePlugin : CDVPlugin {
+    var isDeviceReady: Bool = false
     let geoNotificationManager = GeoNotificationManager()
     let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
 
+    override func pluginInitialize () {
+        NSNotificationCenter.defaultCenter().addObserver(
+            self,
+            selector: "didReceiveLocalNotification:",
+            name: "CDVLocalNotification",
+            object: nil
+        )
+
+        NSNotificationCenter.defaultCenter().addObserver(
+            self,
+            selector: "didReceiveTransition:",
+            name: "handleTransition",
+            object: nil
+        )
+    }
+
     func initialize(command: CDVInvokedUrlCommand) {
-        log("Plugin initialization");
+        log("Plugin initialization")
         //let faker = GeofenceFaker(manager: geoNotificationManager)
         //faker.start()
-        GeofencePluginWebView = self.webView
 
         if iOS8 {
             promptForNotificationPermission()
         }
+        var pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
+        commandDelegate.sendPluginResult(pluginResult, callbackId: command.callbackId)
+    }
+
+    func ping(command: CDVInvokedUrlCommand) {
+        log("Ping")
         var pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
         commandDelegate.sendPluginResult(pluginResult, callbackId: command.callbackId)
     }
@@ -55,6 +75,13 @@ var GeofencePluginWebView: UIWebView?
                 self.commandDelegate.sendPluginResult(pluginResult, callbackId: command.callbackId)
             }
         }
+    }
+
+    func deviceReady(command: CDVInvokedUrlCommand) {
+        isDeviceReady = true
+
+        var pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
+        commandDelegate.sendPluginResult(pluginResult, callbackId: command.callbackId)
     }
 
     func getWatched(command: CDVInvokedUrlCommand) {
@@ -90,12 +117,38 @@ var GeofencePluginWebView: UIWebView?
         }
     }
 
-    class func fireReceiveTransition(geoNotification: JSON) {
-        var mustBeArray = [JSON]()
-        mustBeArray.append(geoNotification)
-        let js = "setTimeout('geofence.receiveTransition(" + mustBeArray.description + ")',0)";
-        if (GeofencePluginWebView != nil) {
-            GeofencePluginWebView!.stringByEvaluatingJavaScriptFromString(js);
+    func didReceiveTransition (notification: NSNotification) {
+        log("didReceiveTransition")
+        if let geoNotificationString = notification.object as? String {
+            let geoNotification = JSON(geoNotificationString)
+            var mustBeArray = [JSON]()
+            mustBeArray.append(geoNotification)
+            let js = "setTimeout('geofence.receiveTransition(" + mustBeArray.description + ")',0)"
+
+            evaluateJs(js)
+        }
+    }
+
+    func didReceiveLocalNotification (notification: NSNotification) {
+        log("didReceiveLocalNotification")
+        if UIApplication.sharedApplication().applicationState != UIApplicationState.Active {
+            var data = "undefined"
+            if let uiNotification = notification.object as? UILocalNotification {
+                if let notificationData = uiNotification.userInfo?["geofence.notification.data"] as? String {
+                    data = notificationData
+                }
+                let js = "setTimeout('geofence.onNotificationClicked(" + data + ")',0)"
+
+                evaluateJs(js)
+            }
+        }
+    }
+
+    func evaluateJs (script: String) {
+        if webView != nil {
+            webView.stringByEvaluatingJavaScriptFromString(script)
+        } else {
+            log("webView is null")
         }
     }
 }
@@ -133,7 +186,7 @@ class GeofenceFaker {
                         }
                     }
                 }
-                NSThread.sleepForTimeInterval(3);
+                NSThread.sleepForTimeInterval(3)
             }
          }
     }
@@ -276,7 +329,6 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
             if let notification = geo["notification"].asDictionary {
                 notifyAbout(geo)
             }
-            GeofencePlugin.fireReceiveTransition(geo)
 
             NSNotificationCenter.defaultCenter().postNotificationName("handleTransition", object: geo.description)
         }
@@ -290,6 +342,9 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         notification.fireDate = dateTime
         notification.soundName = UILocalNotificationDefaultSoundName
         notification.alertBody = geo["notification"]["text"].asString!
+        if let json = geo["notification"]["data"] as? JSON {
+            notification.userInfo = ["geofence.notification.data": json.description]
+        }
         UIApplication.sharedApplication().scheduleLocalNotification(notification)
 
         if let vibrate = geo["notification"]["vibrate"].asArray {

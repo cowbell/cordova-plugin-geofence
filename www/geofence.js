@@ -37,6 +37,10 @@ Geofence.prototype.initialize = function (success, error) {
     return execPromise(success, error, 'GeofencePlugin', 'initialize', []);
 };
 
+Geofence.prototype.ping = function (success, error) {
+    return execPromise(success, error, 'GeofencePlugin', 'ping', []);
+}
+
 /**
  * Removing geofences with given ids
  *
@@ -112,7 +116,7 @@ function execPromise(success, error, pluginName, method, args) {
 channel.deviceready.subscribe(function () {
     // Device is ready now, the listeners are registered
     // and all queued events can be executed.
-    exec(null, null, 'GeofencePlugin', 'deviceready', []);
+    exec(null, null, 'GeofencePlugin', 'deviceReady', []);
 });
 
 geofence = new Geofence();
