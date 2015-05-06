@@ -1,0 +1,42 @@
+{
+  "name": "cordova-plugin-geofence",
+  "version": "0.4.0",
+  "description": "Cordova geofence plugin",
+  "cordova": {
+    "id": "cordova-plugin-geofence",
+    "platforms": [
+      "android",
+      "ios",
+      "wp8",
+      "windows8",
+      "windows"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cowbell/cordova-plugin-geofence.git"
+  },
+  "keywords": [
+    "cordova",
+    "plugin",
+    "geofence",
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios",
+    "cordova-wp8",
+    "cordova-windows8",
+    "cordova-windows"
+  ],
+  "author": "Cowbell Labs",
+  "license": "Apache 2.0",
+  "bugs": {
+    "url": "https://github.com/cowbell/cordova-plugin-geofence/issues"
+  },
+  "homepage": "https://github.com/cowbell/cordova-plugin-geofence#readme",
+  "engines": [
+    {
+      "name": "cordova",
+      "version": ">=3.0.0"
+    }
+  ]
+}

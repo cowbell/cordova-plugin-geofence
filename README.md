@@ -19,6 +19,12 @@ From master
 cordova plugin add https://github.com/cowbell/cordova-plugin-geofence
 ```
 
+Latest stable version
+
+```
+cordova plugin add cordova-plugin-geofence
+```
+
 ## Removing the Plugin from project
 
 Using cordova CLI
