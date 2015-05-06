@@ -209,7 +209,7 @@ window.geofence.receiveTransition = function (geofences) {
 
 ## When the app is opened via Notification click
 
-Currently Android only.
+Android, iOS only
 
 ```javascript
 window.geofence.onNotificationClicked = function (notificationData) {
