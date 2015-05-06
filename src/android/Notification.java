@@ -13,7 +13,7 @@ public class Notification {
     @Expose public int id;
     @Expose public String title;
     @Expose public String text;
-	@Expose public long[] vibrate = new long[] { 1000 };
+    @Expose public long[] vibrate = new long[] { 1000 };
     @Expose public String icon = "";
     @Expose public String smallIcon = "";
     @Expose public Object data;

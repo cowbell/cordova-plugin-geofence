@@ -37,6 +37,13 @@ Geofence.prototype.initialize = function (success, error) {
     return execPromise(success, error, 'GeofencePlugin', 'initialize', []);
 };
 
+/**
+ * Simple ping function for testing
+ * @param  {Function} success callback
+ * @param  {Function} error callback
+ *
+ * @return {Promise}
+ */
 Geofence.prototype.ping = function (success, error) {
     return execPromise(success, error, 'GeofencePlugin', 'ping', []);
 }
@@ -87,7 +94,24 @@ Geofence.prototype.getWatched = function (success, error) {
  * @name onNotificationClicked
  * @param {JSON} notificationData user data from notification
  */
-Geofence.prototype.onNotificationClicked = function(notificationData){
+Geofence.prototype.onNotificationClicked = function (notificationData) {
+
+};
+
+/**
+ * Called when app received geofence transition event
+ * @param  {Array} geofences
+ */
+Geofence.prototype.onTransitionReceived = function (geofences) {
+    this.receiveTransition(geofences);
+};
+
+/**
+ * Called when app received geofence transition event
+ * @deprecated since version 0.4.0, see onTransitionReceived
+ * @param  {Array} geofences
+ */
+Geofence.prototype.receiveTransition = function (geofences) {
 
 };
 

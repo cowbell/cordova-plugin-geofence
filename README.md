@@ -49,8 +49,8 @@ Cordova initialize plugin to `window.geofence` object.
 
 All methods returning promises, but you can also use standard callback functions.
 
-For listening of geofence transistion you can override receiveTransition method
-- `window.geofence.receiveTransition(geofences)`
+For listening of geofence transistion you can override onTransitionReceived method
+- `window.geofence.onTransitionReceived(geofences)`
 
 ## Constants
 
@@ -200,7 +200,7 @@ window.geofence.getWatched().then(function (geofencesJson) {
 ## Listening for geofence transitions
 
 ```javascript
-window.geofence.receiveTransition = function (geofences) {
+window.geofence.onTransitionReceived = function (geofences) {
     geofences.forEach(function (geo) {
         console.log('Geofence transition detected', geo);
     });

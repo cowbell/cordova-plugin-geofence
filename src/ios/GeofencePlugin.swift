@@ -123,7 +123,7 @@ func log(message: String){
             let geoNotification = JSON(geoNotificationString)
             var mustBeArray = [JSON]()
             mustBeArray.append(geoNotification)
-            let js = "setTimeout('geofence.receiveTransition(" + mustBeArray.description + ")',0)"
+            let js = "setTimeout('geofence.onTransitionReceived(" + mustBeArray.description + ")',0)"
 
             evaluateJs(js)
         }
