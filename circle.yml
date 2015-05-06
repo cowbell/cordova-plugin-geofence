@@ -1,0 +1,17 @@
+machine:
+  environment:
+    ANDROID_NDK_HOME: $ANDROID_NDK
+
+dependencies:
+  pre:
+    - npm install -g cordova-paramedic
+    - npm install -g cordova
+
+test:
+  pre:
+    - emulator -avd circleci-android21 -no-audio -no-window:
+        background: true
+        parallel: true
+    - circle-android wait-for-boot
+  override:
+    - cordova-paramedic --platform android --plugin
