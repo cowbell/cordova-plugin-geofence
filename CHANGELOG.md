@@ -1,6 +1,6 @@
 # ChangeLog
 
-## Version 0.4.0
+## Version 0.4.0 - 06.05.2015
 
 - Support for Xcode 6.3 and swift 1.2, swift < 1.2 is not supported
 - Support for Cordova 5.0
