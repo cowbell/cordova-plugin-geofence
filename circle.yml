@@ -14,4 +14,4 @@ test:
         parallel: true
     - circle-android wait-for-boot
   override:
-    - cordova-paramedic --platform android --plugin
+    - cordova-paramedic --platform android --plugin .
