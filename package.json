@@ -38,5 +38,9 @@
       "name": "cordova",
       "version": ">=3.0.0"
     }
-  ]
+  ],
+  "devDependencies": {
+    "cordova": "^5.0.0",
+    "cordova-paramedic": "^0.3.1"
+  }
 }

@@ -1,15 +1,15 @@
 machine:
   environment:
     ANDROID_NDK_HOME: $ANDROID_NDK
-
 dependencies:
-  pre:
+  override:
     - npm install -g cordova-paramedic
     - npm install -g cordova
-
 test:
   pre:
-    - emulator -avd circleci-android21 -no-audio -no-window:
+    - echo y | android update sdk --no-ui --all --filter "addon-google_apis-google-22, sys-img-armeabi-v7a-addon-google_apis-google-22"
+    - android create avd --force -n test -t "Google Inc.:Google APIs:22" --abi armeabi-v7a --tag google_apis
+    - emulator -avd test -no-audio -no-window:
         background: true
         parallel: true
     - circle-android wait-for-boot
