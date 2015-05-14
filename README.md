@@ -275,4 +275,4 @@ If you are retargeting WP 8.0 to WP 8.1 you need to register background task to 
 
 This software is released under the [Apache 2.0 License](http://opensource.org/licenses/Apache-2.0).
 
-© 2014 Cowbell-labs. All rights reserved
+© 2015 Cowbell-labs. All rights reserved
