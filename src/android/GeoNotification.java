@@ -11,6 +11,7 @@ public class GeoNotification {
     @Expose public int transitionType;
 
     @Expose public Notification notification;
+    @Expose public Period period;
 
     public GeoNotification() {
     }

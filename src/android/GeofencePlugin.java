@@ -17,8 +17,8 @@ import android.util.Log;
 
 public class GeofencePlugin extends CordovaPlugin {
     public static final String TAG = "GeofencePlugin";
-    private GeoNotificationManager geoNotificationManager;
-    private Context context;
+    private static GeoNotificationManager geoNotificationManager;
+    private static Context context;
     protected static Boolean isInBackground = true;
     private static CordovaWebView webView = null;
 
@@ -91,6 +91,18 @@ public class GeofencePlugin extends CordovaPlugin {
         } else {
             webView.sendJavascript(js);
         }
+    }
+
+    public static void registar(List<GeoNotification> notifications) {
+	List<GeoNotification> geoNotifications = new ArrayList<GeoNotification>();
+	
+	for (GeoNotification geoNotification : notifications) {
+	    if (geoNotification.period.isRepeat() == true) {
+		geoNotifications.add(geoNotification);
+	    }
+	}
+
+	geoNotificationManager.addGeoNotifications(geoNotifications, null);
     }
 
     private void deviceReady() {

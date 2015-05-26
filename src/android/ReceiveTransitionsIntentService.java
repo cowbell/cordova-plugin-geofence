@@ -2,6 +2,7 @@ package com.cowbell.cordova.geofence;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Calendar;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
@@ -68,21 +69,28 @@ public class ReceiveTransitionsIntentService extends IntentService {
                 List<Geofence> triggerList = LocationClient
                         .getTriggeringGeofences(intent);
                 List<GeoNotification> geoNotifications = new ArrayList<GeoNotification>();
+		Calendar now = Calendar.getInstance();
+
                 for (Geofence fence : triggerList) {
                     String fenceId = fence.getRequestId();
                     GeoNotification geoNotification = store
                             .getGeoNotification(fenceId);
 
                     if (geoNotification != null) {
-                        if (geoNotification.notification != null) {
-                            notifier.notify(geoNotification.notification);
-                        }
-                        geoNotifications.add(geoNotification);
-                    }
-                }
+			if (geoNotification.notification != null) {
+			    if (geoNotification.period.isWithin(now) == true) {
+				notifier.notify(geoNotification.notification);
+			    }
+			}
+			geoNotifications.add(geoNotification);
+		    }
+		}
 
                 if (geoNotifications.size() > 0) {
+		    List<GeoNotification> reregistrations = 
+			    new ArrayList<GeoNotification>();
                     GeofencePlugin.onTransitionReceived(geoNotifications);
+                    GeofencePlugin.registar(geoNotifications);
                 }
             } else {
                 logger.log(Log.ERROR, "Geofence transition error: "
