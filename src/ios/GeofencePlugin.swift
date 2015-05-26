@@ -330,7 +330,10 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
                 notifyAbout(geo)
             }
 
-            NSNotificationCenter.defaultCenter().postNotificationName("handleTransition", object: geo.description)
+            var d = geo.description
+            d = d.substringToIndex(advance(d.startIndex, count(d) - 1)) + ",\"handledTransition\":\(type)}"
+            NSNotificationCenter.defaultCenter().postNotificationName("handleTransition", object: d)
+            //NSNotificationCenter.defaultCenter().postNotificationName("handleTransition", object: geo.description)
         }
     }
 
