@@ -38,9 +38,9 @@ public class Period {
 	
 	logger.log(Log.DEBUG, "isWithin(): fromDate = " 
 		    + sdf.format(fromDate.getTime()));
-	logger.log(Log.DEBUG, "isWithin(): toDate = "
+	logger.log(Log.DEBUG, "isWithin(): toDate   = "
 		    + sdf.format(toDate.getTime()));
-	logger.log(Log.DEBUG, "isWithin(): now = "
+	logger.log(Log.DEBUG, "isWithin(): now      = "
 		    + sdf.format(now.getTime()));
 	logger.log(Log.DEBUG, "now.after(fromDate) = " + now.after(fromDate));
 	logger.log(Log.DEBUG, "now.before(toDate) = " + now.before(toDate));
@@ -57,8 +57,8 @@ public class Period {
 
     private boolean isWithinEveryDay(Calendar now) {
 	int year, month, day;
-	Calendar fromDate = Calendar.getInstance();
-	Calendar toDate   = Calendar.getInstance();
+	Calendar fromDate = this.fromDate;
+	Calendar toDate   = this.toDate;
 
 	year  = now.get(Calendar.YEAR);
 	month = now.get(Calendar.MONTH);
@@ -72,8 +72,8 @@ public class Period {
 
     private boolean isWithinEveryWeek(Calendar now) {
 	int year, month, day;
-	Calendar fromDate = Calendar.getInstance();
-	Calendar toDate   = Calendar.getInstance();
+	Calendar fromDate = this.fromDate;
+	Calendar toDate   = this.toDate;
 
 	if (fromDate.get(Calendar.DAY_OF_WEEK) !=
 	    now.get(Calendar.DAY_OF_WEEK)) {
@@ -92,8 +92,8 @@ public class Period {
 
     private boolean isWithinEveryMonth(Calendar now) {
 	int year, month;
-	Calendar fromDate = Calendar.getInstance();
-	Calendar toDate   = Calendar.getInstance();
+	Calendar fromDate = this.fromDate;
+	Calendar toDate   = this.toDate;
 
 	year  = now.get(Calendar.YEAR);
 	month = now.get(Calendar.MONTH);
@@ -108,9 +108,8 @@ public class Period {
 
     private boolean isWithinEveryYear(Calendar now) {
 	int year;
-
-	Calendar fromDate = Calendar.getInstance();
-	Calendar toDate   = Calendar.getInstance();
+	Calendar fromDate = this.fromDate;
+	Calendar toDate   = this.toDate;
 
 	year  = now.get(Calendar.YEAR);
 

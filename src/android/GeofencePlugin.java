@@ -19,8 +19,10 @@ public class GeofencePlugin extends CordovaPlugin {
     public static final String TAG = "GeofencePlugin";
     private static GeoNotificationManager geoNotificationManager;
     private static Context context;
+    private static Context appcontext;
     protected static Boolean isInBackground = true;
     private static CordovaWebView webView = null;
+    private static CallbackContext callbackContext;
 
     /**
      * @param cordova
@@ -96,13 +98,22 @@ public class GeofencePlugin extends CordovaPlugin {
     public static void registar(List<GeoNotification> notifications) {
 	List<GeoNotification> geoNotifications = new ArrayList<GeoNotification>();
 	
+	Log.d(TAG, "GeofencePlugin#registar(): enter");
+	Log.d(TAG, "GeofencePlugin#registar(): check-1");
 	for (GeoNotification geoNotification : notifications) {
+	    Log.d(TAG, "GeofencePlugin#registar(): check-2");
 	    if (geoNotification.period.isRepeat() == true) {
+		Log.d(TAG, "GeofencePlugin#registar(): check-3");
 		geoNotifications.add(geoNotification);
 	    }
+	    Log.d(TAG, "GeofencePlugin#registar(): check-4");
 	}
+	Log.d(TAG, "GeofencePlugin#registar(): check-5");
 
-	geoNotificationManager.addGeoNotifications(geoNotifications, null);
+	if (geoNotifications.size() > 0) {
+	    geoNotificationManager.addGeoNotifications2(geoNotifications);
+	}
+	Log.d(TAG, "GeofencePlugin#registar(): leave");
     }
 
     private void deviceReady() {

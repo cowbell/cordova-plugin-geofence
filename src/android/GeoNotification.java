@@ -3,6 +3,8 @@ package com.cowbell.cordova.geofence;
 import com.google.android.gms.location.Geofence;
 import com.google.gson.annotations.Expose;
 
+import android.util.Log;
+
 public class GeoNotification {
     @Expose public String id;
     @Expose public double latitude;
@@ -28,6 +30,9 @@ public class GeoNotification {
     }
 
     public static GeoNotification fromJson(String json) {
+        Logger logger = Logger.getLogger();
+        logger.log(Log.DEBUG, "GeoNotificatoin#fromJson: json = " + json);
+
         if (json == null)
             return null;
         return Gson.get().fromJson(json, GeoNotification.class);
