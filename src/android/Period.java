@@ -1,32 +1,51 @@
 package com.cowbell.cordova.geofence;
 
+
 import com.google.gson.annotations.Expose;
 import java.util.Calendar;
+import java.text.SimpleDateFormat;
 import android.util.Log;
 
 public class Period {
     @Expose public Calendar fromDate;
     @Expose public Calendar toDate;
-    @Expose public Calendar type;
-    @Expose public Repeat repeat;
+    @Expose public int repeat;
+
+    static final int ONCE        = 0;
+    static final int EVERY_DAY   = 1;
+    static final int EVERY_WEEK  = 2;
+    static final int EVERY_MONTH = 3;
+    static final int EVERY_YEAR  = 4;
 
     private Logger logger;
 
-    public Period(Calendar fromDate, Calendar toDate, Repeat repeat) {
+    public Period(Calendar fromDate, Calendar toDate, int repeat) {
 	this.fromDate = fromDate;
 	this.toDate   = toDate;
 	this.repeat   = repeat;
-        logger = Logger.getLogger();
     }
 
     public boolean isRepeat() {
-	return repeat != Repeat.ONCE;
+	return repeat != ONCE;
     }
 
     private boolean isWithin(Calendar fromDate, 
 			     Calendar toDate,
 			     Calendar now) {
-	if ((fromDate.after(now) == true) && (toDate.before(now) == true)) {
+
+        logger = Logger.getLogger();
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+	
+	logger.log(Log.DEBUG, "isWithin(): fromDate = " 
+		    + sdf.format(fromDate.getTime()));
+	logger.log(Log.DEBUG, "isWithin(): toDate = "
+		    + sdf.format(toDate.getTime()));
+	logger.log(Log.DEBUG, "isWithin(): now = "
+		    + sdf.format(now.getTime()));
+	logger.log(Log.DEBUG, "now.after(fromDate) = " + now.after(fromDate));
+	logger.log(Log.DEBUG, "now.before(toDate) = " + now.before(toDate));
+
+	if ((now.after(fromDate) == true) && (now.before(toDate) == true)) {
 	    return true;
 	}
 	return false;
@@ -106,18 +125,23 @@ public class Period {
 	boolean retval = false;
 	switch (repeat) {
 	case ONCE:
+	    logger.log(Log.DEBUG, "ONCE");
 	    retval = isWithinOnce(now);
 	    break;
 	case EVERY_DAY:
+	    logger.log(Log.DEBUG, "EVERY_DAY");
 	    retval = isWithinEveryDay(now);
 	    break;
 	case EVERY_WEEK:
+	    logger.log(Log.DEBUG, "EVERY_WEEK");
 	    retval = isWithinEveryWeek(now);
 	    break;
 	case EVERY_MONTH:
+	    logger.log(Log.DEBUG, "EVERY_MONTH");
 	    retval = isWithinEveryMonth(now);
 	    break;
 	case EVERY_YEAR:
+	    logger.log(Log.DEBUG, "EVERY_YEAR");
 	    retval = isWithinEveryYear(now);
 	    break;
 	default:
