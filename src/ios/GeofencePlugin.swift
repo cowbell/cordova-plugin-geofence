@@ -300,12 +300,12 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
 
     func locationManager(manager: CLLocationManager!, didEnterRegion region: CLRegion!) {
         log("Entering region \(region.identifier)")
-        handleTransition(region)
+        handleTransition(region, type: 1)
     }
 
     func locationManager(manager: CLLocationManager!, didExitRegion region: CLRegion!) {
         log("Exiting region \(region.identifier)")
-        handleTransition(region)
+        handleTransition(region, type: 2)
     }
 
     func locationManager(manager: CLLocationManager!, didStartMonitoringForRegion region: CLRegion!) {
@@ -324,7 +324,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         log("Monitoring region " + region.identifier + " failed " + error.description)
     }
 
-    func handleTransition(region: CLRegion!) {
+    func handleTransition(region: CLRegion!, type: Int) {
         if let geo = store.findById(region.identifier) {
             if let notification = geo["notification"].asDictionary {
                 notifyAbout(geo)
