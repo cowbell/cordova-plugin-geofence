@@ -12,6 +12,8 @@ public class GeoNotification {
 
     @Expose public Notification notification;
 
+    @Expose public int handledTransition;
+
     public GeoNotification() {
     }
 
