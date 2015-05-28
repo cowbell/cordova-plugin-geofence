@@ -98,6 +98,13 @@ public class GeofencePlugin extends CordovaPlugin {
     public static void registar(List<GeoNotification> notifications) {
 	List<GeoNotification> geoNotifications = new ArrayList<GeoNotification>();
 	
+	// Geofence.initialize() が呼び出される前に発火したときは、
+        // geoNotificationManager が未初期化で null で本メソッドが
+	// 呼び出される。
+	if (geoNotificationManager == null) {
+	    return;
+	}
+
 	Log.d(TAG, "GeofencePlugin#registar(): enter");
 	Log.d(TAG, "GeofencePlugin#registar(): check-1");
 	for (GeoNotification geoNotification : notifications) {

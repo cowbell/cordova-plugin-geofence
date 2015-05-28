@@ -76,24 +76,21 @@ public class ReceiveTransitionsIntentService extends IntentService {
                     GeoNotification geoNotification = store
                             .getGeoNotification(fenceId);
 
-                    if (geoNotification != null) {
-			if (geoNotification.notification != null) {
-			    if (geoNotification.period == null) {
-				logger.log(Log.ERROR, "geoNotification.period == null");
-			    }
-			    logger.log(Log.ERROR, 
-				"geoNotification.period.isWithin(now)=" + 
-			    geoNotification.period.isWithin(now));
-			    if (geoNotification.period.isWithin(now) == true) {
-				logger.log(Log.ERROR, "check-1");
-				notifier.notify(geoNotification.notification);
-				logger.log(Log.ERROR, "check-2");
-			    }
-			}
-			logger.log(Log.ERROR, "check-3");
-			geoNotifications.add(geoNotification);
-			logger.log(Log.ERROR, "check-4");
+                    if ((geoNotification == null)
+			|| (geoNotification.notification == null) 
+			|| (geoNotification.period == null)) {
+			continue;
 		    }
+
+		    if (geoNotification.period.isFiredInCurrentPeriod(now)
+			== true) {
+			logger.log(Log.ERROR, "check-1");
+			notifier.notify(geoNotification.notification);
+			logger.log(Log.ERROR, "check-2");
+		    }
+		    logger.log(Log.ERROR, "check-3");
+		    geoNotifications.add(geoNotification);
+		    logger.log(Log.ERROR, "check-4");
 		}
 
                 if (geoNotifications.size() > 0) {

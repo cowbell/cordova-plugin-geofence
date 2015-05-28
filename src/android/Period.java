@@ -9,6 +9,8 @@ import android.util.Log;
 public class Period {
     @Expose public Calendar fromDate;
     @Expose public Calendar toDate;
+    @Expose public Calendar fromDateCurrentPeriod;
+    @Expose public Calendar toDateCurrentPeriod;
     @Expose public int repeat;
 
     static final int ONCE        = 0;
@@ -19,10 +21,16 @@ public class Period {
 
     private Logger logger;
 
-    public Period(Calendar fromDate, Calendar toDate, int repeat) {
-	this.fromDate = fromDate;
-	this.toDate   = toDate;
-	this.repeat   = repeat;
+    public Period(Calendar fromDate, 
+		  Calendar toDate, 
+		  Calendar fromDateCurrentPeriod, 
+		  Calendar toDateCurrentPeriod, 
+		  int repeat) {
+	this.fromDate              = fromDate;
+	this.toDate                = toDate;
+	this.fromDateCurrentPeriod = fromDateCurrentPeriod;
+	this.toDateCurrentPeriod   = toDateCurrentPeriod;
+	this.repeat                = repeat;
     }
 
     public boolean isRepeat() {
@@ -46,6 +54,8 @@ public class Period {
 	logger.log(Log.DEBUG, "now.before(toDate) = " + now.before(toDate));
 
 	if ((now.after(fromDate) == true) && (now.before(toDate) == true)) {
+	    fromDateCurrentPeriod = fromDate;
+	    toDateCurrentPeriod   = toDate;
 	    return true;
 	}
 	return false;
@@ -119,7 +129,7 @@ public class Period {
 	return isWithin(fromDate, toDate, now);
     }
 
-    public boolean isWithin(Calendar now) {
+    private boolean isWithin(Calendar now) {
         Logger logger = Logger.getLogger();
 	boolean retval = false;
 	switch (repeat) {
@@ -149,6 +159,37 @@ public class Period {
 	    break;
 	}
 	return retval;
+    }
+
+    boolean isFiredInCurrentPeriod(Calendar now) {
+        logger = Logger.getLogger();
+
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+	logger.log(Log.DEBUG, "isFiredInCurrentPeriod(): fromDateCurrentPeriod = " 
+		    + fromDateCurrentPeriod);
+	logger.log(Log.DEBUG, "isFiredInCurrentPeriod(): toDateCurrentPeriod = " 
+		    + toDateCurrentPeriod);
+	
+	logger.log(Log.DEBUG, "isFiredInCurrentPeriod(): fromDateCurrentPeriod = " 
+		    + sdf.format(fromDateCurrentPeriod.getTime()));
+	logger.log(Log.DEBUG, "isFiredInCurrentPeriod(): toDateCurrentPeriod   = "
+		    + sdf.format(toDateCurrentPeriod.getTime()));
+	logger.log(Log.DEBUG, "isFiredInCurrentPeriod(): now      = "
+		    + sdf.format(now.getTime()));
+	logger.log(Log.DEBUG, "now.after(fromDateCurrentPeriod) = " + now.after(fromDateCurrentPeriod));
+	logger.log(Log.DEBUG, "now.before(toDateCurrentPeriod) = " + now.before(toDateCurrentPeriod));
+
+	if ((now.after(fromDateCurrentPeriod) == true)
+	    && (now.before(toDateCurrentPeriod) == true)) {
+	    logger.log(Log.DEBUG, "isFiredInCurrentPeriod(): Already fired.");
+	    return false;
+	}
+	if (isWithin(now) != true) {
+	    logger.log(Log.DEBUG, "isFiredInCurrentPeriod(): isn't fired.");
+	    return false;
+	}
+	logger.log(Log.DEBUG, "isFiredInCurrentPeriod(): fired.");
+	return true;
     }
 
     public String toString() {
