@@ -96,7 +96,6 @@ public class GeoNotificationManager {
 		+ geoNotifications.size());
         List<Geofence> newGeofences = new ArrayList<Geofence>();
 	logger.log(Log.DEBUG, "addGeoNotificatoins2(): check-1");
-	PendingIntent pi = getTransitionPendingIntent2(context);
         for (GeoNotification geo : geoNotifications) {
 	    logger.log(Log.DEBUG, "addGeoNotificatoins2(): check-2");
             geoNotificationStore.setGeoNotification(geo);
@@ -105,7 +104,7 @@ public class GeoNotificationManager {
 	logger.log(Log.DEBUG, "addGeoNotificatoins2(): check-3: newGeofences.size()="
 		+ newGeofences.size());
         AddGeofenceCommand geoFenceCmd = new AddGeofenceCommand(context,
-                pi, newGeofences);
+                pendingIntent, newGeofences);
 	logger.log(Log.DEBUG, "addGeoNotificatoins2(): check-4");
 /*
         if (callback != null) {
@@ -169,17 +168,4 @@ public class GeoNotificationManager {
         return PendingIntent.getService(context, 0, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
-
-    private PendingIntent getTransitionPendingIntent2(Context context) {
-        // Create an explicit Intent
-        Intent intent = new Intent(context,
-                ReceiveTransitionsIntentService.class);
-        /*
-         * Return the PendingIntent
-         */
-        return PendingIntent.getService(context, 0, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-    }
-
-
 }
