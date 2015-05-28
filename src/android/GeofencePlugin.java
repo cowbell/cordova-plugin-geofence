@@ -17,10 +17,12 @@ import android.util.Log;
 
 public class GeofencePlugin extends CordovaPlugin {
     public static final String TAG = "GeofencePlugin";
-    private GeoNotificationManager geoNotificationManager;
-    private Context context;
+    private static GeoNotificationManager geoNotificationManager;
+    private static Context context;
+    private static Context appcontext;
     protected static Boolean isInBackground = true;
     private static CordovaWebView webView = null;
+    private static CallbackContext callbackContext;
 
     /**
      * @param cordova
@@ -91,6 +93,34 @@ public class GeofencePlugin extends CordovaPlugin {
         } else {
             webView.sendJavascript(js);
         }
+    }
+
+    public static void registar(List<GeoNotification> notifications) {
+	List<GeoNotification> geoNotifications = new ArrayList<GeoNotification>();
+	
+	// Geofence.initialize() が呼び出される前に発火したときは、
+        // geoNotificationManager が未初期化で null で本メソッドが
+	// 呼び出される。
+	if (geoNotificationManager == null) {
+	    return;
+	}
+
+	Log.d(TAG, "GeofencePlugin#registar(): enter");
+	Log.d(TAG, "GeofencePlugin#registar(): check-1");
+	for (GeoNotification geoNotification : notifications) {
+	    Log.d(TAG, "GeofencePlugin#registar(): check-2");
+	    if (geoNotification.period.isRepeat() == true) {
+		Log.d(TAG, "GeofencePlugin#registar(): check-3");
+		geoNotifications.add(geoNotification);
+	    }
+	    Log.d(TAG, "GeofencePlugin#registar(): check-4");
+	}
+	Log.d(TAG, "GeofencePlugin#registar(): check-5");
+
+	if (geoNotifications.size() > 0) {
+	    geoNotificationManager.addGeoNotifications2(geoNotifications);
+	}
+	Log.d(TAG, "GeofencePlugin#registar(): leave");
     }
 
     private void deviceReady() {

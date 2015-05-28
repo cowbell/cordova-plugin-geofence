@@ -86,8 +86,40 @@ public class GeoNotificationManager {
                     callback.success();
                 }
             });
-        }
+        } 
         googleServiceCommandExecutor.QueueToExecute(geoFenceCmd);
+    }
+
+    public void addGeoNotifications2(List<GeoNotification> geoNotifications) {
+	logger.log(Log.DEBUG, "addGeoNotificatoins2(): enter");
+	logger.log(Log.DEBUG, "addGeoNotificatoins2(): check-0: geoNotificaion.size()="
+		+ geoNotifications.size());
+        List<Geofence> newGeofences = new ArrayList<Geofence>();
+	logger.log(Log.DEBUG, "addGeoNotificatoins2(): check-1");
+        for (GeoNotification geo : geoNotifications) {
+	    logger.log(Log.DEBUG, "addGeoNotificatoins2(): check-2");
+            geoNotificationStore.setGeoNotification(geo);
+            newGeofences.add(geo.toGeofence());
+        }
+	logger.log(Log.DEBUG, "addGeoNotificatoins2(): check-3: newGeofences.size()="
+		+ newGeofences.size());
+        AddGeofenceCommand geoFenceCmd = new AddGeofenceCommand(context,
+                pendingIntent, newGeofences);
+	logger.log(Log.DEBUG, "addGeoNotificatoins2(): check-4");
+/*
+        if (callback != null) {
+	    logger.log(Log.DEBUG, "addGeoNotificatoins2(): check-5");
+            geoFenceCmd.addListener(new IGoogleServiceCommandListener() {
+                @Override
+                public void onCommandExecuted() {
+                    // callback.success();
+                }
+            });
+        }
+*/
+	logger.log(Log.DEBUG, "addGeoNotificatoins2(): check-7");
+        googleServiceCommandExecutor.QueueToExecute(geoFenceCmd);
+	logger.log(Log.DEBUG, "addGeoNotificatoins2(): leave");
     }
 
     public void removeGeoNotification(String id, final CallbackContext callback) {
@@ -136,5 +168,4 @@ public class GeoNotificationManager {
         return PendingIntent.getService(context, 0, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
-
 }
