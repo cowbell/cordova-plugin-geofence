@@ -41,6 +41,6 @@
   ],
   "devDependencies": {
     "cordova": "^5.0.0",
-    "cordova-paramedic": "^0.3.1"
+    "cordova-paramedic": "tsubik/cordova-paramedic"
   }
 }
