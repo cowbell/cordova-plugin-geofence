@@ -20,8 +20,8 @@
     </js-module>
 
     <dependency id="es6-promise-plugin" url="https://github.com/vstirbu/PromisesPlugin.git"/>
-    <dependency id="cordova-plugin-android-support-v4" />
-    <dependency id="cordova-plugin-googleplayservices" />
+    <dependency id="android.support.v4" />
+    <dependency id="com.google.playservices" />
 
     <!-- android -->
     <platform name="android">
@@ -54,6 +54,14 @@
             </feature>
         </config-file>
 
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+            <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+            <uses-permission android:name="android.permission.VIBRATE" />
+            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+        </config-file>
+
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <service android:name="com.cowbell.cordova.geofence.ReceiveTransitionsIntentService" android:label="@string/app_name" android:exported="false">
             </service>
@@ -66,14 +74,6 @@
                 </intent-filter>
             </receiver>
 
-        </config-file>
-
-        <config-file target="AndroidManifest.xml" parent="/manifest">
-            <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-            <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-			<uses-permission android:name="android.permission.VIBRATE" />
-			<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
         </config-file>
 
     </platform>
