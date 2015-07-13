@@ -19,7 +19,7 @@
         <clobbers target="geofence" />
     </js-module>
 
-    <dependency id="com.vladstirbu.cordova.promise" url="https://github.com/vstirbu/PromisesPlugin.git" />
+    <dependency id="es6-promise-plugin" />
     <dependency id="com.google.playservices" />
     <!-- android -->
     <platform name="android">
