@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest" xmlns:android="http://schemas.android.com/apk/res/android" id="com.cowbell.cordova.geofence" version="0.3.3">
+<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest" xmlns:android="http://schemas.android.com/apk/res/android" id="cordova-plugin-geofence" version="0.4.1">
     <name>geofence</name>
     <description>Geofence plugin</description>
     <license>Apache 2.0</license>
@@ -20,7 +20,8 @@
     </js-module>
 
     <dependency id="es6-promise-plugin" />
-    <dependency id="com.google.playservices" />
+    <dependency id="cordova.plugin-android-support-v4" />
+    <dependency id="cordova-plugin-googleplayservice" />
     <!-- android -->
     <platform name="android">
         <source-file src="src/android/AbstractGoogleServiceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
@@ -45,7 +46,6 @@
         <source-file src="src/android/RemoveGeofenceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
 
         <lib-file src="src/android/libs/gson-2.3.jar" />
-        <lib-file src="src/android/libs/android-support-v4.jar" />
 
         <config-file target="config.xml" parent="/*">
             <feature name="GeofencePlugin">
