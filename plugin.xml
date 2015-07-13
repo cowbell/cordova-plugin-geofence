@@ -20,7 +20,7 @@
     </js-module>
 
     <dependency id="es6-promise-plugin" url="https://github.com/vstirbu/PromisesPlugin.git"/>
-    <dependency id="cordova.plugin-android-support-v4" />
+    <dependency id="cordova.plugin-android-support-v4" url="https://github.com/floatinghotpot/cordova-plugin-android-support-v4.git" />
     <dependency id="cordova-plugin-googleplayservice" />
     <!-- android -->
     <platform name="android">
