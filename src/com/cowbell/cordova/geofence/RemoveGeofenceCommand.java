@@ -45,8 +45,9 @@ public class RemoveGeofenceCommand extends AbstractGoogleServiceCommand
             locationClient.removeGeofences(geofencesIds, this);
         } else {
             logger.log(Log.DEBUG, "Tried to remove Geofences when there were none");
-            CommandExecuted();
         }
+
+        CommandExecuted();
     }
 
 }

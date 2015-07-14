@@ -1,47 +1,45 @@
 package com.cowbell.cordova.geofence;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.IntentService;
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient;
 
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+
 public class ReceiveTransitionsIntentService extends IntentService {
-    protected BeepHelper beepHelper;
-    protected GeoNotificationNotifier notifier;
+
+    private static final String circuitLocationEndpoint = "http://circuit-2015-services-p.elasticbeanstalk.com/devices/%s/locationEvents";
+
     protected GeoNotificationStore store;
+    private String deviceId;
 
     /**
      * Sets an identifier for the service
      */
     public ReceiveTransitionsIntentService() {
         super("ReceiveTransitionsIntentService");
-        beepHelper = new BeepHelper();
         store = new GeoNotificationStore(this);
         Logger.setLogger(new Logger(GeofencePlugin.TAG, this, false));
+
+        this.deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        Log.d(GeofencePlugin.TAG, "The device ID: " + deviceId);
     }
 
     /**
      * Handles incoming intents
      *
-     * @param intent
-     *            The Intent sent by Location Services. This Intent is provided
-     *            to Location Services (inside a PendingIntent) when you call
-     *            addGeofences()
+     * @param intent The Intent sent by Location Services. This Intent is provided
+     *               to Location Services (inside a PendingIntent) when you call
+     *               addGeofences()
      */
     @Override
     protected void onHandleIntent(Intent intent) {
-        notifier = new GeoNotificationNotifier(
-                (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE),
-                this
-        );
-
         Logger logger = Logger.getLogger();
         logger.log(Log.DEBUG, "ReceiveTransitionsIntentService - onHandleIntent");
         // First check for errors
@@ -60,33 +58,24 @@ public class ReceiveTransitionsIntentService extends IntentService {
              * geofence or geofences that triggered the transition
              */
         } else {
+            long now = new Date().getTime();
             // Get the type of transition (entry or exit)
             int transitionType = LocationClient.getGeofenceTransition(intent);
             if ((transitionType == Geofence.GEOFENCE_TRANSITION_ENTER)
-                    || (transitionType == Geofence.GEOFENCE_TRANSITION_EXIT)) {
+                    || transitionType == Geofence.GEOFENCE_TRANSITION_EXIT
+                    || transitionType == Geofence.GEOFENCE_TRANSITION_DWELL) {
                 logger.log(Log.DEBUG, "Geofence transition detected");
                 List<Geofence> triggerList = LocationClient
                         .getTriggeringGeofences(intent);
-                List<GeoNotification> geoNotifications = new ArrayList<GeoNotification>();
-                for (Geofence fence : triggerList) {
-                    String fenceId = fence.getRequestId();
-                    GeoNotification geoNotification = store
-                            .getGeoNotification(fenceId);
 
-                    if (geoNotification != null) {
-                        if (geoNotification.notification != null) {
-                            notifier.notify(geoNotification.notification);
-                        }
-                        geoNotifications.add(geoNotification);
+                for (Geofence fence : triggerList) {
+                    CircuitLocationEvent locationEvent = new CircuitLocationEvent(fence.getRequestId(), transitionType, now);
+                    try {
+                        HttpRequests.postJson(String.format(circuitLocationEndpoint, deviceId), locationEvent.toJson());
+                    } catch (IOException e) {
+                        Log.e(GeofencePlugin.TAG, "IOException occurred while trying to POST to endpoint with message: " + e.getMessage());
                     }
                 }
-
-                if (geoNotifications.size() > 0) {
-                    GeofencePlugin.onTransitionReceived(geoNotifications);
-                }
-            } else {
-                logger.log(Log.ERROR, "Geofence transition error: "
-                        + transitionType);
             }
         }
     }

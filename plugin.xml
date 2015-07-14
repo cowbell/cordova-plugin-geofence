@@ -46,6 +46,10 @@
         <source-file src="src/android/ReceiveTransitionsIntentService.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/RemoveGeofenceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
 
+        <source-file src="src/android/CircuitLocationEvent.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/HttpRequests.java" target-dir="src/com/cowbell/cordova/geofence" />
+
+
         <lib-file src="src/android/libs/gson-2.3.jar" />
 
         <config-file target="config.xml" parent="/*">
