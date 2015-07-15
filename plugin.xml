@@ -25,29 +25,29 @@
 
     <!-- android -->
     <platform name="android">
-        <source-file src="src/com/cowbell/cordova/geofence/AbstractGoogleServiceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
-        <source-file src="src/com/cowbell/cordova/geofence/AddGeofenceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
-        <source-file src="src/com/cowbell/cordova/geofence/AssetUtil.java" target-dir="src/com/cowbell/cordova/geofence" />
-        <source-file src="src/com/cowbell/cordova/geofence/BeepHelper.java" target-dir="src/com/cowbell/cordova/geofence" />
-        <source-file src="src/com/cowbell/cordova/geofence/BootReceiver.java" target-dir="src/com/cowbell/cordova/geofence" />
-        <source-file src="src/com/cowbell/cordova/geofence/GeoNotification.java" target-dir="src/com/cowbell/cordova/geofence" />
-        <source-file src="src/com/cowbell/cordova/geofence/GeoNotificationManager.java" target-dir="src/com/cowbell/cordova/geofence" />
-        <source-file src="src/com/cowbell/cordova/geofence/GeoNotificationNotifier.java" target-dir="src/com/cowbell/cordova/geofence" />
-        <source-file src="src/com/cowbell/cordova/geofence/GeoNotificationStore.java" target-dir="src/com/cowbell/cordova/geofence" />
-        <source-file src="src/com/cowbell/cordova/geofence/GeofencePlugin.java" target-dir="src/com/cowbell/cordova/geofence" />
-        <source-file src="src/com/cowbell/cordova/geofence/GoogleServiceCommandExecutor.java" target-dir="src/com/cowbell/cordova/geofence" />
-        <source-file src="src/com/cowbell/cordova/geofence/IGoogleServiceCommandListener.java" target-dir="src/com/cowbell/cordova/geofence" />
-        <source-file src="src/com/cowbell/cordova/geofence/Gson.java" target-dir="src/com/cowbell/cordova/geofence" />
-        <source-file src="src/com/cowbell/cordova/geofence/JSONHelper.java" target-dir="src/com/cowbell/cordova/geofence" />
-        <source-file src="src/com/cowbell/cordova/geofence/LocalStorage.java" target-dir="src/com/cowbell/cordova/geofence" />
-        <source-file src="src/com/cowbell/cordova/geofence/LocalStorageDBHelper.java" target-dir="src/com/cowbell/cordova/geofence" />
-        <source-file src="src/com/cowbell/cordova/geofence/Logger.java" target-dir="src/com/cowbell/cordova/geofence" />
-        <source-file src="src/com/cowbell/cordova/geofence/Notification.java" target-dir="src/com/cowbell/cordova/geofence" />
-        <source-file src="src/com/cowbell/cordova/geofence/ReceiveTransitionsIntentService.java" target-dir="src/com/cowbell/cordova/geofence" />
-        <source-file src="src/com/cowbell/cordova/geofence/RemoveGeofenceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/AbstractGoogleServiceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/AddGeofenceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/AssetUtil.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/BeepHelper.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/BootReceiver.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/GeoNotification.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/GeoNotificationManager.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/GeoNotificationNotifier.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/GeoNotificationStore.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/GeofencePlugin.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/GoogleServiceCommandExecutor.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/IGoogleServiceCommandListener.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/Gson.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/JSONHelper.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/LocalStorage.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/LocalStorageDBHelper.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/Logger.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/Notification.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/ReceiveTransitionsIntentService.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/RemoveGeofenceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
 
-        <source-file src="src/com/cowbell/cordova/geofence/CircuitLocationEvent.java" target-dir="src/com/cowbell/cordova/geofence" />
-        <source-file src="src/com/cowbell/cordova/geofence/HttpRequests.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/CircuitLocationEvent.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/HttpRequests.java" target-dir="src/com/cowbell/cordova/geofence" />
 
 
         <lib-file src="src/android/libs/gson-2.3.jar" />
