@@ -6,13 +6,13 @@ import com.google.gson.annotations.Expose;
 public class CircuitLocationEvent {
     @Expose private String location;
     @Expose private String type;
-    @Expose private long timestamp;
+    @Expose private long occurredAt;
 
     public CircuitLocationEvent() {}
 
-    public CircuitLocationEvent(String location, int transitionType, long timestamp) {
+    public CircuitLocationEvent(String location, int transitionType, long occurredAt) {
         this.location = location;
-        this.timestamp = timestamp;
+        this.occurredAt = occurredAt;
 
         switch (transitionType) {
             case Geofence.GEOFENCE_TRANSITION_ENTER:

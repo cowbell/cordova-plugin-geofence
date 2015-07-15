@@ -31,14 +31,14 @@ public class HttpRequests {
             conn.setRequestProperty("Content-Length",
                     Integer.toString(json.getBytes().length));
             // post the request
-            Log.d(GeofencePlugin.TAG, "Sending POST request with JSON request body: " + json);
+            Log.d(GeofencePlugin.TAG, "Sending POST request to " + endpoint + " with JSON request body: " + json);
             OutputStream out = conn.getOutputStream();
             out.write(json.getBytes());
             out.close();
             // handle the response
             int status = conn.getResponseCode();
             if (status == 500) {
-                throw new IOException("Post failed with error code " + status);
+                throw new IOException(conn.getResponseMessage());
             }
         } finally {
             if (conn != null) {

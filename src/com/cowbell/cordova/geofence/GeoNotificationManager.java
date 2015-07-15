@@ -8,6 +8,7 @@ import org.apache.cordova.CallbackContext;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -130,6 +131,10 @@ public class GeoNotificationManager {
         // Create an explicit Intent
         Intent intent = new Intent(context,
                 ReceiveTransitionsIntentService.class);
+
+        String deviceId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        intent.putExtra("com.cowbell.cordova.geofence.DEVICEID_EXTRA", deviceId);
+
         /*
          * Return the PendingIntent
          */

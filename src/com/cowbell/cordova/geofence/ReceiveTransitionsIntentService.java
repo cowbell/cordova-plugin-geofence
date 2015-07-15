@@ -26,9 +26,6 @@ public class ReceiveTransitionsIntentService extends IntentService {
         super("ReceiveTransitionsIntentService");
         store = new GeoNotificationStore(this);
         Logger.setLogger(new Logger(GeofencePlugin.TAG, this, false));
-
-        this.deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        Log.d(GeofencePlugin.TAG, "The device ID: " + deviceId);
     }
 
     /**
@@ -58,6 +55,9 @@ public class ReceiveTransitionsIntentService extends IntentService {
              * geofence or geofences that triggered the transition
              */
         } else {
+            String deviceId = intent.getStringExtra("com.cowbell.cordova.geofence.DEVICEID_EXTRA");
+            Log.d(GeofencePlugin.TAG, "The device ID: " + deviceId);
+
             long now = new Date().getTime();
             // Get the type of transition (entry or exit)
             int transitionType = LocationClient.getGeofenceTransition(intent);
