@@ -20,11 +20,12 @@
     </js-module>
 
     <dependency id="es6-promise-plugin" url="https://github.com/vstirbu/PromisesPlugin.git"/>
-    <dependency id="android.support.v4" />
-    <dependency id="com.google.playservices" />
+    <dependency id="cordova-plugin-googleplayservices" />
 
     <!-- android -->
     <platform name="android">
+        <framework src="com.android.support:support-v4:+" />
+
         <source-file src="src/android/AbstractGoogleServiceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/AddGeofenceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/AssetUtil.java" target-dir="src/com/cowbell/cordova/geofence" />
