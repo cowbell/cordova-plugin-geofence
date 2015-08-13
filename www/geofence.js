@@ -1,5 +1,4 @@
 var exec = require('cordova/exec'),
-    Promise = require('es6-promise-plugin.Promise'),
     channel = require('cordova/channel'),
     geofence,
     Geofence = function () {
@@ -21,7 +20,7 @@ Geofence.prototype.addOrUpdate = function (geofences, success, error) {
     if (!Array.isArray(geofences)) {
         geofences = [geofences];
     }
-    return execPromise(success, error, 'GeofencePlugin', 'addOrUpdate', geofences);
+    return exec(success, error, 'GeofencePlugin', 'addOrUpdate', geofences);
 };
 
 /**
@@ -34,7 +33,7 @@ Geofence.prototype.addOrUpdate = function (geofences, success, error) {
  * @return {Promise}
  */
 Geofence.prototype.initialize = function (success, error) {
-    return execPromise(success, error, 'GeofencePlugin', 'initialize', []);
+    return exec(success, error, 'GeofencePlugin', 'initialize', []);
 };
 
 /**
@@ -45,7 +44,7 @@ Geofence.prototype.initialize = function (success, error) {
  * @return {Promise}
  */
 Geofence.prototype.ping = function (success, error) {
-    return execPromise(success, error, 'GeofencePlugin', 'ping', []);
+    return exec(success, error, 'GeofencePlugin', 'ping', []);
 }
 
 /**
@@ -61,7 +60,7 @@ Geofence.prototype.remove = function (ids, success, error) {
     if (!Array.isArray(ids)) {
         ids = [ids];
     }
-    return execPromise(success, error, 'GeofencePlugin', 'remove', ids);
+    return exec(success, error, 'GeofencePlugin', 'remove', ids);
 };
 
 /**
@@ -73,7 +72,7 @@ Geofence.prototype.remove = function (ids, success, error) {
  * @return {Promise}
  */
 Geofence.prototype.removeAll = function (success, error) {
-    return execPromise(success, error, 'GeofencePlugin', 'removeAll', []);
+    return exec(success, error, 'GeofencePlugin', 'removeAll', []);
 };
 
 /**
@@ -85,7 +84,7 @@ Geofence.prototype.removeAll = function (success, error) {
  * @return {Promise} if successful returns geofences array stringify to JSON
  */
 Geofence.prototype.getWatched = function (success, error) {
-    return execPromise(success, error, 'GeofencePlugin', 'getWatched', []);
+    return exec(success, error, 'GeofencePlugin', 'getWatched', []);
 };
 
 /**
@@ -114,26 +113,6 @@ Geofence.prototype.onTransitionReceived = function (geofences) {
 Geofence.prototype.receiveTransition = function (geofences) {
 
 };
-
-function execPromise(success, error, pluginName, method, args) {
-    return new Promise(function (resolve, reject) {
-        exec(function (result) {
-                resolve(result);
-                if (typeof success === 'function') {
-                    success(result);
-                }
-            },
-            function (reason) {
-                reject(reason);
-                if (typeof error === 'function') {
-                    error(reason);
-                }
-            },
-            pluginName,
-            method,
-            args);
-    });
-}
 
 
 // Called after 'deviceready' event
