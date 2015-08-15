@@ -135,13 +135,5 @@ function execPromise(success, error, pluginName, method, args) {
     });
 }
 
-
-// Called after 'deviceready' event
-channel.deviceready.subscribe(function () {
-    // Device is ready now, the listeners are registered
-    // and all queued events can be executed.
-    exec(null, null, 'GeofencePlugin', 'deviceReady', []);
-});
-
 geofence = new Geofence();
 module.exports = geofence;
