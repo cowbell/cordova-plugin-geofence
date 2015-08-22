@@ -1,5 +1,4 @@
 var exec = require('cordova/exec'),
-    Promise = require('es6-promise-plugin'),
     channel = require('cordova/channel');
 
 module.exports = {
