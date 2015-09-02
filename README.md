@@ -51,7 +51,7 @@ Cordova initialize plugin to `window.geofence` object.
 
 - `window.geofence.initialize(onSuccess, onError)`
 - `window.geofence.addOrUpdate(geofences, onSuccess, onError)`
-- `window.geofence.remove(onSuccess, onError)`
+- `window.geofence.remove(geofenceId, onSuccess, onError)`
 - `window.geofence.removeAll(onSuccess, onError)`
 - `window.geofence.getWatched(onSuccess, onError)`
 
