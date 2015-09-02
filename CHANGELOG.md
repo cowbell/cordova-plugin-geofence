@@ -1,5 +1,9 @@
 # ChangeLog
 
+## Version 0.4.2 - 02.08.2015
+
+- fixed Promise bug
+
 ## Version 0.4.1 - 07.07.2015
 
 - dependant plugins ids updated
