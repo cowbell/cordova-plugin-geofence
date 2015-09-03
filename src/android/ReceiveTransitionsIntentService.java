@@ -38,13 +38,14 @@ public class ReceiveTransitionsIntentService extends IntentService {
      */
     @Override
     protected void onHandleIntent(Intent intent) {
+        Logger logger = Logger.getLogger();
+        logger.log(Log.DEBUG, "ReceiveTransitionsIntentService - onHandleIntent");
+
+
         notifier = new GeoNotificationNotifier(
                 (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE),
                 this
         );
-
-        Logger logger = Logger.getLogger();
-        logger.log(Log.DEBUG, "ReceiveTransitionsIntentService - onHandleIntent");
         // First check for errors
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {

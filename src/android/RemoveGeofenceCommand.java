@@ -35,31 +35,60 @@ public class RemoveGeofenceCommand extends AbstractGoogleServiceCommand{
         CommandExecuted();
     }
 
-    //@Override
-    public void onRemoveGeofencesByRequestIdsResult(int arg0, String[] arg1) {
-        logger.log(Log.DEBUG, "Geofences removed");
-        CommandExecuted();
+    @Override
+    void onAddGeofencesResult(int statusCode, String[] arg1) {
+
     }
 
     @Override
     protected void ExecuteCustomCode() {
         if (pendingIntent != null) {
-            PendingResult<Status> pendingResult = LocationServices.GeofencingApi.removeGeofences(mGoogleApiClient, geofencesIds);
-            pendingResult.setResultCallback(new ResultCallback<Status>() {
+            logger.log(Log.DEBUG, "Tried to remove Geofences in first if");
+            LocationServices.GeofencingApi.removeGeofences(mGoogleApiClient, geofencesIds).setResultCallback(new ResultCallback<Status>() {
                 @Override
                 public void onResult(Status status) {
-                    //onRemoveGeofencesByRequestIdsResult(status.getStatusCode());
+                    if (status.isSuccess()) {
+                        logger.log(Log.DEBUG, "Geofences successfully removed");
+            /*
+             * Handle successful addition of geofences here. You can send out a
+             * broadcast intent or update the UI. geofences into the Intent's
+             * extended data.
+             */
+                    } else {
+                        logger.log(Log.DEBUG, "Removing geofences failed");
+                        // If adding the geofences failed
+            /*
+             * Report errors here. You can log the error using Log.e() or update
+             * the UI.
+             */
+                    }
+                    CommandExecuted();
                 }
             });
             //LocationServices.GeofencingApi.removeGeofences(mGoogleApiClient, geofencesIds, pendingIntent);
         //for some reason an exception is thrown when clearing an empty set of geofences
         } else if (geofencesIds != null && geofencesIds.size() > 0) {
+            logger.log(Log.DEBUG, "Tried to remove Geofences in 2nd if");
             //LocationServices.GeofencingApi.removeGeofences(mGoogleApiClient, geofencesIds, pendingIntent);
-            PendingResult<Status> pendingResult = LocationServices.GeofencingApi.removeGeofences(mGoogleApiClient, geofencesIds);
-            pendingResult.setResultCallback(new ResultCallback<Status>() {
+            LocationServices.GeofencingApi.removeGeofences(mGoogleApiClient, geofencesIds).setResultCallback(new ResultCallback<Status>() {
                 @Override
                 public void onResult(Status status) {
-                    //onRemoveGeofencesByRequestIdsResult(status.getStatusCode());
+                    if (status.isSuccess()) {
+                        logger.log(Log.DEBUG, "Geofences successfully removed");
+            /*
+             * Handle successful addition of geofences here. You can send out a
+             * broadcast intent or update the UI. geofences into the Intent's
+             * extended data.
+             */
+                    } else {
+                        logger.log(Log.DEBUG, "Removing geofences failed");
+                        // If adding the geofences failed
+            /*
+             * Report errors here. You can log the error using Log.e() or update
+             * the UI.
+             */
+                    }
+                    CommandExecuted();
                 }
             });
         } else {

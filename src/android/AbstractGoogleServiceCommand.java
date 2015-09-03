@@ -8,6 +8,9 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.location.GeofencingRequest;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -16,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractGoogleServiceCommand implements
-        ConnectionCallbacks, OnConnectionFailedListener {
-    protected LocationRequest locationClient;
+        ConnectionCallbacks, OnConnectionFailedListener{
+    protected GeofencingRequest locationClient;
     protected Logger logger;
     protected boolean connectionInProgress = false;
     protected List<IGoogleServiceCommandListener> listeners;
@@ -25,7 +28,11 @@ public abstract class AbstractGoogleServiceCommand implements
     protected GoogleApiClient mGoogleApiClient;
     public AbstractGoogleServiceCommand(Context context) {
         this.context = context;
-        //mGoogleApiClient = new GoogleApiClient(context, this, this);
+        mGoogleApiClient = new GoogleApiClient.Builder(context)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
         logger = Logger.getLogger();
         listeners = new ArrayList<IGoogleServiceCommandListener>();
     }
@@ -94,6 +101,8 @@ public abstract class AbstractGoogleServiceCommand implements
             listener.onCommandExecuted();
         }
     }
+
+    abstract void onAddGeofencesResult(int statusCode, String[] arg1);
 
     protected abstract void ExecuteCustomCode();
 

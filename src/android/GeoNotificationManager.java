@@ -21,8 +21,6 @@ public class GeoNotificationManager {
     private Context context;
     private GeoNotificationStore geoNotificationStore;
     //private LocationClient locationClient;
-    private GoogleApiClient mGoogleApiClient;
-    private LocationRequest locationRequest;
     private Logger logger;
     private boolean connectionInProgress = false;
     private List<Geofence> geoFences;
@@ -129,11 +127,13 @@ public class GeoNotificationManager {
      */
     private PendingIntent getTransitionPendingIntent() {
         // Create an explicit Intent
+
         Intent intent = new Intent(context,
                 ReceiveTransitionsIntentService.class);
         /*
          * Return the PendingIntent
          */
+        logger.log(Log.DEBUG, "Geofence Intent created!");
         return PendingIntent.getService(context, 0, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }

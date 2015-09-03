@@ -24,7 +24,7 @@ public class AddGeofenceCommand extends AbstractGoogleServiceCommand{
         this.pendingIntent = pendingIntent;
     }
 
-    //@Override
+    @Override
     public void onAddGeofencesResult(int statusCode, String[] arg1) {
         // If adding the geofences was successful
         if (LocationStatusCodes.SUCCESS == statusCode) {
@@ -78,4 +78,5 @@ public class AddGeofenceCommand extends AbstractGoogleServiceCommand{
     public void onConnectionSuspended(int i) {
 
     }
+
 }
