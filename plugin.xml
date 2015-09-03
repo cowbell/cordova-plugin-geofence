@@ -20,8 +20,6 @@
     </js-module>
 
     <dependency id="es6-promise-plugin" />
-    <dependency id="cordova-plugin-android-support-v4" />
-    <dependency id="cordova-plugin-googleplayservices" />
 
     <!-- android -->
     <platform name="android">
@@ -45,7 +43,8 @@
         <source-file src="src/android/Notification.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/ReceiveTransitionsIntentService.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/RemoveGeofenceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
-
+		    
+		<framework src="com.google.android.gms:play-services:+" />
         <lib-file src="src/android/libs/gson-2.3.jar" />
 
         <config-file target="config.xml" parent="/*">
