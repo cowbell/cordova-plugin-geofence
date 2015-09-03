@@ -271,6 +271,23 @@ If you are retargeting WP 8.0 to WP 8.1 you need to register background task to 
 </Extension>
 ```
 
+# Development
+
+##Installation
+
+- git clone https://github.com/cowbell/cordova-plugin-geofence
+- change into the new directory
+- `npm install`
+
+##Running tests
+
+- Start emulator
+- `cordova-paramedic --platform android --plugin .`
+
+###Troubleshooting
+
+Add `--verbose` at the end of `cordova-paramedic` command.
+
 ##License
 
 This software is released under the [Apache 2.0 License](http://opensource.org/licenses/Apache-2.0).
