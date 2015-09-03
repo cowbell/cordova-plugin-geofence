@@ -1,8 +1,5 @@
 package com.cowbell.cordova.geofence;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -10,7 +7,11 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.google.android.gms.location.Geofence;
-import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.location.GeofencingEvent;
+//import com.google.android.gms.location.LocationClient;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ReceiveTransitionsIntentService extends IntentService {
     protected BeepHelper beepHelper;
@@ -45,9 +46,10 @@ public class ReceiveTransitionsIntentService extends IntentService {
         Logger logger = Logger.getLogger();
         logger.log(Log.DEBUG, "ReceiveTransitionsIntentService - onHandleIntent");
         // First check for errors
-        if (LocationClient.hasError(intent)) {
+        GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
+        if (geofencingEvent.hasError()) {
             // Get the error code with a static method
-            int errorCode = LocationClient.getErrorCode(intent);
+            int errorCode = geofencingEvent.getErrorCode();
             // Log the error
             logger.log(Log.ERROR,
                     "Location Services error: " + Integer.toString(errorCode));
@@ -61,12 +63,11 @@ public class ReceiveTransitionsIntentService extends IntentService {
              */
         } else {
             // Get the type of transition (entry or exit)
-            int transitionType = LocationClient.getGeofenceTransition(intent);
+            int transitionType = geofencingEvent.getGeofenceTransition();
             if ((transitionType == Geofence.GEOFENCE_TRANSITION_ENTER)
                     || (transitionType == Geofence.GEOFENCE_TRANSITION_EXIT)) {
                 logger.log(Log.DEBUG, "Geofence transition detected");
-                List<Geofence> triggerList = LocationClient
-                        .getTriggeringGeofences(intent);
+                List<Geofence> triggerList = geofencingEvent.getTriggeringGeofences();
                 List<GeoNotification> geoNotifications = new ArrayList<GeoNotification>();
                 for (Geofence fence : triggerList) {
                     String fenceId = fence.getRequestId();

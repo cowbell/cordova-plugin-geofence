@@ -1,9 +1,9 @@
 package com.cowbell.cordova.geofence;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import android.content.Context;
 
 public class GeoNotificationStore {
     private LocalStorage storage;

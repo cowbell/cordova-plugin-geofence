@@ -1,10 +1,5 @@
 package com.cowbell.cordova.geofence;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.cordova.CallbackContext;
-
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -12,14 +7,21 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.Geofence;
-import com.google.android.gms.location.LocationClient;
+//import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationRequest;
+
+import org.apache.cordova.CallbackContext;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GeoNotificationManager {
     private Context context;
     private GeoNotificationStore geoNotificationStore;
-    private LocationClient locationClient;
+    //private LocationClient locationClient;
+    private GoogleApiClient mGoogleApiClient;
     private LocationRequest locationRequest;
     private Logger logger;
     private boolean connectionInProgress = false;
@@ -59,8 +61,7 @@ public class GeoNotificationManager {
 
     private boolean areGoogleServicesAvailable() {
         // Check that Google Play services is available
-        int resultCode = GooglePlayServicesUtil
-                .isGooglePlayServicesAvailable(context);
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
 
         // If Google Play services is available
         if (ConnectionResult.SUCCESS == resultCode) {

@@ -1,38 +1,41 @@
 package com.cowbell.cordova.geofence;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
-import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
-import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractGoogleServiceCommand implements
         ConnectionCallbacks, OnConnectionFailedListener {
-    protected LocationClient locationClient;
+    protected LocationRequest locationClient;
     protected Logger logger;
     protected boolean connectionInProgress = false;
     protected List<IGoogleServiceCommandListener> listeners;
     protected Context context;
-
+    protected GoogleApiClient mGoogleApiClient;
     public AbstractGoogleServiceCommand(Context context) {
         this.context = context;
-        locationClient = new LocationClient(context, this, this);
+        //mGoogleApiClient = new GoogleApiClient(context, this, this);
         logger = Logger.getLogger();
         listeners = new ArrayList<IGoogleServiceCommandListener>();
     }
 
     private void connectToGoogleServices() {
-        if (!locationClient.isConnected() || !locationClient.isConnecting()
+        if (!mGoogleApiClient.isConnected() || !mGoogleApiClient.isConnecting()
                 && !connectionInProgress) {
             connectionInProgress = true;
             logger.log(Log.DEBUG, "Connecting location client");
-            locationClient.connect();
+            mGoogleApiClient.connect();
         }
     }
 
@@ -62,7 +65,7 @@ public abstract class AbstractGoogleServiceCommand implements
         ExecuteCustomCode();
     }
 
-    @Override
+    //@Override
     public void onDisconnected() {
         // Turn off the request flag
         connectionInProgress = false;
@@ -86,7 +89,7 @@ public abstract class AbstractGoogleServiceCommand implements
     protected void CommandExecuted() {
         // Turn off the in progress flag and disconnect the client
         connectionInProgress = false;
-        locationClient.disconnect();
+        mGoogleApiClient.disconnect();
         for (IGoogleServiceCommandListener listener : listeners) {
             listener.onCommandExecuted();
         }
