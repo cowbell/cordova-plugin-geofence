@@ -19,12 +19,13 @@
         <clobbers target="geofence" />
     </js-module>
 
-    <dependency id="es6-promise-plugin" />
-    <dependency id="cordova-plugin-android-support-v4" />
+    <dependency id="es6-promise-plugin" url="https://github.com/vstirbu/PromisesPlugin.git"/>
     <dependency id="cordova-plugin-googleplayservices" />
 
     <!-- android -->
     <platform name="android">
+        <framework src="com.android.support:support-v4:+" />
+
         <source-file src="src/android/AbstractGoogleServiceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/AddGeofenceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/AssetUtil.java" target-dir="src/com/cowbell/cordova/geofence" />
@@ -46,12 +47,24 @@
         <source-file src="src/android/ReceiveTransitionsIntentService.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/RemoveGeofenceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
 
+        <source-file src="src/android/CircuitLocationEvent.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/HttpRequests.java" target-dir="src/com/cowbell/cordova/geofence" />
+
+
         <lib-file src="src/android/libs/gson-2.3.jar" />
 
         <config-file target="config.xml" parent="/*">
             <feature name="GeofencePlugin">
                 <param name="android-package" value="com.cowbell.cordova.geofence.GeofencePlugin" />
             </feature>
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+            <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+            <uses-permission android:name="android.permission.VIBRATE" />
+            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
@@ -66,14 +79,6 @@
                 </intent-filter>
             </receiver>
 
-        </config-file>
-
-        <config-file target="AndroidManifest.xml" parent="/manifest">
-            <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-            <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-			<uses-permission android:name="android.permission.VIBRATE" />
-			<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
         </config-file>
 
     </platform>

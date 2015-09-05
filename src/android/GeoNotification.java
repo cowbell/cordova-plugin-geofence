@@ -19,6 +19,7 @@ public class GeoNotification {
         return new Geofence.Builder().setRequestId(id)
         .setTransitionTypes(transitionType)
         .setCircularRegion(latitude, longitude, radius)
+        .setLoiteringDelay(300000) // 5 minutes for dwelling
         .setExpirationDuration(Long.MAX_VALUE).build();
     }
 
