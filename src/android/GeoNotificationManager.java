@@ -1,10 +1,5 @@
 package com.cowbell.cordova.geofence;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.cordova.CallbackContext;
-
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -12,15 +7,19 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.Geofence;
-import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationRequest;
+
+import org.apache.cordova.CallbackContext;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GeoNotificationManager {
     private Context context;
     private GeoNotificationStore geoNotificationStore;
-    private LocationClient locationClient;
-    private LocationRequest locationRequest;
+    //private LocationClient locationClient;
     private Logger logger;
     private boolean connectionInProgress = false;
     private List<Geofence> geoFences;
@@ -59,8 +58,7 @@ public class GeoNotificationManager {
 
     private boolean areGoogleServicesAvailable() {
         // Check that Google Play services is available
-        int resultCode = GooglePlayServicesUtil
-                .isGooglePlayServicesAvailable(context);
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
 
         // If Google Play services is available
         if (ConnectionResult.SUCCESS == resultCode) {
@@ -128,11 +126,13 @@ public class GeoNotificationManager {
      */
     private PendingIntent getTransitionPendingIntent() {
         // Create an explicit Intent
+
         Intent intent = new Intent(context,
                 ReceiveTransitionsIntentService.class);
         /*
          * Return the PendingIntent
          */
+        logger.log(Log.DEBUG, "Geofence Intent created!");
         return PendingIntent.getService(context, 0, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }

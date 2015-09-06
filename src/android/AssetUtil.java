@@ -27,16 +27,6 @@ Taken from https://github.com/katzer/cordova-plugin-local-notifications plugin
 
 package com.cowbell.cordova.geofence;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
@@ -46,6 +36,16 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.StrictMode;
 import android.util.Log;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Util class to map unified asset URIs to native URIs. URIs like file:///

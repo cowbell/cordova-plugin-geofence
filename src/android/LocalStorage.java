@@ -1,12 +1,12 @@
 package com.cowbell.cordova.geofence;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class is used as a substitution of the local storage in Android webviews
