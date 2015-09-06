@@ -9,7 +9,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.Geofence;
-//import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationRequest;
 
 import org.apache.cordova.CallbackContext;
