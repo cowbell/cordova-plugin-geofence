@@ -8,12 +8,12 @@ import android.util.Log;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
-//import com.google.android.gms.location.LocationClient;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ReceiveTransitionsIntentService extends IntentService {
+    protected static final String GeofenceTransitionIntent = "com.cowbell.cordova.geofence.TRANSITION";
     protected BeepHelper beepHelper;
     protected GeoNotificationNotifier notifier;
     protected GeoNotificationStore store;
@@ -25,6 +25,10 @@ public class ReceiveTransitionsIntentService extends IntentService {
         super("ReceiveTransitionsIntentService");
         beepHelper = new BeepHelper();
         store = new GeoNotificationStore(this);
+        notifier = new GeoNotificationNotifier(
+                (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE),
+                this
+        );
         Logger.setLogger(new Logger(GeofencePlugin.TAG, this, false));
     }
 
@@ -40,28 +44,17 @@ public class ReceiveTransitionsIntentService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         Logger logger = Logger.getLogger();
         logger.log(Log.DEBUG, "ReceiveTransitionsIntentService - onHandleIntent");
+        Intent broadcastIntent = new Intent(GeofenceTransitionIntent);
 
-
-        notifier = new GeoNotificationNotifier(
-                (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE),
-                this
-        );
         // First check for errors
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {
             // Get the error code with a static method
             int errorCode = geofencingEvent.getErrorCode();
+            String error = "Location Services error: " + Integer.toString(errorCode);
             // Log the error
-            logger.log(Log.ERROR,
-                    "Location Services error: " + Integer.toString(errorCode));
-            /*
-             * You can also send the error code to an Activity or Fragment with
-             * a broadcast Intent
-             */
-            /*
-             * If there's no error, get the transition type and the IDs of the
-             * geofence or geofences that triggered the transition
-             */
+            logger.log(Log.ERROR, error);
+            broadcastIntent.putExtra("error", error);
         } else {
             // Get the type of transition (entry or exit)
             int transitionType = geofencingEvent.getGeofenceTransition();
@@ -84,12 +77,15 @@ public class ReceiveTransitionsIntentService extends IntentService {
                 }
 
                 if (geoNotifications.size() > 0) {
+                    broadcastIntent.putExtra("transitionData", Gson.get().toJson(geoNotifications));
                     GeofencePlugin.onTransitionReceived(geoNotifications);
                 }
             } else {
-                logger.log(Log.ERROR, "Geofence transition error: "
-                        + transitionType);
+                String error = "Geofence transition error: " + transitionType;
+                logger.log(Log.ERROR, error);
+                broadcastIntent.putExtra("error", error);
             }
         }
+        sendBroadcast(broadcastIntent);
     }
 }

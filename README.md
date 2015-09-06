@@ -215,6 +215,47 @@ window.geofence.onTransitionReceived = function (geofences) {
 };
 ```
 
+## Listening for geofence transitions in native code
+
+### Android
+
+For android plugin broadcasting intent `com.cowbell.cordova.geofence.TRANSITION`. You can implement your own `BroadcastReceiver` and start listening for this intent.
+
+Register receiver in `AndroidManifest.xml`
+
+```xml
+<receiver android:name="YOUR_APP_PACKAGE_NAME.TransitionReceiver">
+    <intent-filter>
+        <action android:name="com.cowbell.cordova.geofence.TRANSITION" />
+    </intent-filter>
+</receiver>
+```
+
+Example `TransitionReceiver.java` code
+
+```java
+......
+import com.cowbell.cordova.geofence.Gson;
+import com.cowbell.cordova.geofence.GeoNotification;
+
+public class TransitionReceiver extends BroadcastReceiver {
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        String error = intent.getStringExtra("error");
+
+        if (error != null) {
+            //handle error
+            Log.println(Log.ERROR, "YourAppTAG", error);
+        } else {
+            String geofencesJson = intent.getStringExtra("transitionData");
+            GeoNotification[] geoNotifications = Gson.get().fromJson(geofencesJson, GeoNotification[].class);
+            //handle geoNotifications objects
+        }
+    }
+}
+```
+
 ## When the app is opened via Notification click
 
 Android, iOS only
