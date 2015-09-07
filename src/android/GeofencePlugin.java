@@ -20,7 +20,7 @@ public class GeofencePlugin extends CordovaPlugin {
     private GeoNotificationManager geoNotificationManager;
     private Context context;
     protected static Boolean isInBackground = true;
-    private static CordovaWebView webView = null;
+    public static CordovaWebView webView = null;
 
     /**
      * @param cordova
