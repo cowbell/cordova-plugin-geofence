@@ -214,7 +214,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
             log("Location services enabled")
         }
         if iOS8 {
-            locationManager.requestAlwaysAuthorization()
+            // locationManager.requestAlwaysAuthorization()
         }
 
         if (!CLLocationManager.isMonitoringAvailableForClass(CLRegion)) {
@@ -239,7 +239,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         let id = geoNotification["id"].asString
 
         let region = CLCircularRegion(center: location, radius: radius, identifier: id!)
-        
+
         var transitionType = 0
         if let i = geoNotification["transitionType"].asInt {
             transitionType = i
@@ -258,7 +258,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
 
     func getMonitoredRegion(id: String) -> CLRegion? {
         for object in locationManager.monitoredRegions {
-            let region = object 
+            let region = object
 
             if (region.identifier == id) {
                 return region
@@ -279,7 +279,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     func removeAllGeoNotifications() {
         store.clear()
         for object in locationManager.monitoredRegions {
-            let region = object 
+            let region = object
             log("Stoping monitoring region \(region.identifier)")
             locationManager.stopMonitoringForRegion(region)
         }
