@@ -35,7 +35,7 @@ public class GeoNotificationManager {
         if (areGoogleServicesAvailable()) {
             logger.log(Log.DEBUG, "Google play services available");
         } else {
-            logger.log(Log.DEBUG, "Google play services not available");
+            logger.log(Log.WARN, "Google play services not available. Geofence plugin will not work correctly.");
         }
     }
 
@@ -46,9 +46,9 @@ public class GeoNotificationManager {
             geoFences.add(geo.toGeofence());
         }
         if (!geoFences.isEmpty()) {
-        	googleServiceCommandExecutor.QueueToExecute(new AddGeofenceCommand(
-        			context, pendingIntent, geoFences));
-        }	
+            googleServiceCommandExecutor.QueueToExecute(new AddGeofenceCommand(
+                context, pendingIntent, geoFences));
+        }
     }
 
     public List<GeoNotification> getWatched() {
