@@ -292,6 +292,10 @@ window.geofence.addOrUpdate({
 
 # Platform specifics
 
+##Android
+
+This plugin uses Google Play Services so you need to have it installed on your device.
+
 ##iOS
 
 Plugin is written in Swift. All xcode project options to enable swift support are set up automatically after plugin is installed.
