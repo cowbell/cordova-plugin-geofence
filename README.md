@@ -329,6 +329,10 @@ If you are retargeting WP 8.0 to WP 8.1 you need to register background task to 
 - Start emulator
 - `cordova-paramedic --platform android --plugin .`
 
+###Testing on iOS
+
+Before you run `cordova-paramedic` install `npm install -g ios-sim`
+
 ###Troubleshooting
 
 Add `--verbose` at the end of `cordova-paramedic` command.
