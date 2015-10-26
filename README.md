@@ -32,7 +32,7 @@ cordova plugin add cordova-plugin-geofence
 Using cordova CLI
 
 ```
-cordova plugin rm com.cowbell.cordova.geofence
+cordova plugin rm cordova-plugin-geofence
 ```
 
 ## Supported Platforms
