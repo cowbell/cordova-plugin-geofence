@@ -19,8 +19,7 @@ func log(message: String){
 
 @available(iOS 8.0, *)
 @objc(HWPGeofencePlugin) class GeofencePlugin : CDVPlugin {
-    var isDeviceReady: Bool = false
-    let geoNotificationManager = GeoNotificationManager()
+    lazy var geoNotificationManager = GeoNotificationManager()
     let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
 
     override func pluginInitialize () {
@@ -47,6 +46,15 @@ func log(message: String){
         if iOS8 {
             promptForNotificationPermission()
         }
+
+        geoNotificationManager = GeoNotificationManager()
+        geoNotificationManager.registerPermissions()
+
+        let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
+        commandDelegate!.sendPluginResult(pluginResult, callbackId: command.callbackId)
+    }
+
+    func deviceReady(command: CDVInvokedUrlCommand) {
         let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
         commandDelegate!.sendPluginResult(pluginResult, callbackId: command.callbackId)
     }
@@ -76,13 +84,6 @@ func log(message: String){
                 self.commandDelegate!.sendPluginResult(pluginResult, callbackId: command.callbackId)
             }
         }
-    }
-
-    func deviceReady(command: CDVInvokedUrlCommand) {
-        isDeviceReady = true
-
-        let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
-        commandDelegate!.sendPluginResult(pluginResult, callbackId: command.callbackId)
     }
 
     func getWatched(command: CDVInvokedUrlCommand) {
@@ -213,21 +214,22 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         } else {
             log("Location services enabled")
         }
-        if iOS8 {
-            locationManager.requestAlwaysAuthorization()
-        }
 
         if (!CLLocationManager.isMonitoringAvailableForClass(CLRegion)) {
             log("Geofencing not available")
         }
     }
 
+    func registerPermissions() {
+        if iOS8 {
+            locationManager.requestAlwaysAuthorization()
+        }
+    }
+
     func addOrUpdateGeoNotification(geoNotification: JSON) {
         log("GeoNotificationManager addOrUpdate")
 
-        if (!CLLocationManager.locationServicesEnabled()) {
-            log("Locationservices is not enabled")
-        }
+        checkRequirements()
 
         let location = CLLocationCoordinate2DMake(
             geoNotification["latitude"].asDouble!,
@@ -239,7 +241,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         let id = geoNotification["id"].asString
 
         let region = CLCircularRegion(center: location, radius: radius, identifier: id!)
-        
+
         var transitionType = 0
         if let i = geoNotification["transitionType"].asInt {
             transitionType = i
@@ -252,13 +254,41 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         locationManager.startMonitoringForRegion(region)
     }
 
+    func checkRequirements() {
+        if (!CLLocationManager.locationServicesEnabled()) {
+            log("Warning: Locationservices is not enabled")
+        }
+
+        let authStatus = CLLocationManager.authorizationStatus()
+
+        if (authStatus != CLAuthorizationStatus.AuthorizedAlways) {
+            log("Warning: Location always permissions not granted, have you initialized geofence plugin?")
+        }
+
+        if let notificationSettings = UIApplication.sharedApplication().currentUserNotificationSettings() {
+            if !notificationSettings.types.contains(.Sound) {
+                log("Warning: notification settings - sound permission missing")
+            }
+
+            if !notificationSettings.types.contains(.Alert) {
+                log("Warning: notification settings - alert permission missing")
+            }
+
+            if !notificationSettings.types.contains(.Badge) {
+                log("Warning: notification settings - badge permission missing")
+            }
+        } else {
+            log("Warning: notification permission missing")
+        }
+    }
+
     func getWatchedGeoNotifications() -> [JSON]? {
         return store.getAll()
     }
 
     func getMonitoredRegion(id: String) -> CLRegion? {
         for object in locationManager.monitoredRegions {
-            let region = object 
+            let region = object
 
             if (region.identifier == id) {
                 return region
@@ -269,7 +299,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
 
     func removeGeoNotification(id: String) {
         store.remove(id)
-        var region = getMonitoredRegion(id)
+        let region = getMonitoredRegion(id)
         if (region != nil) {
             log("Stoping monitoring region \(id)")
             locationManager.stopMonitoringForRegion(region!)
@@ -279,7 +309,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     func removeAllGeoNotifications() {
         store.clear()
         for object in locationManager.monitoredRegions {
-            let region = object 
+            let region = object
             log("Stoping monitoring region \(region.identifier)")
             locationManager.stopMonitoringForRegion(region)
         }
@@ -312,7 +342,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         let lng = (region as! CLCircularRegion).center.longitude
         let radius = (region as! CLCircularRegion).radius
 
-        log("Starting monitoring for region \(region) lat \(lat) lng \(lng)")
+        log("Starting monitoring for region \(region) lat \(lat) lng \(lng) of radius \(radius)")
     }
 
     func locationManager(manager: CLLocationManager, didDetermineState state: CLRegionState, forRegion region: CLRegion) {
