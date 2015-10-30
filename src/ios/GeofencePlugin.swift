@@ -139,6 +139,7 @@ func log(message: String){
                 if let notificationData = uiNotification.userInfo?["geofence.notification.data"] as? String {
                     data = notificationData
                 }
+                log("user tapped on notification - " + data + "--endData")
                 let js = "setTimeout('geofence.onNotificationClicked(" + data + ")',0)"
 
                 evaluateJs(js)
