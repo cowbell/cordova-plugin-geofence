@@ -19,7 +19,7 @@ func log(message: String){
 
 @available(iOS 8.0, *)
 @objc(HWPGeofencePlugin) class GeofencePlugin : CDVPlugin {
-    let geoNotificationManager = GeoNotificationManager()
+    lazy var geoNotificationManager = GeoNotificationManager()
     let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
 
     override func pluginInitialize () {
@@ -84,13 +84,6 @@ func log(message: String){
                 self.commandDelegate!.sendPluginResult(pluginResult, callbackId: command.callbackId)
             }
         }
-    }
-
-    func deviceReady(command: CDVInvokedUrlCommand) {
-        isDeviceReady = true
-
-        let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
-        commandDelegate!.sendPluginResult(pluginResult, callbackId: command.callbackId)
     }
 
     func getWatched(command: CDVInvokedUrlCommand) {
