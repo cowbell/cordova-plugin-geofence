@@ -137,7 +137,7 @@ func log(message: String){
                 if let notificationData = uiNotification.userInfo?["geofence.notification.data"] as? String {
                     data = notificationData
                 }
-                log("user tapped on notification - " + data + "--endData")
+
                 let js = "setTimeout('geofence.onNotificationClicked(" + data + ")',0)"
 
                 evaluateJs(js)
@@ -328,12 +328,14 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
 
     func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion) {
         log("Entering region \(region.identifier)")
-        handleTransition(region, transitionType: 1)
+        let location = manager.location!.coordinate // user location at the trigger time
+        handleTransition(region, transitionType: 1, location: location)
     }
 
     func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion) {
         log("Exiting region \(region.identifier)")
-        handleTransition(region, transitionType: 2)
+        let location = manager.location!.coordinate // user location at the trigger time
+        handleTransition(region, transitionType: 2, location: location)
     }
 
     func locationManager(manager: CLLocationManager, didStartMonitoringForRegion region: CLRegion) {
@@ -352,12 +354,13 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         log("Monitoring region " + region!.identifier + " failed " + error.description)
     }
 
-    func handleTransition(region: CLRegion!, transitionType: Int) {
+    func handleTransition(region: CLRegion!, transitionType: Int, location: CLLocationCoordinate2D!) {
         if var geoNotification = store.findById(region.identifier) {
             geoNotification["transitionType"].int = transitionType
 
             if geoNotification["notification"].isExists() {
                 notifyAbout(geoNotification)
+                notifyServer(geoNotification, location: location)
             }
 
             NSNotificationCenter.defaultCenter().postNotificationName("handleTransition", object: geoNotification.rawString(NSUTF8StringEncoding, options: []))
@@ -382,6 +385,71 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
                 AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
             }
         }
+    }
+    
+    func notifyServer(geo: JSON, location: CLLocationCoordinate2D!) {
+        let surpriseID = geo["notification"]["data"]["_id"].string!
+        var serverURL = ""
+        
+        if let apiEndpoint = geo["notification"]["data"]["env"].string {
+            serverURL = apiEndpoint + "/surprises/" + surpriseID + "/ping"
+        } else {
+            let apiEndpoint = "https://api.discovermoment.com/api" //assume if no env, in production
+            serverURL = apiEndpoint + "/surprises/" + surpriseID + "/ping"
+        }
+
+        
+        log("Telling the server we've triggered a geofence for surprise: \(surpriseID)")
+        
+        
+        let request = NSMutableURLRequest(URL: NSURL(string: serverURL)!)
+        
+        let session = NSURLSession.sharedSession()
+        request.HTTPMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        
+        let params = [
+            "transitionType": geo["transitionType"].int!,
+            "location": [
+                "coords":[
+                    "latitude": location.latitude,
+                    "longitude":location.longitude
+                ]
+            ]
+        ] as Dictionary<String,AnyObject>
+        
+        do {
+            request.HTTPBody = try NSJSONSerialization.dataWithJSONObject(params, options: [])
+            print(params)
+        } catch {
+            log("error on constructing HTTP body = \(error)")
+            request.HTTPBody = nil
+        }
+        
+        let task = session.dataTaskWithRequest(request) { data, response, error in
+            guard data != nil else {
+                log("no data found: \(error)")
+                return
+            }
+            
+            do {
+                if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: []) as? NSDictionary {
+                    let success = json["success"] as? Int                                  // Okay, the `json` is here, let's get the value for 'success' out of it
+                    log("Success: \(success)")
+                    log("JSON response: \(json)")
+                } else {
+                    let jsonStr = NSString(data: data!, encoding: NSUTF8StringEncoding)    // No error thrown, but not NSDictionary
+                    log("Error could not parse JSON: \(jsonStr)")
+                }
+            } catch let parseError {
+                log("error on parsing json = \(parseError)")    // Log the error thrown by `JSONObjectWithData`
+                let jsonStr = NSString(data: data!, encoding: NSUTF8StringEncoding)
+                log("Error could not parse JSON: '\(jsonStr)'")
+            }
+        }
+        
+        task.resume()
     }
 }
 
