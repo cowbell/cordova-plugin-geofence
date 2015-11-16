@@ -8,7 +8,7 @@ Android Build [![Build Status](https://circleci.com/gh/cowbell/cordova-plugin-ge
 
 Plugin to monitor circular geofences using mobile devices. The purpose is to notify user if crossing the boundary of the monitored geofence.
 
-*Geofences persists after device reboot. You do not have to open your app first to monitor added geofences*
+*Geofences persist after device reboot. You do not have to open your app first to monitor added geofences*
 
 ##Example application
 
