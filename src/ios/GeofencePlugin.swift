@@ -129,10 +129,8 @@ func log(message: String){
     func didReceiveTransition (notification: NSNotification) {
         log("didReceiveTransition")
         if let geoNotificationString = notification.object as? String {
-            let geoNotification = JSON(geoNotificationString)
-            var mustBeArray = [JSON]()
-            mustBeArray.append(geoNotification)
-            let js = "setTimeout('geofence.onTransitionReceived(" + mustBeArray.description + ")',0)"
+
+            let js = "setTimeout('geofence.onTransitionReceived([" + geoNotificationString + "])',0)"
 
             evaluateJs(js)
         }
@@ -184,7 +182,7 @@ class GeofenceFaker {
                         //WTF Swift??
                         let index = arc4random_uniform(UInt32(geos.count))
                         let geo = geos[Int(index)]
-                        let id = geo["id"].asString!
+                        let id = geo["id"].stringValue
                         dispatch_async(dispatch_get_main_queue()) {
                             if let region = self.geoNotificationManager.getMonitoredRegion(id) {
                                 log("FAKER Trigger didEnterRegion")
@@ -239,18 +237,18 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         checkRequirements()
 
         let location = CLLocationCoordinate2DMake(
-            geoNotification["latitude"].asDouble!,
-            geoNotification["longitude"].asDouble!
+            geoNotification["latitude"].doubleValue,
+            geoNotification["longitude"].doubleValue
         )
         log("AddOrUpdate geo: \(geoNotification)")
-        let radius = geoNotification["radius"].asDouble! as CLLocationDistance
+        let radius = geoNotification["radius"].doubleValue as CLLocationDistance
         //let uuid = NSUUID().UUIDString
-        let id = geoNotification["id"].asString
+        let id = geoNotification["id"].stringValue
 
-        let region = CLCircularRegion(center: location, radius: radius, identifier: id!)
+        let region = CLCircularRegion(center: location, radius: radius, identifier: id)
 
         var transitionType = 0
-        if let i = geoNotification["transitionType"].asInt {
+        if let i = geoNotification["transitionType"].int {
             transitionType = i
         }
         region.notifyOnEntry = 0 != transitionType & 1
@@ -336,12 +334,12 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
 
     func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion) {
         log("Entering region \(region.identifier)")
-        handleTransition(region)
+        handleTransition(region, transitionType: 1)
     }
 
     func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion) {
         log("Exiting region \(region.identifier)")
-        handleTransition(region)
+        handleTransition(region, transitionType: 2)
     }
 
     func locationManager(manager: CLLocationManager, didStartMonitoringForRegion region: CLRegion) {
@@ -360,13 +358,15 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         log("Monitoring region " + region!.identifier + " failed " + error.description)
     }
 
-    func handleTransition(region: CLRegion!) {
-        if let geo = store.findById(region.identifier) {
-            if let notification = geo["notification"].asDictionary {
-                notifyAbout(geo)
+    func handleTransition(region: CLRegion!, transitionType: Int) {
+        if var geoNotification = store.findById(region.identifier) {
+            geoNotification["transitionType"].int = transitionType
+
+            if geoNotification["notification"].isExists() {
+                notifyAbout(geoNotification)
             }
 
-            NSNotificationCenter.defaultCenter().postNotificationName("handleTransition", object: geo.description)
+            NSNotificationCenter.defaultCenter().postNotificationName("handleTransition", object: geoNotification.rawString(NSUTF8StringEncoding, options: []))
         }
     }
 
@@ -377,14 +377,14 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         let dateTime = NSDate()
         notification.fireDate = dateTime
         notification.soundName = UILocalNotificationDefaultSoundName
-        notification.alertBody = geo["notification"]["text"].asString!
-        if let json = geo["notification"]["data"] as? JSON {
-            notification.userInfo = ["geofence.notification.data": json.description]
+        notification.alertBody = geo["notification"]["text"].stringValue
+        if let json = geo["notification"]["data"] as JSON? {
+            notification.userInfo = ["geofence.notification.data": json.rawString(NSUTF8StringEncoding, options: [])!]
         }
         UIApplication.sharedApplication().scheduleLocalNotification(notification)
 
-        if let vibrate = geo["notification"]["vibrate"].asArray {
-            if (!vibrate.isEmpty && vibrate[0].asInt > 0) {
+        if let vibrate = geo["notification"]["vibrate"].array {
+            if (!vibrate.isEmpty && vibrate[0].intValue > 0) {
                 AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
             }
         }
@@ -416,7 +416,7 @@ class GeoNotificationStore {
     }
 
     func addOrUpdate(geoNotification: JSON) {
-        if (findById(geoNotification["id"].asString!) != nil) {
+        if (findById(geoNotification["id"].stringValue) != nil) {
             update(geoNotification)
         }
         else {
@@ -425,7 +425,7 @@ class GeoNotificationStore {
     }
 
     func add(geoNotification: JSON) {
-        let id = geoNotification["id"].asString!
+        let id = geoNotification["id"].stringValue
         let err = SD.executeChange("INSERT INTO GeoNotifications (Id, Data) VALUES(?, ?)",
             withArgs: [id, geoNotification.description])
 
@@ -435,7 +435,7 @@ class GeoNotificationStore {
     }
 
     func update(geoNotification: JSON) {
-        let id = geoNotification["id"].asString!
+        let id = geoNotification["id"].stringValue
         let err = SD.executeChange("UPDATE GeoNotifications SET Data = ? WHERE Id = ?",
             withArgs: [geoNotification.description, id])
 
@@ -453,7 +453,8 @@ class GeoNotificationStore {
             return nil
         } else {
             if (resultSet.count > 0) {
-                return JSON(string: resultSet[0]["Data"]!.asString()!)
+                let jsonString = resultSet[0]["Data"]!.asString()!
+                return JSON(data: jsonString.dataUsingEncoding(NSUTF8StringEncoding)!)
             }
             else {
                 return nil
@@ -472,7 +473,7 @@ class GeoNotificationStore {
             var results = [JSON]()
             for row in resultSet {
                 if let data = row["Data"]?.asString() {
-                    results.append(JSON(string: data))
+                    results.append(JSON(data: data.dataUsingEncoding(NSUTF8StringEncoding)!))
                 }
             }
             return results
