@@ -359,11 +359,35 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
             geoNotification["transitionType"].int = transitionType
 
             if geoNotification["notification"].isExists() {
-                notifyAbout(geoNotification)
-                notifyServer(geoNotification, location: location)
+                if validTime(geoNotification) == true {
+                    notifyAbout(geoNotification)
+                    notifyServer(geoNotification, location: location)
+                }
             }
 
             NSNotificationCenter.defaultCenter().postNotificationName("handleTransition", object: geoNotification.rawString(NSUTF8StringEncoding, options: []))
+        }
+    }
+    
+    func validTime(geo: JSON) -> Bool {
+        var maxHour = 18; // 6pm
+        var minHour = 10; // 10am
+        
+        let calendar = NSCalendar.currentCalendar()
+        let hour = calendar.component(.Hour,fromDate: NSDate())
+        
+        if let customMaxHour = geo["notification"]["data"]["maxHour"].int {
+            maxHour = customMaxHour
+        }
+        
+        if let customMinHour = geo["notification"]["data"]["maxHour"].int {
+            minHour = customMinHour
+        }
+        
+        if (hour >= maxHour || hour < minHour) { // notify at 10:01am, but not at 6:01pm
+            return false
+        } else {
+            return true
         }
     }
 
