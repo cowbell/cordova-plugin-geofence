@@ -360,8 +360,11 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
 
             if geoNotification["notification"].isExists() {
                 if validTime(geoNotification) == true {
-                    notifyAbout(geoNotification)
-                    notifyServer(geoNotification, location: location)
+                    if checkRateLimit(geoNotification) == true {
+                        notifyAbout(geoNotification)
+                        notifyServer(geoNotification, location: location)
+                        setNotificationTimestamp()
+                    }
                 }
             }
 
@@ -390,9 +393,64 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
             return true
         }
     }
+    
+    
+    
+    func convertDateToString(date: NSDate) -> String? {
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd H:mm:ss Z"
+        return dateFormatter.stringFromDate(date)
+    }
+    
+    func getNotificationTimestamp() -> String?{
+        let defaults = NSUserDefaults.standardUserDefaults()
+        let variable = defaults.objectForKey("moment_push_time") as? String
+        
+        if variable != nil{
+            return variable
+        } else{
+            let returnValue : String = "empty"
+            return returnValue
+        }
+    }
+    
+    func setNotificationTimestamp(){
+        let defaults = NSUserDefaults.standardUserDefaults()
+        let date = convertDateToString(NSDate())
+        let labelTime = "moment_push_time"
+        defaults.setObject(date, forKey: labelTime)
+        NSUserDefaults.standardUserDefaults().synchronize()
+    }
+    
+    func checkRateLimit(geo: JSON) -> Bool {
+        let previousDate = getNotificationTimestamp()
+        
+        var rateLimit = 1440; // minutes -- 24hrs = 60 * 24 =
+        
+        if let customRateLimit = geo["notification"]["data"]["rateLimit"].int {
+            rateLimit = customRateLimit
+        }
+        
+        if previousDate == "empty" {
+            return true
+        } else {
+            let dateFormatter = NSDateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd H:mm:ss Z"
+            let convertedPreviousDate = dateFormatter.dateFromString(previousDate!)
+            var elapsedTime = NSDate().timeIntervalSinceDate(convertedPreviousDate!)
+            elapsedTime = elapsedTime / 60 // convert seconds to minutes
+            
+            if (elapsedTime > Double(rateLimit)) {
+                return true
+            } else {
+                return false
+            }
+        }
+        
+        
+    }
 
     func notifyAbout(geo: JSON) {
-        log("Creating notification")
         let notification = UILocalNotification()
         notification.timeZone = NSTimeZone.defaultTimeZone()
         let dateTime = NSDate()
