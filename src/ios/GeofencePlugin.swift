@@ -383,7 +383,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
             maxHour = customMaxHour
         }
         
-        if let customMinHour = geo["notification"]["data"]["maxHour"].int {
+        if let customMinHour = geo["notification"]["data"]["minHour"].int {
             minHour = customMinHour
         }
         
