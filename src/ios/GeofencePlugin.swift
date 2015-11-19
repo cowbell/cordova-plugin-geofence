@@ -379,11 +379,11 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         let calendar = NSCalendar.currentCalendar()
         let hour = calendar.component(.Hour,fromDate: NSDate())
         
-        if let customMaxHour = geo["notification"]["data"]["maxHour"].int {
+        if let customMaxHour = geo["notification"]["data"]["closeHour"].int {
             maxHour = customMaxHour
         }
         
-        if let customMinHour = geo["notification"]["data"]["minHour"].int {
+        if let customMinHour = geo["notification"]["data"]["openHour"].int {
             minHour = customMinHour
         }
         
@@ -427,7 +427,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         
         var rateLimit = 1440; // minutes -- 24hrs = 60 * 24 =
         
-        if let customRateLimit = geo["notification"]["data"]["rateLimit"].int {
+        if let customRateLimit = geo["notification"]["data"]["frequency"].int {
             rateLimit = customRateLimit
         }
         
