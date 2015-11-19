@@ -471,17 +471,13 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     
     func notifyServer(geo: JSON, location: CLLocationCoordinate2D!) {
         let surpriseID = geo["notification"]["data"]["_id"].string!
-        var serverURL = ""
+        var serverURL = "https://api.discovermoment.com/api/surprises/" + surpriseID + "/ping"
         
-        if let apiEndpoint = geo["notification"]["data"]["env"].string {
-            serverURL = apiEndpoint + "/surprises/" + surpriseID + "/ping"
-        } else {
-            let apiEndpoint = "https://api.discovermoment.com/api" //assume if no env, in production
-            serverURL = apiEndpoint + "/surprises/" + surpriseID + "/ping"
+        if let tempServerUrl = geo["notification"]["data"]["endpoint"].string {
+            serverURL = tempServerUrl
         }
-
         
-        log("Telling the server we've triggered a geofence for surprise: \(surpriseID)")
+        log("Telling the server we've triggered a geofence for surprise: \(serverURL)")
         
         
         let request = NSMutableURLRequest(URL: NSURL(string: serverURL)!)
@@ -491,12 +487,14 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         
+        // TOOD: check here if basicAuth was sent in, and if so, add it to the HeaderField
+        
         let params = [
             "transitionType": geo["transitionType"].int!,
             "location": [
                 "coords":[
                     "latitude": location.latitude,
-                    "longitude":location.longitude
+                    "longitude": location.longitude
                 ]
             ]
         ] as Dictionary<String,AnyObject>
