@@ -3,6 +3,7 @@ package com.cowbell.cordova.geofence;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.text.format.Time;
 
 import com.google.gson.annotations.Expose;
 
@@ -18,6 +19,9 @@ public class Notification {
     @Expose public String smallIcon = "";
     @Expose public Object data;
     @Expose public boolean openAppOnClick;
+    @Expose public Object scheduleData;
+    @Expose public int frequency;
+    @Expose public long lastTriggered = 0;
 
     public void setContext(Context context) {
         this.context = context;
@@ -66,6 +70,20 @@ public class Notification {
     public long[] getVibrate() {
         return concat(new long[] {0}, vibrate);
     }
+    
+    public String getScheduleDataJson() {
+        if (this.scheduleData == null) {
+            return "";
+        }
+
+        return Gson.get().toJson(this.scheduleData);
+    }
+    
+    public void setLastTriggered(){
+		Time time = new Time();
+		time.setToNow();
+		this.lastTriggered = time.toMillis(false);
+	}
 
     public String toString() {
         return "Notification title: " + getTitle()

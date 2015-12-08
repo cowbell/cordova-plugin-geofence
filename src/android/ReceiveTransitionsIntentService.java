@@ -70,7 +70,11 @@ public class ReceiveTransitionsIntentService extends IntentService {
 
                     if (geoNotification != null) {
                         if (geoNotification.notification != null) {
-                            notifier.notify(geoNotification.notification);
+                            if(geoNotification.isScheduled() && geoNotification.isFrequencyOk()){
+								geoNotification.notification.setLastTriggered();
+								store.setGeoNotification(geoNotification);
+								notifier.notify(geoNotification.notification);	
+							}
                         }
                         geoNotification.transitionType = transitionType;
                         geoNotifications.add(geoNotification);
