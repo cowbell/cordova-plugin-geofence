@@ -131,6 +131,7 @@ func log(message: String){
 
     func didReceiveLocalNotification (notification: NSNotification) {
         log("didReceiveLocalNotification")
+        
         if UIApplication.sharedApplication().applicationState != UIApplicationState.Active {
             var data = "undefined"
             if let uiNotification = notification.object as? UILocalNotification {
@@ -354,13 +355,57 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     func handleTransition(region: CLRegion!, transitionType: Int) {
         if var geoNotification = store.findById(region.identifier) {
             geoNotification["transitionType"].int = transitionType
-
+            
+            log("Testing: \(geoNotification)")
+            isScheduled(geoNotification)
+            isFrequencyOk(geoNotification)
             if geoNotification["notification"].isExists() {
-                notifyAbout(geoNotification)
+                if(isScheduled(geoNotification) && isFrequencyOk(geoNotification)){
+                    notifyAbout(geoNotification)
+                }
             }
 
             NSNotificationCenter.defaultCenter().postNotificationName("handleTransition", object: geoNotification.rawString(NSUTF8StringEncoding, options: []))
         }
+    }
+    
+    func isScheduled(geo: JSON) -> Bool{
+        
+        let date = NSDate()
+        let components = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)?.components([NSCalendarUnit.Weekday, NSCalendarUnit.Hour, NSCalendarUnit.Minute], fromDate: date)
+        log("Date: \(components?.hour):\(components?.minute), WeekDay: \(((components?.weekday)!-1))")
+        
+        if(geo["notification"]["scheduleData"][(components?.weekday)!] != nil){
+            log("ScheduleData: \(geo["notification"]["scheduleData"][((components?.weekday)!-1)])")
+            let day = geo["notification"]["scheduleData"][((components?.weekday)!-1)]
+            if(components?.hour >= day["on"]["hour"].int && components?.hour <= day["off"]["hour"].int){
+                if(components?.minute >= day["on"]["minute"].int && components?.minute <= day["off"]["minute"].int){
+                    log("GeoFence scheduled as active.")
+                    return true
+                }
+            }
+            log("GeoFence scheduled as inactive.")
+            return false
+        }
+        log("GeoFence has no schedule today.")
+        return true
+        
+    }
+    
+    func isFrequencyOk(var geo: JSON) -> Bool{
+        let store = GeoNotificationStore()
+        
+        if(geo["notification"]["lastTriggered"] != nil){
+            if(Int(NSDate().timeIntervalSince1970) < geo["notification"]["lastTriggered"].int! + geo["notification"]["frequency"].int!){
+                log("GeoFence triggered before frequency limit elapsed.")
+                return false
+            }
+        }
+        geo["notification"]["lastTriggered"] = JSON(NSDate().timeIntervalSince1970)
+        log("New Geo Obj: \(geo["notification"])")
+        store.update(geo)
+        
+        return true
     }
 
     func notifyAbout(geo: JSON) {
