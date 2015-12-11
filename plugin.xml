@@ -20,7 +20,7 @@
     </js-module>
 
     <dependency id="es6-promise-plugin" />
-    <dependency id="https://github.com/QuantumRand/google-play-services.git" />
+    <!--<dependency id="https://github.com/QuantumRand/google-play-services.git" />-->
     <dependency id="cordova-plugin-android-support-v4" />
 
     <!-- android -->
@@ -47,7 +47,7 @@
         <source-file src="src/android/RemoveGeofenceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/Schedule.java" target-dir="src/com/cowbell/cordova/geofence" />
 
-        <!--<framework src="com.google.android.gms:play-services-location:+" />-->
+        <framework src="com.google.android.gms:play-services-location:+" />
         <lib-file src="src/android/libs/gson-2.3.jar" />
 		
 		
