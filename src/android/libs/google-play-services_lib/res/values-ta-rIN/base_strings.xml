@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="common_signin_button_text" msgid="3156914698180786012">"உள்நுழைக"</string>
+    <string name="common_signin_button_text_long" msgid="1483290677806110088">"Google மூலம் உள்நுழைக"</string>
+</resources>
