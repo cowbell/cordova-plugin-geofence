@@ -20,7 +20,7 @@
     </js-module>
 
     <dependency id="es6-promise-plugin" />
-    <dependency id="com.google.playservices" url="https://github.com/QuantumRand/google-play-services.git" />
+    <dependency id="cordova-plugin-googleplayservices" url="https://github.com/QuantumRand/google-play-services.git" />
     <dependency id="cordova-plugin-android-support-v4" />
 
     <!-- android -->
