@@ -100,6 +100,19 @@ module.exports = {
      */
     ping: function (success, error) {
         return execPromise(success, error, "GeofencePlugin", "ping", []);
+    },
+
+
+     /**
+     * Getting all monitored geofences from the device
+     *
+     * @name  getMonitored
+     * @param  {Function} success callback
+     * @param  {Function} error callback
+     * @return {Promise} if successful returns geofences array stringify to JSON
+     */
+    getMonitored: function (success, error) {
+        return execPromise(success, error, 'GeofencePlugin', 'getMonitored', []);
     }
 };
 
