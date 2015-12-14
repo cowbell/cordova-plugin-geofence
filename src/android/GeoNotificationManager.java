@@ -58,7 +58,12 @@ public class GeoNotificationManager {
 
     private boolean areGoogleServicesAvailable() {
         // Check that Google Play services is available
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
+        try{
+			int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this.getActivity().getApplicationContext());
+		}
+		catch(Exception e){
+			Log.e("Geofences Error", e);
+		}
 
         // If Google Play services is available
         if (ConnectionResult.SUCCESS == resultCode) {
