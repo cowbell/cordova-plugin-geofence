@@ -59,7 +59,7 @@ public class GeoNotificationManager {
 
     private boolean areGoogleServicesAvailable() {
         // Check that Google Play services is available
-		int resultCode = GoogleApiAvailability.isGooglePlayServicesAvailable(this.context);
+		int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this.context);
 	
 
 		// If Google Play services is available
