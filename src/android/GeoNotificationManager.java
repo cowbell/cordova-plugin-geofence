@@ -60,17 +60,19 @@ public class GeoNotificationManager {
         // Check that Google Play services is available
         try{
 			int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this.context);
+		
+
+			// If Google Play services is available
+			if (ConnectionResult.SUCCESS == resultCode) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 		catch(Exception e){
 			Log.e("Geofences Error", Log.getStackTraceString(e));
+			return true;
 		}
-
-        // If Google Play services is available
-        if (ConnectionResult.SUCCESS == resultCode) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     public void addGeoNotifications(List<GeoNotification> geoNotifications,
