@@ -62,7 +62,7 @@ public class GeoNotificationManager {
 			int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this.getActivity().getApplicationContext());
 		}
 		catch(Exception e){
-			Log.e("Geofences Error", e);
+			Log.e("Geofences Error", Log.getStackTraceString(e));
 		}
 
         // If Google Play services is available
