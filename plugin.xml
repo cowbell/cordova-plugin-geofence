@@ -47,10 +47,11 @@
 
 		<!--<dependency id="com.google.playservices" url="https://github.com/QuantumRand/google-play-services.git" />-->
 		<!--<dependency id="cordova-plugin-googleplayservices"/>-->
-		<dependency id="cordova-plugin-android-support-v4" />
+		<!--<dependency id="cordova-plugin-android-support-v4" />-->
+		<lib-file src="src/android/libs/google-play-services.jar" />
         <framework src="com.google.android.gms:play-services-location:+" />
         <lib-file src="src/android/libs/gson-2.3.jar" />
-        <lib-file src="src/android/libs/google-play-services.jar" />
+        
 		
 		
         <config-file target="config.xml" parent="/*">
