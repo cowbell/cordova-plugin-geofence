@@ -37,13 +37,9 @@ public class GeoNotification {
 				Log.i("Geofence", "GeoFence is active.");
 				return true;
 			}
-			else{
-				Log.i("Geofence", "GeoFence is inactive.");
-				return false;
-			}
 		}
-		
-		return true;
+		Log.i("Geofence", "GeoFence is inactive.");
+		return false;
 	}
 	
 	public boolean isFrequencyOk(){
