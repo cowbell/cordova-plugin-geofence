@@ -378,8 +378,8 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         if(geo["notification"]["scheduleData"][(components?.weekday)!] != nil){
             //log("ScheduleData: \(geo["notification"]["scheduleData"][((components?.weekday)!-1)])")
             let day = geo["notification"]["scheduleData"][((components?.weekday)!-1)]
-            if(((components?.hour)! as Int) >= (Int(day["on"]["hour"].string)) && ((components?.hour)! as Int) <= (Int(day["off"]["hour"].string))){
-                if(((components?.minute)! as Int) >= (Int(day["on"]["minute"].string)) && ((components?.minute)! as Int) <= (Int(day["off"]["minute"].string))){
+            if(((components?.hour)! as Int) >= (Int(day["on"]["hour"].string!)) && ((components?.hour)! as Int) <= (Int(day["off"]["hour"].string!))){
+                if(((components?.minute)! as Int) >= (Int(day["on"]["minute"].string!)) && ((components?.minute)! as Int) <= (Int(day["off"]["minute"].string!))){
                     log("GeoFence scheduled as active.")
                     return true
                 }
