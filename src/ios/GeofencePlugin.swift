@@ -373,13 +373,13 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         
         let date = NSDate()
         let components = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)?.components([NSCalendarUnit.Weekday, NSCalendarUnit.Hour, NSCalendarUnit.Minute], fromDate: date)
-        log("Date: \(components?.hour):\(components?.minute), WeekDay: \(((components?.weekday)!-1))")
+        //log("Date: \(components?.hour):\(components?.minute), WeekDay: \(((components?.weekday)!-1))")
         
         if(geo["notification"]["scheduleData"][(components?.weekday)!] != nil){
-            log("ScheduleData: \(geo["notification"]["scheduleData"][((components?.weekday)!-1)])")
+            //log("ScheduleData: \(geo["notification"]["scheduleData"][((components?.weekday)!-1)])")
             let day = geo["notification"]["scheduleData"][((components?.weekday)!-1)]
-            if(components?.hour >= day["on"]["hour"].int && components?.hour <= day["off"]["hour"].int){
-                if(components?.minute >= day["on"]["minute"].int && components?.minute <= day["off"]["minute"].int){
+            if(((components?.hour)! as Int) >= (Int(day["on"]["hour"].string)) && ((components?.hour)! as Int) <= (Int(day["off"]["hour"].string))){
+                if(((components?.minute)! as Int) >= (Int(day["on"]["minute"].string)) && ((components?.minute)! as Int) <= (Int(day["off"]["minute"].string))){
                     log("GeoFence scheduled as active.")
                     return true
                 }
