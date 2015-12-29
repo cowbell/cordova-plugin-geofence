@@ -10,9 +10,12 @@ Plugin to monitor circular geofences using mobile devices. The purpose is to not
 
 *Geofences persist after device reboot. You do not have to open your app first to monitor added geofences*
 
-##Example application
+##Example applications
 
-Check out our [example application](https://github.com/cowbell/ionic-geofence) built with ionic framework.
+Check out our example applications:
+
+* https://github.com/cowbell/ionic-geofence built with [Ionic](http://ionic.io/) framework
+* https://github.com/cowbell/ember-geofence built with [Ember.js](http://emberjs.com/), [Cordova](https://cordova.apache.org/), [Material Design](https://www.google.com/design/spec/material-design/introduction.html)
 
 ## Installation
 
