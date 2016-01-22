@@ -19,7 +19,6 @@ import java.util.List;
 public class GeoNotificationManager {
     private Context context;
     private GeoNotificationStore geoNotificationStore;
-    //private LocationClient locationClient;
     private Logger logger;
     private boolean connectionInProgress = false;
     private List<Geofence> geoFences;
