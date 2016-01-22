@@ -263,20 +263,22 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
             log("Warning: Location always permissions not granted, have you initialized geofence plugin?")
         }
 
-        if let notificationSettings = UIApplication.sharedApplication().currentUserNotificationSettings() {
-            if !notificationSettings.types.contains(.Sound) {
-                log("Warning: notification settings - sound permission missing")
-            }
+        if (iOS8) {
+            if let notificationSettings = UIApplication.sharedApplication().currentUserNotificationSettings() {
+                if !notificationSettings.types.contains(.Sound) {
+                    log("Warning: notification settings - sound permission missing")
+                }
 
-            if !notificationSettings.types.contains(.Alert) {
-                log("Warning: notification settings - alert permission missing")
-            }
+                if !notificationSettings.types.contains(.Alert) {
+                    log("Warning: notification settings - alert permission missing")
+                }
 
-            if !notificationSettings.types.contains(.Badge) {
-                log("Warning: notification settings - badge permission missing")
+                if !notificationSettings.types.contains(.Badge) {
+                    log("Warning: notification settings - badge permission missing")
+                }
+            } else {
+                log("Warning: notification permission missing")
             }
-        } else {
-            log("Warning: notification permission missing")
         }
     }
 
