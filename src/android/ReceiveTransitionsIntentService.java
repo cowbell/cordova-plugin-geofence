@@ -5,6 +5,10 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import java.util.Date;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
@@ -56,10 +60,11 @@ public class ReceiveTransitionsIntentService extends IntentService {
             logger.log(Log.ERROR, error);
             broadcastIntent.putExtra("error", error);
         } else {
-            // Get the type of transition (entry or exit)
+            // Get the type of transition (entry, exit, dwell or dwell | enter)
             int transitionType = geofencingEvent.getGeofenceTransition();
             if ((transitionType == Geofence.GEOFENCE_TRANSITION_ENTER)
-                    || (transitionType == Geofence.GEOFENCE_TRANSITION_EXIT)) {
+                    || (transitionType == Geofence.GEOFENCE_TRANSITION_EXIT)
+                    || (transitionType == Geofence.GEOFENCE_TRANSITION_DWELL)) {
                 logger.log(Log.DEBUG, "Geofence transition detected");
                 List<Geofence> triggerList = geofencingEvent.getTriggeringGeofences();
                 List<GeoNotification> geoNotifications = new ArrayList<GeoNotification>();
@@ -70,10 +75,19 @@ public class ReceiveTransitionsIntentService extends IntentService {
 
                     if (geoNotification != null) {
                         if (geoNotification.notification != null) {
-                            notifier.notify(geoNotification.notification);
+
+                            Date d2 = new Date();
+
+                            if((geoNotification.lastShown + geoNotification.frequency) < d2.getTime()){
+                                geoNotification.lastShown = new Date().getTime();
+                                notifier.notify(geoNotification.notification);
+
+                                geoNotification.transitionType = transitionType;
+                                geoNotifications.add(geoNotification);
+
+                                store.setGeoNotification(geoNotification);
+                            }
                         }
-                        geoNotification.transitionType = transitionType;
-                        geoNotifications.add(geoNotification);
                     }
                 }
 

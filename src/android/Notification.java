@@ -24,6 +24,10 @@ public class Notification {
         this.assets = AssetUtil.getInstance(context);
     }
 
+    public int getId() {
+        return this.id;
+    }
+
     public String getText() {
         return this.text;
     }
