@@ -4,79 +4,40 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.util.Log;
 
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.Geofence;
-//import com.google.android.gms.location.LocationClient.OnAddGeofencesResultListener;
+import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationStatusCodes;
 
-import java.util.List;
-
-public class AddGeofenceCommand extends AbstractGoogleServiceCommand{
-    private List<Geofence> geofencesToAdd;
+public class AddGeofenceCommand extends AbstractGoogleServiceCommand {
+    private GeofencingRequest geofenceRequest;
     private PendingIntent pendingIntent;
 
     public AddGeofenceCommand(Context context, PendingIntent pendingIntent,
-            List<Geofence> geofencesToAdd) {
+            GeofencingRequest geofenceRequest) {
         super(context);
-        this.geofencesToAdd = geofencesToAdd;
+        this.geofenceRequest = geofenceRequest;
         this.pendingIntent = pendingIntent;
     }
 
     @Override
-    public void onAddGeofencesResult(int statusCode, String[] arg1) {
-        // If adding the geofences was successful
-        if (LocationStatusCodes.SUCCESS == statusCode) {
-            logger.log(Log.DEBUG, "Geofences successfully added");
-            /*
-             * Handle successful addition of geofences here. You can send out a
-             * broadcast intent or update the UI. geofences into the Intent's
-             * extended data.
-             */
-        } else {
-            logger.log(Log.DEBUG, "Adding geofences failed");
-            // If adding the geofences failed
-            /*
-             * Report errors here. You can log the error using Log.e() or update
-             * the UI.
-             */
+    public void Execute() {
+        logger.log(Log.DEBUG, "Adding geofence");
+
+        if (geofenceRequest != null) {
+            LocationServices.GeofencingApi
+                    .addGeofences(googleApiClient, geofenceRequest, pendingIntent)
+                    .setResultCallback(this);
         }
-        CommandExecuted();
     }
 
     @Override
-    public void ExecuteCustomCode() {
-        // TODO Auto-generated method stub
-        logger.log(Log.DEBUG, "Adding new geofences");
-        LocationServices.GeofencingApi
-                .addGeofences(mGoogleApiClient, geofencesToAdd, pendingIntent)
-                .setResultCallback(new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        if (status.isSuccess()) {
-                            logger.log(Log.DEBUG, "Geofences successfully added");
-            /*
-             * Handle successful addition of geofences here. You can send out a
-             * broadcast intent or update the UI. geofences into the Intent's
-             * extended data.
-             */
-                        } else {
-                            logger.log(Log.DEBUG, "Adding geofences failed");
-                            // If adding the geofences failed
-            /*
-             * Report errors here. You can log the error using Log.e() or update
-             * the UI.
-             */
-                        }
-                        CommandExecuted();
-                    }
-                });
+    public void onResult(Status status) {
+        if (status.isSuccess()) {
+            logger.log(Log.DEBUG, "Geofence successfully added");
+            CommandExecuted(CommandStatus.SUCCESS);
+        } else {
+            logger.log(Log.DEBUG, "Adding geofence failed");
+            CommandExecuted(new CommandStatus(false, status.getStatusMessage()));
+        }
     }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
 }

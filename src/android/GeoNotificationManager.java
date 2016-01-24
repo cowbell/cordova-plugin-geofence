@@ -7,9 +7,8 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.Geofence;
-import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.GeofencingRequest;
 
 import org.apache.cordova.CallbackContext;
 
@@ -19,10 +18,8 @@ import java.util.List;
 public class GeoNotificationManager {
     private Context context;
     private GeoNotificationStore geoNotificationStore;
-    //private LocationClient locationClient;
     private Logger logger;
     private boolean connectionInProgress = false;
-    private List<Geofence> geoFences;
     private PendingIntent pendingIntent;
     private GoogleServiceCommandExecutor googleServiceCommandExecutor;
 
@@ -30,7 +27,7 @@ public class GeoNotificationManager {
         this.context = context;
         geoNotificationStore = new GeoNotificationStore(context);
         logger = Logger.getLogger();
-        googleServiceCommandExecutor = new GoogleServiceCommandExecutor();
+        googleServiceCommandExecutor = new GoogleServiceCommandExecutor(context);
         pendingIntent = getTransitionPendingIntent();
         if (areGoogleServicesAvailable()) {
             logger.log(Log.DEBUG, "Google play services available");
@@ -41,13 +38,11 @@ public class GeoNotificationManager {
 
     public void loadFromStorageAndInitializeGeofences() {
         List<GeoNotification> geoNotifications = geoNotificationStore.getAll();
-        geoFences = new ArrayList<Geofence>();
+        List<GeofencingRequest> geoFenceRequestList = new ArrayList<GeofencingRequest>();
+
         for (GeoNotification geo : geoNotifications) {
-            geoFences.add(geo.toGeofence());
-        }
-        if (!geoFences.isEmpty()) {
             googleServiceCommandExecutor.QueueToExecute(new AddGeofenceCommand(
-                context, pendingIntent, geoFences));
+                    context, pendingIntent, geo.toGeofenceRequest()));
         }
     }
 
@@ -68,23 +63,24 @@ public class GeoNotificationManager {
         }
     }
 
-    public void addGeoNotifications(List<GeoNotification> geoNotifications,
+    public void addGeoNotification(final GeoNotification geoNotification,
             final CallbackContext callback) {
-        List<Geofence> newGeofences = new ArrayList<Geofence>();
-        for (GeoNotification geo : geoNotifications) {
-            geoNotificationStore.setGeoNotification(geo);
-            newGeofences.add(geo.toGeofence());
-        }
-        AddGeofenceCommand geoFenceCmd = new AddGeofenceCommand(context,
-                pendingIntent, newGeofences);
+        GeofencingRequest geofencingRequest = geoNotification.toGeofenceRequest();
+        AddGeofenceCommand geoFenceCmd = new AddGeofenceCommand(context, pendingIntent, geofencingRequest);
+
         if (callback != null) {
             geoFenceCmd.addListener(new IGoogleServiceCommandListener() {
-                @Override
-                public void onCommandExecuted() {
-                    callback.success();
+                public void onCommandExecuted(CommandStatus status) {
+                    if (status.isSuccess()) {
+                        geoNotificationStore.setGeoNotification(geoNotification);
+                        callback.success();
+                    } else {
+                        callback.error(status.getMessage());
+                    }
                 }
             });
         }
+
         googleServiceCommandExecutor.QueueToExecute(geoFenceCmd);
     }
 
@@ -94,20 +90,24 @@ public class GeoNotificationManager {
         removeGeoNotifications(ids, callback);
     }
 
-    public void removeGeoNotifications(List<String> ids,
+    public void removeGeoNotifications(final List<String> ids,
             final CallbackContext callback) {
         RemoveGeofenceCommand cmd = new RemoveGeofenceCommand(context, ids);
         if (callback != null) {
             cmd.addListener(new IGoogleServiceCommandListener() {
-                @Override
-                public void onCommandExecuted() {
-                    callback.success();
+                public void onCommandExecuted(CommandStatus status) {
+                    if (status.isSuccess()) {
+                        for (String id : ids) {
+                            geoNotificationStore.remove(id);
+                        }
+                        callback.success();
+                    } else {
+                        callback.error(status.getMessage());
+                    }
                 }
             });
         }
-        for (String id : ids) {
-            geoNotificationStore.remove(id);
-        }
+
         googleServiceCommandExecutor.QueueToExecute(cmd);
     }
 

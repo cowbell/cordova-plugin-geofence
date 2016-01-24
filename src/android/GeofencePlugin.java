@@ -44,15 +44,12 @@ public class GeofencePlugin extends CordovaPlugin {
                 + args.toString());
 
         if (action.equals("addOrUpdate")) {
-            List<GeoNotification> geoNotifications = new ArrayList<GeoNotification>();
-            for (int i = 0; i < args.length(); i++) {
-                GeoNotification not = parseFromJSONObject(args.getJSONObject(i));
-                if (not != null) {
-                    geoNotifications.add(not);
-                }
+            if (args.length() > 0) {
+                GeoNotification geoNotification = parseFromJSONObject(args.getJSONObject(0));
+                geoNotificationManager.addGeoNotification(geoNotification, callbackContext);
+            } else {
+                callbackContext.error("no argument provided");
             }
-            geoNotificationManager.addGeoNotifications(geoNotifications,
-                    callbackContext);
         } else if (action.equals("remove")) {
             List<String> ids = new ArrayList<String>();
             for (int i = 0; i < args.length(); i++) {
