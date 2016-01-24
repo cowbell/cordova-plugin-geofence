@@ -3,6 +3,7 @@ package com.cowbell.cordova.geofence;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -29,11 +30,8 @@ public class GeoNotificationManager {
         logger = Logger.getLogger();
         googleServiceCommandExecutor = new GoogleServiceCommandExecutor(context);
         pendingIntent = getTransitionPendingIntent();
-        if (areGoogleServicesAvailable()) {
-            logger.log(Log.DEBUG, "Google play services available");
-        } else {
-            logger.log(Log.WARN, "Google play services not available. Geofence plugin will not work correctly.");
-        }
+        checkGoogleServices();
+        checkGPSNetworkProvider();
     }
 
     public void loadFromStorageAndInitializeGeofences() {
@@ -60,6 +58,36 @@ public class GeoNotificationManager {
             return true;
         } else {
             return false;
+        }
+    }
+
+    private void checkGoogleServices() {
+        if (areGoogleServicesAvailable()) {
+            logger.log(Log.DEBUG, "Google play services available");
+        } else {
+            logger.log(Log.WARN, "Google play services not available. Geofence plugin will not work correctly.");
+        }
+    }
+
+    private void checkGPSNetworkProvider() {
+        LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+
+        try {
+            gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch(Exception ex) {}
+
+        try {
+            network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch(Exception ex) {}
+
+        if (!gps_enabled) {
+            logger.log(Log.WARN, "GPS Provider not enabled");
+        }
+
+        if (!network_enabled) {
+            logger.log(Log.WARN, "Network Provider not enabled");
         }
     }
 

@@ -28,8 +28,12 @@ public class RemoveGeofenceCommand extends AbstractGoogleServiceCommand{
             logger.log(Log.DEBUG, "Geofences successfully removed");
             CommandExecuted(CommandStatus.SUCCESS);
         } else {
-            logger.log(Log.ERROR, "Removing geofences failed");
-            CommandExecuted(new CommandStatus(false, status.getStatusMessage()));
+            StringBuilder message = new StringBuilder();
+            message.append("Removing geofences failed \n");
+            message.append("Status code: " + status.getStatusCode() + "\n");
+            message.append("Message: " + status.getStatusMessage() + "\n");
+            logger.log(Log.ERROR, message.toString());
+            CommandExecuted(new CommandStatus(false, message.toString()));
         }
     }
 
