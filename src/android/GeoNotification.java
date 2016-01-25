@@ -37,7 +37,7 @@ public class GeoNotification {
         return Gson.get().toJson(this);
     }
 
-    public getExpireTime() {
+    public long getExpireTime() {
         if(endDate == null || endDate.isEmpty() || endDate == "false") {
             return Geofence.NEVER_EXPIRE;
         }
