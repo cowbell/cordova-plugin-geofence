@@ -60,7 +60,7 @@ public class ReceiveTransitionsIntentService extends IntentService {
             logger.log(Log.ERROR, error);
             broadcastIntent.putExtra("error", error);
         } else {
-            // Get the type of transition (entry, exit, dwell or dwell | enter)
+            // Get the type of transition (entry, exit, or dwell)
             int transitionType = geofencingEvent.getGeofenceTransition();
             if ((transitionType == Geofence.GEOFENCE_TRANSITION_ENTER)
                     || (transitionType == Geofence.GEOFENCE_TRANSITION_EXIT)
@@ -78,14 +78,13 @@ public class ReceiveTransitionsIntentService extends IntentService {
 
                             Date d2 = new Date();
 
-                            if((geoNotification.lastShown + geoNotification.frequency) < d2.getTime()){
-                                geoNotification.lastShown = new Date().getTime();
-                                notifier.notify(geoNotification.notification);
+                            if((geoNotification.lastShown + geoNotification.frequency) < d2.getTime()) {
+                                geoNotification.lastShown = d2.getTime();
+                                store.setGeoNotification(geoNotification);
 
+                                notifier.notify(geoNotification.notification);
                                 geoNotification.transitionType = transitionType;
                                 geoNotifications.add(geoNotification);
-
-                                store.setGeoNotification(geoNotification);
                             }
                         }
                     }

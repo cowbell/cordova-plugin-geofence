@@ -149,12 +149,12 @@ public class GeofencePlugin extends CordovaPlugin {
         return geo;
     }
 
-    protected void wasNotificationClicked(Intent intent){
+    protected void wasNotificationClicked(Intent intent) {
         Log.d(TAG, "Notification Clicked");
 
         String data = intent.getStringExtra("geofence.notification.data");
 
-        if(data != null && !data.isEmpty()){
+        if(data != null && !data.isEmpty()) {
             Log.d(TAG, "Data found for notification click");
 
             String js = "setTimeout('geofence.onNotificationClicked("
@@ -162,7 +162,7 @@ public class GeofencePlugin extends CordovaPlugin {
 
             Log.d(TAG, String.valueOf(isInForeground));
 
-            if(isInForeground){
+            if(isInForeground) {
                 Log.d(TAG, "Firing JS");
                 webView.sendJavascript(js);
             }

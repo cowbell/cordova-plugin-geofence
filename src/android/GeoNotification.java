@@ -17,10 +17,7 @@ public class GeoNotification {
     @Expose public String endDate;
     @Expose public long lastShown = 0;
     @Expose public int frequency = 0;
-    @Expose public long expireTime = -1;
-    @Expose public boolean useDwell = false;
     @Expose public int loiteringDelay = 120000;
-    @Expose public int notificationResponsiveness = 60000;
 
     @Expose public Notification notification;
 
@@ -28,53 +25,43 @@ public class GeoNotification {
     }
 
     public Geofence toGeofence() {
-        //Get milliseconds to endDate if it has one
-        if(endDate == null || endDate.isEmpty() || endDate == "false") {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-
-            Date date = new Date();
-
-            try {
-                date = sdf.parse(endDate);
-            }catch(ParseException ex){
-                ex.printStackTrace();
-            }
-
-            Date now = new Date();
-
-            long dateMill = date.getTime();
-            long nowMill = now.getTime();
-
-            long diff = dateMill - nowMill;
-
-            if(diff < 0){
-                expireTime = 0;
-            }else{
-                expireTime = diff;
-            }
-        }
-
-        if(useDwell){
-            transitionType = transitionType | Geofence.GEOFENCE_TRANSITION_DWELL;
-            return new Geofence.Builder().setRequestId(id)
-                    .setTransitionTypes(transitionType)
-                    .setExpirationDuration(expireTime)
-                    .setNotificationResponsiveness(notificationResponsiveness)
-                    .setLoiteringDelay(loiteringDelay)
-                    .setCircularRegion(latitude, longitude, radius)
-                    .build();
-        }else{
-            return new Geofence.Builder().setRequestId(id)
-                    .setTransitionTypes(transitionType)
-                    .setNotificationResponsiveness(notificationResponsiveness)
-                    .setExpirationDuration(expireTime)
-                    .setCircularRegion(latitude, longitude, radius)
-                    .build();
-        }
+        return new Geofence.Builder().setRequestId(id)
+                .setTransitionTypes(transitionType)
+                .setExpirationDuration(getExpireTime())
+                .setLoiteringDelay(loiteringDelay)
+                .setCircularRegion(latitude, longitude, radius)
+                .build();
     }
 
     public String toJson() {
         return Gson.get().toJson(this);
+    }
+
+    public getExpireTime() {
+        if(endDate == null || endDate.isEmpty() || endDate == "false") {
+            return Geofence.NEVER_EXPIRE;
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date date = new Date();
+
+        try {
+            date = sdf.parse(endDate);
+        }catch(ParseException ex) {
+            return Geofence.NEVER_EXPIRE;
+        }
+
+        Date now = new Date();
+        long dateMill = date.getTime();
+        long nowMill = now.getTime();
+
+        long diff = dateMill - nowMill;
+
+        if(diff < 0) {
+            return 0;
+        }else {
+            return diff;
+        }
     }
 
     public static GeoNotification fromJson(String json) {
