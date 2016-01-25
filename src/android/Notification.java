@@ -18,6 +18,7 @@ public class Notification {
     @Expose public String smallIcon = "";
     @Expose public Object data;
     @Expose public boolean openAppOnClick;
+    @Expose public boolean autoCancel = true;
 
     public void setContext(Context context) {
         this.context = context;
@@ -44,6 +45,10 @@ public class Notification {
         }
 
         return resId;
+    }
+
+    public boolean getAutoCancel() {
+        return autoCancel;
     }
 
     public Bitmap getLargeIcon() {
