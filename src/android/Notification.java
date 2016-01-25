@@ -48,7 +48,7 @@ public class Notification {
     }
 
     public boolean getAutoCancel() {
-        return autoCancel;
+        return this.autoCancel;
     }
 
     public Bitmap getLargeIcon() {
