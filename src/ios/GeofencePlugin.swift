@@ -8,6 +8,7 @@
 
 import Foundation
 import AudioToolbox
+import WebKit
 
 let TAG = "GeofencePlugin"
 let iOS8 = floor(NSFoundationVersionNumber) > floor(NSFoundationVersionNumber_iOS_7_1)
@@ -19,6 +20,7 @@ func log(message: String){
 
 @available(iOS 8.0, *)
 @objc(HWPGeofencePlugin) class GeofencePlugin : CDVPlugin {
+    var wk: WKWebView!
     lazy var geoNotificationManager = GeoNotificationManager()
     let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
 
@@ -145,8 +147,8 @@ func log(message: String){
     }
 
     func evaluateJs (script: String) {
-        if webView != nil {
-            webView!.stringByEvaluatingJavaScriptFromString(script)
+        if wk != nil {
+            wk!.evaluateJavaScript(script,completionHandler: nil)
         } else {
             log("webView is null")
         }
