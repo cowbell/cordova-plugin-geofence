@@ -10,7 +10,7 @@ module.exports = function(context) {
 
     function run() {
         var cordova_util = context.requireCordovaModule('cordova-lib/src/cordova/util'),
-            ConfigParser = context.requireCordovaModule('cordova-lib/src/configparser/ConfigParser'),
+            ConfigParser = context.requireCordovaModule('cordova-common').ConfigParser,
             projectRoot = cordova_util.isCordova(),
             platform_ios,
             xml = cordova_util.projectConfig(projectRoot),
@@ -18,6 +18,8 @@ module.exports = function(context) {
             projectName = cfg.name(),
             iosPlatformPath = path.join(projectRoot, 'platforms', 'ios'),
             iosProjectFilesPath = path.join(iosPlatformPath, projectName),
+            xcconfigPath = path.join(iosPlatformPath, 'cordova', 'build.xcconfig'),
+            xcconfigContent,
             projectFile,
             xcodeProject,
             bridgingHeaderPath;
@@ -36,7 +38,11 @@ module.exports = function(context) {
         // hopefully projectFile can't go null here.......
         xcodeProject = projectFile.xcode;
 
-        bridgingHeaderPath = getBridgingHeader(xcodeProject);
+        if (fs.existsSync(xcconfigPath)) {
+            xcconfigContent = fs.readFileSync(xcconfigPath, 'utf-8');
+        }
+
+        bridgingHeaderPath = getBridgingHeader(projectName, xcconfigContent, xcodeProject);
         if(bridgingHeaderPath) {
             bridgingHeaderPath = path.join(iosPlatformPath, bridgingHeaderPath);
         } else {
@@ -65,9 +71,28 @@ module.exports = function(context) {
         });
     }
 
-    function getBridgingHeader(xcodeProject) {
-        var configurations = nonComments(xcodeProject.pbxXCBuildConfigurationSection()),
-            config, buildSettings, bridgingHeader;
+    function getBridgingHeader(projectName, xcconfigContent, xcodeProject) {
+        var configurations,
+            config,
+            buildSettings,
+            bridgingHeader;
+
+        if (xcconfigContent) {
+            var regex = /^SWIFT_OBJC_BRIDGING_HEADER *=(.*)$/m,
+                match = xcconfigContent.match(regex);
+
+            if (match) {
+                bridgingHeader = match[1];
+                bridgingHeader = bridgingHeader
+                    .replace("$(PROJECT_DIR)/", "")
+                    .replace("$(PROJECT_NAME)", projectName)
+                    .trim();
+
+                return bridgingHeader;
+            }
+        }
+
+        configurations = nonComments(xcodeProject.pbxXCBuildConfigurationSection());
 
         for (config in configurations) {
             buildSettings = configurations[config].buildSettings;
