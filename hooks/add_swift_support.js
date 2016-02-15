@@ -64,8 +64,6 @@ module.exports = function(context) {
             console.log('IOS project option EMBEDDED_CONTENT_CONTAINS_SWIFT set as:[YES] ...');
             console.log('IOS project swift_objc Bridging-Header set to:[' + bridgingHeaderPath + '] ...');
             console.log('IOS project Runpath Search Paths set to: @executable_path/Frameworks ...');
-            console.log('IOS project Adding libsqlite3...');
-            xcodeProject.addFramework("libsqlite3.dylib");
 
             projectFile.write();
         });

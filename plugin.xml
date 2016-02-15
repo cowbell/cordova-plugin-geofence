@@ -133,5 +133,6 @@
         <source-file src="src/ios/GeofencePlugin.swift"/>
         <source-file src="src/ios/SwiftData.swift"/>
         <source-file src="src/ios/SwiftyJson.swift"/>
+        <framework src="libsqlite3.dylib"/>
     </platform>
 </plugin>
