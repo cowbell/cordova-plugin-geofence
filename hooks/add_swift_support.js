@@ -3,7 +3,7 @@ var child_process = require('child_process'),
     path = require('path');
 
 module.exports = function(context) {
-    var IOS_DEPLOYMENT_TARGET = '7.0',
+    var IOS_DEPLOYMENT_TARGET = '8.0',
         COMMENT_KEY = /_comment$/;
 
     run();
