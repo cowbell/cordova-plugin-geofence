@@ -72,6 +72,15 @@ module.exports = {
         return execPromise(success, error, "GeofencePlugin", "getWatched", []);
     },
     /**
+     * Requesting state of geofences with given ids
+     *
+     * @name requestState
+     * @param {String} Geofence id
+     */
+    requestState: function(ids,success,error) {
+        return execPromise(success, error, "GeofencePlugin", "requestState", ids);
+    },
+    /**
      * Called when app is opened via Notification bar
      *
      * @name onNotificationClicked

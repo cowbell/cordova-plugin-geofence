@@ -107,6 +107,25 @@ func delay(delay:Double, closure:()->()) {
         }
     }
 
+    func requestState(command: CDVInvokedUrlCommand) {
+        dispatch_async(dispatch_get_global_queue(priority, 0)) {
+            for id in command.arguments {
+                let region = self.geoNotificationManager.getMonitoredRegion(id as! String)
+                if (region != nil) {
+                    log("RequestingStateForRegion \(id)")
+                    self.geoNotificationManager.locationManager.requestStateForRegion(region!)
+                }
+                else {
+                    log("RequestingStateForRegion, region not found \(id)")
+                }
+            }
+            dispatch_async(dispatch_get_main_queue()) {
+                let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
+                self.commandDelegate!.sendPluginResult(pluginResult, callbackId: command.callbackId)
+            }
+        }
+    }    
+
     func remove(command: CDVInvokedUrlCommand) {
         dispatch_async(dispatch_get_global_queue(priority, 0)) {
             for id in command.arguments {
