@@ -4,18 +4,24 @@ var child_process = require('child_process'),
 
 module.exports = function(context) {
     var IOS_DEPLOYMENT_TARGET = '8.0',
-        COMMENT_KEY = /_comment$/;
+        COMMENT_KEY = /_comment$/,
+        CORDOVA_VERSION = process.env.CORDOVA_VERSION;
 
     run();
 
     function run() {
         var cordova_util = context.requireCordovaModule('cordova-lib/src/cordova/util'),
-            ConfigParser = context.requireCordovaModule('cordova-common').ConfigParser,
+            ConfigParser = CORDOVA_VERSION >= 6.0
+                ? context.requireCordovaModule('cordova-common').ConfigParser
+                : context.requireCordovaModule('cordova-lib/src/configparser/ConfigParser'),
             projectRoot = cordova_util.isCordova(),
             platform_ios,
             xml = cordova_util.projectConfig(projectRoot),
             cfg = new ConfigParser(xml),
             projectName = cfg.name(),
+            platform_ios = CORDOVA_VERSION < 5.0
+                ? context.requireCordovaModule('cordova-lib/src/plugman/platforms')['ios']
+                : context.requireCordovaModule('cordova-lib/src/plugman/platforms/ios'),
             iosPlatformPath = path.join(projectRoot, 'platforms', 'ios'),
             iosProjectFilesPath = path.join(iosPlatformPath, projectName),
             xcconfigPath = path.join(iosPlatformPath, 'cordova', 'build.xcconfig'),
@@ -24,18 +30,7 @@ module.exports = function(context) {
             xcodeProject,
             bridgingHeaderPath;
 
-        try {
-            // try pre-5.0 cordova structure
-            platform_ios = context.requireCordovaModule('cordova-lib/src/plugman/platforms')['ios'];
-            projectFile = platform_ios.parseProjectFile(iosPlatformPath);
-        } catch (e) {
-            console.log("Looks like we're in Cordova 5.0 and above...");
-            // let's try cordova 5.0 structure
-            platform_ios = context.requireCordovaModule('cordova-lib/src/plugman/platforms/ios');
-            projectFile = platform_ios.parseProjectFile(iosPlatformPath);
-        }
-
-        // hopefully projectFile can't go null here.......
+        projectFile = platform_ios.parseProjectFile(iosPlatformPath);
         xcodeProject = projectFile.xcode;
 
         if (fs.existsSync(xcconfigPath)) {

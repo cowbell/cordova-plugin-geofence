@@ -146,14 +146,14 @@ func log(message: String){
     }
 
     func evaluateJs (script: String) {
-        if webView != nil {
+        if let webView = webView {
             if let uiWebView = webView as? UIWebView {
                 uiWebView.stringByEvaluatingJavaScriptFromString(script)
             } else if let wkWebView = webView as? WKWebView {
                 wkWebView.evaluateJavaScript(script, completionHandler: nil)
             }
         } else {
-            log("webView is null")
+            log("webView is nil")
         }
     }
 }
