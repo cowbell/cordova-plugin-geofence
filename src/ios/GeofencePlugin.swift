@@ -8,6 +8,7 @@
 
 import Foundation
 import AudioToolbox
+import WebKit
 
 let TAG = "GeofencePlugin"
 let iOS8 = floor(NSFoundationVersionNumber) > floor(NSFoundationVersionNumber_iOS_7_1)
@@ -146,10 +147,14 @@ func log(message: String){
     }
 
     func evaluateJs (script: String) {
-        if webView != nil {
-            webView!.stringByEvaluatingJavaScriptFromString(script)
+        if let webView = webView {
+            if let uiWebView = webView as? UIWebView {
+                uiWebView.stringByEvaluatingJavaScriptFromString(script)
+            } else if let wkWebView = webView as? WKWebView {
+                wkWebView.evaluateJavaScript(script, completionHandler: nil)
+            }
         } else {
-            log("webView is null")
+            log("webView is nil")
         }
     }
 }
@@ -264,20 +269,22 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
             log("Warning: Location always permissions not granted, have you initialized geofence plugin?")
         }
 
-        if let notificationSettings = UIApplication.sharedApplication().currentUserNotificationSettings() {
-            if !notificationSettings.types.contains(.Sound) {
-                log("Warning: notification settings - sound permission missing")
-            }
+        if (iOS8) {
+            if let notificationSettings = UIApplication.sharedApplication().currentUserNotificationSettings() {
+                if !notificationSettings.types.contains(.Sound) {
+                    log("Warning: notification settings - sound permission missing")
+                }
 
-            if !notificationSettings.types.contains(.Alert) {
-                log("Warning: notification settings - alert permission missing")
-            }
+                if !notificationSettings.types.contains(.Alert) {
+                    log("Warning: notification settings - alert permission missing")
+                }
 
-            if !notificationSettings.types.contains(.Badge) {
-                log("Warning: notification settings - badge permission missing")
+                if !notificationSettings.types.contains(.Badge) {
+                    log("Warning: notification settings - badge permission missing")
+                }
+            } else {
+                log("Warning: notification permission missing")
             }
-        } else {
-            log("Warning: notification permission missing")
         }
     }
 

@@ -1,6 +1,7 @@
 # Cordova Geofence Plugin
 
 [![Code Climate](https://codeclimate.com/github/cowbell/cordova-plugin-geofence/badges/gpa.svg)](https://codeclimate.com/github/cowbell/cordova-plugin-geofence)
+[![version](https://badge.fury.io/js/cordova-plugin-geofence.png)](https://badge.fury.io/js/cordova-plugin-geofence)
 
 iOS Build [![Build Status](https://travis-ci.org/cowbell/cordova-plugin-geofence.svg?branch=master)](https://travis-ci.org/cowbell/cordova-plugin-geofence)
 
@@ -10,9 +11,13 @@ Plugin to monitor circular geofences using mobile devices. The purpose is to not
 
 *Geofences persist after device reboot. You do not have to open your app first to monitor added geofences*
 
-##Example application
+##Example applications
 
-Check out our [example application](https://github.com/cowbell/ionic-geofence) built with ionic framework.
+Check out our example applications:
+
+* https://github.com/cowbell/ionic-geofence built with [Ionic](http://ionic.io/) framework
+* https://github.com/tsubik/ionic2-geofence built with [Ionic 2](http://ionic.io/2) framework
+* https://github.com/cowbell/ember-geofence built with [Ember.js](http://emberjs.com/), [Cordova](https://cordova.apache.org/), [Material Design](https://www.google.com/design/spec/material-design/introduction.html)
 
 ## Installation
 
@@ -341,4 +346,4 @@ Add `--verbose` at the end of `cordova-paramedic` command.
 
 This software is released under the [Apache 2.0 License](http://opensource.org/licenses/Apache-2.0).
 
-© 2014-2015 Cowbell-labs. All rights reserved
+© 2014-2016 Cowbell-labs. All rights reserved

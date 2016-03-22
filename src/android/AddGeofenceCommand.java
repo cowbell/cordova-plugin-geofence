@@ -49,6 +49,7 @@ public class AddGeofenceCommand extends AbstractGoogleServiceCommand{
     public void ExecuteCustomCode() {
         // TODO Auto-generated method stub
         logger.log(Log.DEBUG, "Adding new geofences");
+        if(geofencesToAdd!=null && geofencesToAdd.size() > 0) {
         LocationServices.GeofencingApi
                 .addGeofences(mGoogleApiClient, geofencesToAdd, pendingIntent)
                 .setResultCallback(new ResultCallback<Status>() {
@@ -72,6 +73,7 @@ public class AddGeofenceCommand extends AbstractGoogleServiceCommand{
                         CommandExecuted();
                     }
                 });
+        }
     }
 
     @Override

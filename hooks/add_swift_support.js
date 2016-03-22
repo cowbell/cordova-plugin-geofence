@@ -3,40 +3,41 @@ var child_process = require('child_process'),
     path = require('path');
 
 module.exports = function(context) {
-    var IOS_DEPLOYMENT_TARGET = '7.0',
-        COMMENT_KEY = /_comment$/;
+    var IOS_DEPLOYMENT_TARGET = '8.0',
+        COMMENT_KEY = /_comment$/,
+        CORDOVA_VERSION = process.env.CORDOVA_VERSION;
 
     run();
 
     function run() {
         var cordova_util = context.requireCordovaModule('cordova-lib/src/cordova/util'),
-            ConfigParser = context.requireCordovaModule('cordova-lib/src/configparser/ConfigParser'),
+            ConfigParser = CORDOVA_VERSION >= 6.0
+                ? context.requireCordovaModule('cordova-common').ConfigParser
+                : context.requireCordovaModule('cordova-lib/src/configparser/ConfigParser'),
             projectRoot = cordova_util.isCordova(),
             platform_ios,
             xml = cordova_util.projectConfig(projectRoot),
             cfg = new ConfigParser(xml),
             projectName = cfg.name(),
+            platform_ios = CORDOVA_VERSION < 5.0
+                ? context.requireCordovaModule('cordova-lib/src/plugman/platforms')['ios']
+                : context.requireCordovaModule('cordova-lib/src/plugman/platforms/ios'),
             iosPlatformPath = path.join(projectRoot, 'platforms', 'ios'),
             iosProjectFilesPath = path.join(iosPlatformPath, projectName),
+            xcconfigPath = path.join(iosPlatformPath, 'cordova', 'build.xcconfig'),
+            xcconfigContent,
             projectFile,
             xcodeProject,
             bridgingHeaderPath;
 
-        try {
-            // try pre-5.0 cordova structure
-            platform_ios = context.requireCordovaModule('cordova-lib/src/plugman/platforms')['ios'];
-            projectFile = platform_ios.parseProjectFile(iosPlatformPath);
-        } catch (e) {
-            console.log("Looks like we're in Cordova 5.0 and above...");
-            // let's try cordova 5.0 structure
-            platform_ios = context.requireCordovaModule('cordova-lib/src/plugman/platforms/ios');
-            projectFile = platform_ios.parseProjectFile(iosPlatformPath);
-        }
-
-        // hopefully projectFile can't go null here.......
+        projectFile = platform_ios.parseProjectFile(iosPlatformPath);
         xcodeProject = projectFile.xcode;
 
-        bridgingHeaderPath = getBridgingHeader(xcodeProject);
+        if (fs.existsSync(xcconfigPath)) {
+            xcconfigContent = fs.readFileSync(xcconfigPath, 'utf-8');
+        }
+
+        bridgingHeaderPath = getBridgingHeader(projectName, xcconfigContent, xcodeProject);
         if(bridgingHeaderPath) {
             bridgingHeaderPath = path.join(iosPlatformPath, bridgingHeaderPath);
         } else {
@@ -58,16 +59,33 @@ module.exports = function(context) {
             console.log('IOS project option EMBEDDED_CONTENT_CONTAINS_SWIFT set as:[YES] ...');
             console.log('IOS project swift_objc Bridging-Header set to:[' + bridgingHeaderPath + '] ...');
             console.log('IOS project Runpath Search Paths set to: @executable_path/Frameworks ...');
-            console.log('IOS project Adding libsqlite3...');
-            xcodeProject.addFramework("libsqlite3.dylib");
 
             projectFile.write();
         });
     }
 
-    function getBridgingHeader(xcodeProject) {
-        var configurations = nonComments(xcodeProject.pbxXCBuildConfigurationSection()),
-            config, buildSettings, bridgingHeader;
+    function getBridgingHeader(projectName, xcconfigContent, xcodeProject) {
+        var configurations,
+            config,
+            buildSettings,
+            bridgingHeader;
+
+        if (xcconfigContent) {
+            var regex = /^SWIFT_OBJC_BRIDGING_HEADER *=(.*)$/m,
+                match = xcconfigContent.match(regex);
+
+            if (match) {
+                bridgingHeader = match[1];
+                bridgingHeader = bridgingHeader
+                    .replace("$(PROJECT_DIR)/", "")
+                    .replace("$(PROJECT_NAME)", projectName)
+                    .trim();
+
+                return bridgingHeader;
+            }
+        }
+
+        configurations = nonComments(xcodeProject.pbxXCBuildConfigurationSection());
 
         for (config in configurations) {
             buildSettings = configurations[config].buildSettings;
