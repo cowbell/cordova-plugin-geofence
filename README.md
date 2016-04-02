@@ -205,6 +205,95 @@ window.geofence.getWatched().then(function (geofencesJson) {
 });
 ```
 
+## Frequency Limiting
+
+```javascript
+notification: {
+    frequency: Number(600), //Seconds required between retriggering a fence.
+}
+```
+
+## Using On/Off Schedule Data
+
+ScheduleData is an array consisting of a start and end time for each day. Array begins on Sunday. All times are local to the device.
+
+```javascript
+notification: {
+    scheduleData: [
+        {
+            "on": {
+                "hour": "0",
+                "minute": "0"
+            },
+            "off": {
+                "hour": "23",
+                "minute": "59"
+            }
+        },
+        {
+            "on": {
+                "hour": "0",
+                "minute": "0"
+            },
+            "off": {
+                "hour": "23",
+                "minute": "59"
+            }
+        },
+        {
+            "on": {
+                "hour": "0",
+                "minute": "0"
+            },
+            "off": {
+                "hour": "23",
+                "minute": "59"
+            }
+        },
+        {
+            "on": {
+                "hour": "0",
+                "minute": "0"
+            },
+            "off": {
+                "hour": "23",
+                "minute": "59"
+            }
+        },
+        {
+            "on": {
+                "hour": "0",
+                "minute": "0"
+            },
+            "off": {
+                "hour": "23",
+                "minute": "59"
+            }
+        },
+        {
+            "on": {
+                "hour": "0",
+                "minute": "0"
+            },
+            "off": {
+                "hour": "23",
+                "minute": "59"
+            }
+        },
+        {
+            "on": {
+                "hour": "0",
+                "minute": "0"
+            },
+            "off": {
+                "hour": "23",
+                "minute": "59"
+            }
+        }
+    ]
+}
+```
+
 ## Listening for geofence transitions
 
 ```javascript
