@@ -12,6 +12,9 @@
       "windows"
     ]
   },
+  "scripts": {
+    "test": "cordova-paramedic --platform android --plugin ."
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cowbell/cordova-plugin-geofence.git"
