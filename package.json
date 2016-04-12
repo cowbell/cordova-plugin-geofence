@@ -44,6 +44,6 @@
   ],
   "devDependencies": {
     "cordova": "^5.0.0",
-    "cordova-paramedic": "^0.4.0"
+    "cordova-paramedic": "https://github.com/apache/cordova-paramedic"
   }
 }
