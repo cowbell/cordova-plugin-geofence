@@ -39,11 +39,7 @@ public class GeofencePlugin extends CordovaPlugin {
             this.callbackContext = callbackContext;
         }
     }
-
-    private class InitializeOptions {
-        @Expose public Boolean storagePermissions;
-    }
-
+    
     //FIXME: what about many executedActions at once
     private Action executedAction;
 
@@ -92,7 +88,7 @@ public class GeofencePlugin extends CordovaPlugin {
                     .getWatched();
             callbackContext.success(Gson.get().toJson(geoNotifications));
         } else if (action.equals("initialize")) {
-            initialize(args, callbackContext);
+            initialize(callbackContext);
         } else if (action.equals("deviceReady")) {
             deviceReady();
         } else {
@@ -136,24 +132,14 @@ public class GeofencePlugin extends CordovaPlugin {
         }
     }
 
-    private void initialize(JSONArray args, CallbackContext callbackContext) throws JSONException {
-        ArrayList<String> permissions = new ArrayList<String>();
-        permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
-        permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+    private void initialize(CallbackContext callbackContext) throws JSONException {
+        String[] permissions = {
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION
+        };
 
-        if (args.length() > 0) {
-            String json = args.getJSONObject(0).toString();
-            InitializeOptions options = Gson.get().fromJson(json, InitializeOptions.class);
-
-            if (options.storagePermissions) {
-                permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            }
-        }
-
-        String[] permissionsArray = permissions.toArray(new String[permissions.size()]);
-
-        if (!hasPermissions(permissionsArray)) {
-            PermissionHelper.requestPermissions(this, 0, permissionsArray);
+        if (!hasPermissions(permissions)) {
+            PermissionHelper.requestPermissions(this, 0, permissions);
         } else {
             callbackContext.success();
         }

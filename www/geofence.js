@@ -6,24 +6,13 @@ module.exports = {
      * Initializing geofence plugin
      *
      * @name initialize
-     * @param  {Object} options
      * @param  {Function} success callback
      * @param  {Function} error callback
      *
      * @return {Promise}
      */
-    initialize: function (options, success, error) {
-        if (typeof options === 'function') {
-            error = success;
-            success = options;
-            options = undefined;
-        }
-
-        options = options || {
-            storagePermissions: false
-        };
-
-        return execPromise(success, error, "GeofencePlugin", "initialize", [options]);
+    initialize: function (success, error) {
+        return execPromise(success, error, "GeofencePlugin", "initialize", []);
     },
     /**
      * Adding new geofence to monitor.
