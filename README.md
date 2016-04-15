@@ -87,6 +87,7 @@ document.addEventListener('deviceready', function () {
 ```
 
 Initialization process is responsible for requesting neccessary permissions.
+If required permissions are not granted then initialization fails with error message.
 
 ## Adding new geofence to monitor
 
