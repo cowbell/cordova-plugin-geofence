@@ -272,6 +272,8 @@ public class TransitionReceiver extends BroadcastReceiver {
 
 Android, iOS only
 
+onNotificationClicked is fired only when notification is configured passing ```data: Object``` Otherwise, it does not fire!
+
 ```javascript
 window.geofence.onNotificationClicked = function (notificationData) {
     console.log('App opened from Geo Notification!', notificationData);
