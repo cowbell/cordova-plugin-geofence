@@ -8,8 +8,8 @@ node_js:
   - "4.1"
 install:
   - npm install -g ios-sim
+  - npm install -g ios-deploy
   - npm install
-  - npm link
 before_script:
   - ios-sim start --devicetypeid=iPhone-6
 script:

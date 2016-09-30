@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-geofence",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Cordova geofence plugin",
   "cordova": {
     "id": "cordova-plugin-geofence",
@@ -11,6 +11,9 @@
       "windows8",
       "windows"
     ]
+  },
+  "scripts": {
+    "test": "cordova-paramedic --platform android --plugin ."
   },
   "repository": {
     "type": "git",
@@ -39,8 +42,9 @@
       "version": ">=5.0.0"
     }
   ],
+  "typings": "./typings/cordova-plugin-geofence.d.ts",
   "devDependencies": {
-    "cordova": "^5.0.0",
-    "cordova-paramedic": "^0.4.0"
+    "cordova": "^6.1.1",
+    "cordova-paramedic": "https://github.com/apache/cordova-paramedic"
   }
 }

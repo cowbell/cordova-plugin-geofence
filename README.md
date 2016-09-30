@@ -54,13 +54,13 @@ Cordova initialize plugin to `window.geofence` object.
 
 ## Methods
 
+All methods returning promises, but you can also use standard callback functions.
+
 - `window.geofence.initialize(onSuccess, onError)`
 - `window.geofence.addOrUpdate(geofences, onSuccess, onError)`
 - `window.geofence.remove(geofenceId, onSuccess, onError)`
 - `window.geofence.removeAll(onSuccess, onError)`
 - `window.geofence.getWatched(onSuccess, onError)`
-
-All methods returning promises, but you can also use standard callback functions.
 
 For listening of geofence transistion you can override onTransitionReceived method
 - `window.geofence.onTransitionReceived(geofences)`
@@ -78,9 +78,16 @@ The plugin is not available until `deviceready` event is fired.
 ```javascript
 document.addEventListener('deviceready', function () {
     // window.geofence is now available
-    window.geofence.initialize();
+    window.geofence.initialize().then(function () {
+        console.log("Successful initialization");
+    }, function (error) {
+        console.log("Error", error);
+    });
 }, false);
 ```
+
+Initialization process is responsible for requesting neccessary permissions.
+If required permissions are not granted then initialization fails with error message.
 
 ## Adding new geofence to monitor
 

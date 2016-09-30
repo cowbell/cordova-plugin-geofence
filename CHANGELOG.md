@@ -1,5 +1,13 @@
 # ChangeLog
 
+## Version 0.6.0 - 15.04.2016
+
+- Support for Android 6 new permission acquiring model
+- Support for Cordova 6.0
+- Fix for notification permissions on iOS 8
+- Removed unnecessary WRITE_STORAGE permissions on Android
+- initialize method fails when required permissions are not granted
+
 ## Version 0.5.0 - 09.11.2015
 
 - Support for new Google API
