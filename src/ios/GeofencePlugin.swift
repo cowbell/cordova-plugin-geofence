@@ -32,14 +32,14 @@ func log(messages: [String]) {
     override func pluginInitialize () {
         NSNotificationCenter.defaultCenter().addObserver(
             self,
-            selector: "didReceiveLocalNotification:",
+            selector: #selector(GeofencePlugin.didReceiveLocalNotification(_:)),
             name: "CDVLocalNotification",
             object: nil
         )
 
         NSNotificationCenter.defaultCenter().addObserver(
             self,
-            selector: "didReceiveTransition:",
+            selector: #selector(GeofencePlugin.didReceiveTransition(_:)),
             name: "handleTransition",
             object: nil
         )
