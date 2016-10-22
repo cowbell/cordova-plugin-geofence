@@ -372,11 +372,13 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     }
 
     func locationManager(manager: CLLocationManager, didStartMonitoringForRegion region: CLRegion) {
-        let lat = (region as! CLCircularRegion).center.latitude
-        let lng = (region as! CLCircularRegion).center.longitude
-        let radius = (region as! CLCircularRegion).radius
+        if region is CLCircularRegion {
+            let lat = (region as! CLCircularRegion).center.latitude
+            let lng = (region as! CLCircularRegion).center.longitude
+            let radius = (region as! CLCircularRegion).radius
 
-        log("Starting monitoring for region \(region) lat \(lat) lng \(lng) of radius \(radius)")
+            log("Starting monitoring for region \(region) lat \(lat) lng \(lng) of radius \(radius)")
+        }
     }
 
     func locationManager(manager: CLLocationManager, didDetermineState state: CLRegionState, forRegion region: CLRegion) {
