@@ -48,6 +48,37 @@ cordova plugin rm cordova-plugin-geofence
     - using Universal App (cordova windows platform)
     - using Silverlight App (cordova wp8 platform retargeted to WP 8.1)
 
+# Platform specifics
+
+##Android
+
+This plugin uses Google Play Services so you need to have it installed on your device.
+
+##iOS
+
+Plugin is written in Swift. All xcode project options to enable swift support are set up automatically after plugin is installed thanks to
+[cordova-plugin-add-swift-support](https://github.com/akofman/cordova-plugin-add-swift-support).
+
+:warning: Swift 3 is not supported at the moment, the following preference has to be added in your project :
+
+`<preference name="UseLegacySwiftLanguageVersion" value="true" />`
+
+##Windows phone 8.1
+
+Plugin can be used with both windows phone 8.1 type projects Univeral App, Silverlight App.
+
+In order to use toast notifications you have to enable this feature in appxmanifest file either using UI in Visual Studio or edit file setting attribute **ToastCapable="true"** in **m3:VisualElements** node under Package/Applications/Application.
+
+If you are retargeting WP 8.0 to WP 8.1 you need to register background task to perform geofence notifications. Register it via UI in Visual Studio or add following code under Package/Applications/Application/Extensions
+
+```xml
+<Extension Category="windows.backgroundTasks" EntryPoint="GeofenceComponent.GeofenceTrigger">
+    <BackgroundTasks>
+        <m2:Task Type="location" />
+    </BackgroundTasks>
+</Extension>
+```
+
 # Using the plugin
 
 Cordova initialize plugin to `window.geofence` object.
@@ -300,32 +331,6 @@ window.geofence.addOrUpdate({
 }, function (reason) {
     console.log('Adding geofence failed', reason);
 })
-```
-
-# Platform specifics
-
-##Android
-
-This plugin uses Google Play Services so you need to have it installed on your device.
-
-##iOS
-
-Plugin is written in Swift. All xcode project options to enable swift support are set up automatically after plugin is installed.
-
-##Windows phone 8.1
-
-Plugin can be used with both windows phone 8.1 type projects Univeral App, Silverlight App.
-
-In order to use toast notifications you have to enable this feature in appxmanifest file either using UI in Visual Studio or edit file setting attribute **ToastCapable="true"** in **m3:VisualElements** node under Package/Applications/Application.
-
-If you are retargeting WP 8.0 to WP 8.1 you need to register background task to perform geofence notifications. Register it via UI in Visual Studio or add following code under Package/Applications/Application/Extensions
-
-```xml
-<Extension Category="windows.backgroundTasks" EntryPoint="GeofenceComponent.GeofenceTrigger">
-    <BackgroundTasks>
-        <m2:Task Type="location" />
-    </BackgroundTasks>
-</Extension>
 ```
 
 # Development

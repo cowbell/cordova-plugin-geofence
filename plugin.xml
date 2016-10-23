@@ -19,6 +19,7 @@
         <clobbers target="geofence" />
     </js-module>
 
+    <dependency id="cordova-plugin-add-swift-support" version="1.6.0" />
     <dependency id="cordova-plugin-compat" version="^1.0.0" />
     <dependency id="es6-promise-plugin" />
 
@@ -128,7 +129,7 @@
             <param name="ios-package" value="HWPGeofencePlugin"/>
           </feature>
         </config-file>
-        <header-file src="src/ios/Geo-Bridging-Header.h" />
+        <header-file src="src/ios/Geofence-Plugin-Bridging-Header.h" />
         <source-file src="src/ios/GeofencePlugin.swift"/>
         <source-file src="src/ios/SwiftData.swift"/>
         <source-file src="src/ios/SwiftyJson.swift"/>
