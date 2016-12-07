@@ -112,12 +112,17 @@
 
     <!-- ios -->
     <platform name="ios">
+        <preference name="GEOFENCE_ALWAYS_USAGE_DESCRIPTION" default="${EXECUTABLE_NAME} Would Like to Use Your Current Location Even In Background." />
         <config-file target="*-Info.plist" parent="NSLocationAlwaysUsageDescription">
-            <string>${EXECUTABLE_NAME} Would Like to Use Your Current Location Even In Background.</string>
+            <string>$GEOFENCE_ALWAYS_USAGE_DESCRIPTION</string>
         </config-file>
+
+        <preference name="GEOFENCE_IN_USE_USAGE_DESCRIPTION" default="${EXECUTABLE_NAME} Would Like to Use Your Current Location When In Use." />
         <config-file target="*-Info.plist" parent="NSLocationWhenInUseUsageDescription">
-            <string>${EXECUTABLE_NAME} Would Like to Use Your Current Location When In Use.</string>
+            <string>$GEOFENCE_IN_USE_USAGE_DESCRIPTION</string>
         </config-file>
+
+
         <config-file target="*-Info.plist" parent="UIBackgroundModes">
             <array>
                 <string>remote-notification</string>
