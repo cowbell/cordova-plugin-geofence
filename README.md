@@ -129,6 +129,8 @@ window.geofence.addOrUpdate({
     longitude:      Number, //Geo longitude of geofence
     radius:         Number, //Radius of geofence in meters
     transitionType: Number, //Type of transition 1 - Enter, 2 - Exit, 3 - Both
+    startTime:      Date,   //Optional JavaScript Date object for when the geofence should become enabled (iOS and Android only)
+    endTime:        Date,   //Optional JavaScript Date object for when the geofence should become disabled (iOS and Android only)
     notification: {         //Notification object
         id:             Number, //optional should be integer, id of notification
         title:          String, //Title of notification
@@ -311,7 +313,7 @@ window.geofence.onNotificationClicked = function (notificationData) {
 
 #Example usage
 
-Adding geofence to monitor entering Gliwice city center area of radius 3km
+Adding geofence to monitor entering Gliwice city center area of radius 3km with a fixed start and end time.
 
 ```javascript
 window.geofence.addOrUpdate({
@@ -320,6 +322,8 @@ window.geofence.addOrUpdate({
     longitude:      18.6593152,
     radius:         3000,
     transitionType: TransitionType.ENTER,
+    startTime:      new Date('1/23/2017 11:00 AM PST'),
+    endTime:        new Date('1/27/2017 3:00 PM PST'),
     notification: {
         id:             1,
         title:          "Welcome in Gliwice",
