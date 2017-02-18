@@ -35,7 +35,6 @@ public class LocalStorage {
             results.add(cursor.getString(1));
         }
         cursor.close();
-        database.close();
         return results;
     }
 
@@ -58,7 +57,6 @@ public class LocalStorage {
                 value = cursor.getString(1);
             }
             cursor.close();
-            database.close();
         }
         return value;
     }
@@ -85,7 +83,6 @@ public class LocalStorage {
                 database.insert(LocalStorageDBHelper.LOCALSTORAGE_TABLE_NAME,
                         null, values);
             }
-            database.close();
         }
     }
 
@@ -100,7 +97,6 @@ public class LocalStorage {
             database.delete(LocalStorageDBHelper.LOCALSTORAGE_TABLE_NAME,
                     LocalStorageDBHelper.LOCALSTORAGE_ID + "='" + key + "'",
                     null);
-            database.close();
         }
     }
 
@@ -111,6 +107,5 @@ public class LocalStorage {
         database = localStorageDBHelper.getWritableDatabase();
         database.delete(LocalStorageDBHelper.LOCALSTORAGE_TABLE_NAME, null,
                 null);
-        database.close();
     }
 }
