@@ -42,10 +42,11 @@ public class ReceiveTransitionsIntentService extends IntentService {
         logger.log(Log.DEBUG, "ReceiveTransitionsIntentService - onHandleIntent");
         Intent broadcastIntent = new Intent(GeofenceTransitionIntent);
         notifier = new GeoNotificationNotifier(
-                (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE),
-                this
+            (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE),
+            this
         );
 
+        // TODO: refactor this, too long
         // First check for errors
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {

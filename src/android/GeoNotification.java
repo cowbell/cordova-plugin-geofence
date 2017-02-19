@@ -27,8 +27,7 @@ public class GeoNotification {
     }
 
     public static GeoNotification fromJson(String json) {
-        if (json == null)
-            return null;
+        if (json == null) return null;
         return Gson.get().fromJson(json, GeoNotification.class);
     }
 }

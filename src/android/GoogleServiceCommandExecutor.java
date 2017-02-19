@@ -14,14 +14,11 @@ public class GoogleServiceCommandExecutor implements
 
     public void QueueToExecute(AbstractGoogleServiceCommand command) {
         commandsToExecute.add(command);
-        if (!isExecuting) {
-            ExecuteNext();
-        }
+        if (!isExecuting) ExecuteNext();
     }
 
     private void ExecuteNext() {
-        if (commandsToExecute.isEmpty())
-            return;
+        if (commandsToExecute.isEmpty()) return;
         isExecuting = true;
         AbstractGoogleServiceCommand command = commandsToExecute.poll();
         command.addListener(this);

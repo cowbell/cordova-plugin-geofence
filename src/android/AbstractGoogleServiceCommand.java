@@ -26,6 +26,7 @@ public abstract class AbstractGoogleServiceCommand implements
     protected List<IGoogleServiceCommandListener> listeners;
     protected Context context;
     protected GoogleApiClient mGoogleApiClient;
+
     public AbstractGoogleServiceCommand(Context context) {
         this.context = context;
         mGoogleApiClient = new GoogleApiClient.Builder(context)
@@ -72,17 +73,9 @@ public abstract class AbstractGoogleServiceCommand implements
         ExecuteCustomCode();
     }
 
-    //@Override
-    public void onDisconnected() {
-        // Turn off the request flag
-        connectionInProgress = false;
-        // Destroy the current location client
-        locationClient = null;
-        // Display the connection status
-        // Toast.makeText(this, DateFormat.getDateTimeInstance().format(new
-        // Date()) + ": Disconnected. Please re-connect.",
-        // Toast.LENGTH_SHORT).show();
-        logger.log(Log.DEBUG, "Google play services Disconnected");
+    @Override
+    public void onConnectionSuspended(int arg) {
+
     }
 
     public void addListener(IGoogleServiceCommandListener listener) {
@@ -102,8 +95,5 @@ public abstract class AbstractGoogleServiceCommand implements
         }
     }
 
-    abstract void onAddGeofencesResult(int statusCode, String[] arg1);
-
     protected abstract void ExecuteCustomCode();
-
 }
