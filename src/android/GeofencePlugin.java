@@ -128,6 +128,7 @@ public class GeofencePlugin extends CordovaPlugin {
         if (data == null) {
             Log.d(TAG, "No notifications clicked.");
         } else {
+			intent.removeExtra("geofence.notification.data");
             webView.sendJavascript(js);
         }
     }

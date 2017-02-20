@@ -8,6 +8,7 @@ import android.util.Log;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationRequest;
 
@@ -58,14 +59,15 @@ public class GeoNotificationManager {
 
     private boolean areGoogleServicesAvailable() {
         // Check that Google Play services is available
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
+		int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this.context);
+	
 
-        // If Google Play services is available
-        if (ConnectionResult.SUCCESS == resultCode) {
-            return true;
-        } else {
-            return false;
-        }
+		// If Google Play services is available
+		if (ConnectionResult.SUCCESS == resultCode) {
+			return true;
+		} else {
+			return false;
+		}
     }
 
     public void addGeoNotifications(List<GeoNotification> geoNotifications,
