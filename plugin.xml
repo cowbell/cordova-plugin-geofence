@@ -38,7 +38,6 @@
         <source-file src="src/android/GoogleServiceCommandExecutor.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/IGoogleServiceCommandListener.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/Gson.java" target-dir="src/com/cowbell/cordova/geofence" />
-        <source-file src="src/android/JSONHelper.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/LocalStorage.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/LocalStorageDBHelper.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/Logger.java" target-dir="src/com/cowbell/cordova/geofence" />
@@ -46,7 +45,7 @@
         <source-file src="src/android/ReceiveTransitionsIntentService.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/RemoveGeofenceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
 
-        <framework src="com.google.android.gms:play-services-location:9.8.0" />
+        <framework src="com.google.android.gms:play-services-location:+" />
         <lib-file src="src/android/libs/gson-2.3.jar" />
 
         <config-file target="config.xml" parent="/*">
