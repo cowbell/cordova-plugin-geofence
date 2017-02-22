@@ -15,7 +15,7 @@ dependencies:
     - echo y | android update sdk --no-ui --all --filter "extra-google-m2repository"
     - if [ ! -d "$ANDROID_HOME/build-tools/24.0.3" ]; then echo y | android update sdk --no-ui --all --filter "build-tools-24.0.3"; fi
     - if [ ! -d "$ANDROID_HOME/add-ons/addon-google_apis-google-22" ]; then echo y | android update sdk --no-ui --all --filter "addon-google_apis-google-22"; fi
-    - if [ ! -d "$ANDROID_HOME/system-images/android-22/google_apis/armeabi-v7a" ]; then echo y | android update sdk --no-ui --all --filter "sys-img-armeabi-v7a-google_apis-22"; fi
+    - echo y | android update sdk --no-ui --all --filter "sys-img-armeabi-v7a-google_apis-22"
     - echo 'no' | android create avd --force -n test -t "android-22" --abi armeabi-v7a --tag google_apis
     - emulator -avd test -no-audio -no-window:
         background: true
@@ -26,7 +26,3 @@ dependencies:
 test:
   override:
     - npm test
-  pre:
-    - sed -i 's/play-services-location:+/play-services-location:9.8.0/g' plugin.xml
-  override:
-    - cordova-paramedic --platform android@6.0 --plugin . --verbose
