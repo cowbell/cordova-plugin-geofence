@@ -17,6 +17,15 @@ public class Logger {
 
     public void log(int priority, String message) {
         Log.println(priority, TAG, message);
+        showOnToastIfEnabled(message);
+    }
+
+    public void log(String message, Throwable exception) {
+        Log.e(TAG, message, exception);
+        showOnToastIfEnabled(message);
+    }
+
+    public void showOnToastIfEnabled(String message) {
         if (isToastEnabled) {
             Toast.makeText(context, message, 2000).show();
         }

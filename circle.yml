@@ -1,18 +1,28 @@
 machine:
+  java:
+    version: 'oraclejdk8'
   environment:
     ANDROID_NDK_HOME: $ANDROID_NDK
     NODE_ENV: test
     PATH: $PATH:$HOME/$CIRCLE_PROJECT_REPONAME/node_modules/.bin
+  node:
+    version: 6
 dependencies:
-  override:
-    - npm install
-test:
   pre:
-    - echo y | android update sdk --no-ui --all --filter "addon-google_apis-google-19, sys-img-armeabi-v7a-addon-google_apis-google-19"
-    - android create avd --force -n test -t "Google Inc.:Google APIs:19" --abi armeabi-v7a
+    - if [ ! -d "$ANDROID_HOME/platforms/android-24" ]; then echo y | android update sdk --no-ui --all --filter "android-24"; fi
+    - if [ ! -d "$ANDROID_HOME/platforms/android-22" ]; then echo y | android update sdk --no-ui --all --filter "android-22"; fi
+    - echo y | android update sdk --no-ui --all --filter "extra-android-m2repository"
+    - echo y | android update sdk --no-ui --all --filter "extra-google-m2repository"
+    - if [ ! -d "$ANDROID_HOME/build-tools/24.0.3" ]; then echo y | android update sdk --no-ui --all --filter "build-tools-24.0.3"; fi
+    - if [ ! -d "$ANDROID_HOME/add-ons/addon-google_apis-google-22" ]; then echo y | android update sdk --no-ui --all --filter "addon-google_apis-google-22"; fi
+    - echo y | android update sdk --no-ui --all --filter "sys-img-armeabi-v7a-google_apis-22"
+    - echo 'no' | android create avd --force -n test -t "android-22" --abi armeabi-v7a --tag google_apis
     - emulator -avd test -no-audio -no-window:
         background: true
         parallel: true
     - circle-android wait-for-boot
   override:
-    - cordova-paramedic --platform android --plugin . --verbose
+    - npm install
+test:
+  override:
+    - npm test
