@@ -16,10 +16,11 @@ public class GeoNotification {
     }
 
     public Geofence toGeofence() {
-        return new Geofence.Builder().setRequestId(id)
-        .setTransitionTypes(transitionType)
-        .setCircularRegion(latitude, longitude, radius)
-        .setExpirationDuration(Long.MAX_VALUE).build();
+        return new Geofence.Builder()
+            .setRequestId(id)
+            .setTransitionTypes(transitionType)
+            .setCircularRegion(latitude, longitude, radius)
+            .setExpirationDuration(Long.MAX_VALUE).build();
     }
 
     public String toJson() {

@@ -42,8 +42,9 @@ public class GeoNotificationManager {
             geoFences.add(geo.toGeofence());
         }
         if (!geoFences.isEmpty()) {
-            googleServiceCommandExecutor.QueueToExecute(new AddGeofenceCommand(
-                context, pendingIntent, geoFences));
+            googleServiceCommandExecutor.QueueToExecute(
+                new AddGeofenceCommand(context, pendingIntent, geoFences)
+            );
         }
     }
 
@@ -70,8 +71,11 @@ public class GeoNotificationManager {
             geoNotificationStore.setGeoNotification(geo);
             newGeofences.add(geo.toGeofence());
         }
-        AddGeofenceCommand geoFenceCmd = new AddGeofenceCommand(context,
-                pendingIntent, newGeofences);
+        AddGeofenceCommand geoFenceCmd = new AddGeofenceCommand(
+            context,
+            pendingIntent,
+            newGeofences
+        );
         if (callback != null) {
             geoFenceCmd.addListener(new IGoogleServiceCommandListener() {
                 @Override
@@ -113,11 +117,9 @@ public class GeoNotificationManager {
      * geofence transition occurs.
      */
     private PendingIntent getTransitionPendingIntent() {
-        Intent intent = new Intent(context,
-                ReceiveTransitionsIntentService.class);
+        Intent intent = new Intent(context, ReceiveTransitionsIntentService.class);
         logger.log(Log.DEBUG, "Geofence Intent created!");
-        return PendingIntent.getService(context, 0, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
 }

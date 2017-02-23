@@ -23,7 +23,6 @@ public class GeofencePlugin extends CordovaPlugin {
     public static final String TAG = "GeofencePlugin";
     private GeoNotificationManager geoNotificationManager;
     private Context context;
-    protected static Boolean isInBackground = true;
     public static CordovaWebView webView = null;
 
     private class Action {

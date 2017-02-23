@@ -3,8 +3,7 @@ package com.cowbell.cordova.geofence;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class GoogleServiceCommandExecutor implements
-        IGoogleServiceCommandListener {
+public class GoogleServiceCommandExecutor implements IGoogleServiceCommandListener {
     private Queue<AbstractGoogleServiceCommand> commandsToExecute;
     private boolean isExecuting = false;
 

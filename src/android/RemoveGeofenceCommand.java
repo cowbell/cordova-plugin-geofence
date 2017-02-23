@@ -10,7 +10,7 @@ import com.google.android.gms.location.LocationServices;
 
 import java.util.List;
 
-public class RemoveGeofenceCommand extends AbstractGoogleServiceCommand{
+public class RemoveGeofenceCommand extends AbstractGoogleServiceCommand {
     private PendingIntent pendingIntent;
     private List<String> geofencesIds;
 
@@ -32,31 +32,31 @@ public class RemoveGeofenceCommand extends AbstractGoogleServiceCommand{
             LocationServices.GeofencingApi
                 .removeGeofences(mGoogleApiClient, geofencesIds)
                 .setResultCallback(new ResultCallback<Status>() {
-                @Override
-                public void onResult(Status status) {
-                    if (status.isSuccess()) {
-                        logger.log(Log.DEBUG, "Geofences successfully removed");
-                    } else {
-                        logger.log(Log.DEBUG, "Removing geofences failed");
+                    @Override
+                    public void onResult(Status status) {
+                        if (status.isSuccess()) {
+                            logger.log(Log.DEBUG, "Geofences successfully removed");
+                        } else {
+                            logger.log(Log.DEBUG, "Removing geofences failed");
+                        }
+                        CommandExecuted();
                     }
-                    CommandExecuted();
-                }
-            });
+                });
         } else if (geofencesIds != null && geofencesIds.size() > 0) {
             logger.log(Log.DEBUG, "Tried to remove Geofences in 2nd if");
             LocationServices.GeofencingApi
                 .removeGeofences(mGoogleApiClient, geofencesIds)
                 .setResultCallback(new ResultCallback<Status>() {
-                @Override
-                public void onResult(Status status) {
-                    if (status.isSuccess()) {
-                        logger.log(Log.DEBUG, "Geofences successfully removed");
-                    } else {
-                        logger.log(Log.DEBUG, "Removing geofences failed");
+                    @Override
+                    public void onResult(Status status) {
+                        if (status.isSuccess()) {
+                            logger.log(Log.DEBUG, "Geofences successfully removed");
+                        } else {
+                            logger.log(Log.DEBUG, "Removing geofences failed");
+                        }
+                        CommandExecuted();
                     }
-                    CommandExecuted();
-                }
-            });
+                });
         } else {
             logger.log(Log.DEBUG, "Tried to remove Geofences when there were none");
             CommandExecuted();

@@ -11,7 +11,7 @@ import com.google.android.gms.location.LocationServices;
 
 import java.util.List;
 
-public class AddGeofenceCommand extends AbstractGoogleServiceCommand{
+public class AddGeofenceCommand extends AbstractGoogleServiceCommand {
     private List<Geofence> geofencesToAdd;
     private PendingIntent pendingIntent;
 
