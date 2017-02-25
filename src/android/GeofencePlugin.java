@@ -21,6 +21,10 @@ import java.util.List;
 
 public class GeofencePlugin extends CordovaPlugin {
     public static final String TAG = "GeofencePlugin";
+
+    public static final int ERROR_UNKNOWN = 0;
+    public static final int ERROR_PERMISSION_DENIED = 1;
+
     private GeoNotificationManager geoNotificationManager;
     private Context context;
     public static CordovaWebView webView = null;

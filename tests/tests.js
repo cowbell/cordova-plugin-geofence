@@ -1,15 +1,50 @@
-exports.defineAutoTests = function () {
-    var fail = function (done, reason) {
-            if (reason) {
-                console.log(reason);
+if (typeof Object.assign != 'function') {
+    Object.assign = function(target, varArgs) { // .length of function is 2
+        'use strict';
+        if (target == null) { // TypeError if undefined or null
+            throw new TypeError('Cannot convert undefined or null to object');
+        }
+
+        var to = Object(target);
+
+        for (var index = 1; index < arguments.length; index++) {
+            var nextSource = arguments[index];
+
+            if (nextSource != null) { // Skip over if undefined or null
+                for (var nextKey in nextSource) {
+                    // Avoid bugs when hasOwnProperty is shadowed
+                    if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+                        to[nextKey] = nextSource[nextKey];
+                    }
+                }
             }
-            expect(true).toBe(false);
-            done();
-        },
-        succeed = function (done) {
-            expect(true).toBe(true);
-            done();
-        };
+        }
+        return to;
+    };
+}
+
+exports.defineAutoTests = function () {
+    var ANDROID_MAX_ALLOWED_GEOFENCES = 100;
+    var TESTS_TIMEOUT = 10000; // 10s
+
+    var majorDeviceVersion = null;
+    var versionRegex = /(\d)\..+/.exec(device.version);
+    if (versionRegex !== null) {
+        majorDeviceVersion = Number(versionRegex[1]);
+    }
+    // Starting from Android 6.0 there are confirmation dialog which prevents us from running auto tests in silent mode (user interaction needed)
+    // Also, Android emulator doesn't provide geo fix without manual interactions or mocks
+    var skipAndroid = cordova.platformId == "android" && device.isVirtual &&  majorDeviceVersion >= 6;
+
+    var fail = function (done, reason) {
+        if (reason) {
+            console.log(reason);
+        }
+        expect(true).toBe(false);
+        done();
+    };
+
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = TESTS_TIMEOUT;
 
     describe("Geofence plugin object", function () {
         it("should be defined in window object", function () {
@@ -44,6 +79,10 @@ exports.defineAutoTests = function () {
 
     describe("removeAll function", function () {
         it("should remove all stored geofences", function (done) {
+            if (skipAndroid) {
+                pending();
+            }
+
             var geofence = {
                 id: "1",
                 latitude: 50,
@@ -74,7 +113,7 @@ exports.defineAutoTests = function () {
                 longitude: 50,
                 radius: 1000,
                 transitionType: 1
-            },
+            };
             geofence2 = {
                 id: "2",
                 latitude: 55,
@@ -85,10 +124,14 @@ exports.defineAutoTests = function () {
         });
 
         afterEach(function () {
-            window.geofence.removeAll();
+            return window.geofence.removeAll();
         });
 
         it("should add single geofence", function (done) {
+            if (skipAndroid) {
+                pending();
+            }
+
             window.geofence
                 .addOrUpdate(geofence)
                 .then(window.geofence.getWatched)
@@ -101,6 +144,10 @@ exports.defineAutoTests = function () {
         });
 
         it("should add array of geofences", function (done) {
+            if (skipAndroid) {
+                pending();
+            }
+
             window.geofence
                 .addOrUpdate([geofence, geofence2])
                 .then(window.geofence.getWatched)
@@ -112,6 +159,51 @@ exports.defineAutoTests = function () {
                     done();
                 })
                 .catch(fail.bind(this, done));
+        });
+
+        describe("geofence limits", function () {
+            var geofences;
+
+            beforeEach(function (done) {
+                geofences = [];
+
+                for (var i = 0; i < ANDROID_MAX_ALLOWED_GEOFENCES; i++) {
+                    geofences.push(Object.assign({}, geofence, { id: i.toString() }));
+                }
+                done();
+            });
+
+            it("should allow to add upper limit geofences", function (done) {
+                if (skipAndroid) {
+                    pending();
+                }
+
+                window.geofence
+                    .addOrUpdate(geofences)
+                    .then(window.geofence.getWatched)
+                    .then(function (geofencesJson) {
+                        var geofences = JSON.parse(geofencesJson);
+                        expect(geofences.length).toBe(ANDROID_MAX_ALLOWED_GEOFENCES);
+                        done();
+                    })
+                    .catch(fail.bind(this, done));
+            });
+
+            it("should return error when trying to exceed limit", function (done) {
+                if (skipAndroid) {
+                    pending();
+                }
+
+                geofences.push(Object.assign({}, geofence, { id: ANDROID_MAX_ALLOWED_GEOFENCES.toString() }));
+                window.geofence
+                    .addOrUpdate(geofences)
+                    .then(fail.bind(this, done))
+                    .catch(function (error) {
+                        expect(error.code).toBe(0);
+                        expect(error.message).toBeDefined();
+                        done();
+                    });
+            });
         });
 
         describe("geofence object coercion", function () {
@@ -143,8 +235,11 @@ exports.defineAutoTests = function () {
             });
 
             it("should convert latitude to number if possible", function (done) {
-                geofence.latitude = "50.5";
+                if (skipAndroid) {
+                    pending();
+                }
 
+                geofence.latitude = "50.5";
                 window.geofence.addOrUpdate(geofence)
                     .then(function () {
                         expect(geofence.latitude).toBe(50.5);
