@@ -47,8 +47,6 @@ func log(messages: [String]) {
 
     func initialize(command: CDVInvokedUrlCommand) {
         log("Plugin initialization")
-        //let faker = GeofenceFaker(manager: geoNotificationManager)
-        //faker.start()
 
         if iOS8 {
             promptForNotificationPermission()
@@ -176,50 +174,6 @@ func log(messages: [String]) {
         } else {
             log("webView is nil")
         }
-    }
-}
-
-// class for faking crossing geofences
-@available(iOS 8.0, *)
-class GeofenceFaker {
-    let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
-    let geoNotificationManager: GeoNotificationManager
-
-    init(manager: GeoNotificationManager) {
-        geoNotificationManager = manager
-    }
-
-    func start() {
-         dispatch_async(dispatch_get_global_queue(priority, 0)) {
-            while (true) {
-                log("FAKER")
-                let notify = arc4random_uniform(4)
-                if notify == 0 {
-                    log("FAKER notify chosen, need to pick up some region")
-                    var geos = self.geoNotificationManager.getWatchedGeoNotifications()!
-                    if geos.count > 0 {
-                        //WTF Swift??
-                        let index = arc4random_uniform(UInt32(geos.count))
-                        let geo = geos[Int(index)]
-                        let id = geo["id"].stringValue
-                        dispatch_async(dispatch_get_main_queue()) {
-                            if let region = self.geoNotificationManager.getMonitoredRegion(id) {
-                                log("FAKER Trigger didEnterRegion")
-                                self.geoNotificationManager.locationManager(
-                                    self.geoNotificationManager.locationManager,
-                                    didEnterRegion: region
-                                )
-                            }
-                        }
-                    }
-                }
-                NSThread.sleepForTimeInterval(3)
-            }
-         }
-    }
-
-    func stop() {
-
     }
 }
 
