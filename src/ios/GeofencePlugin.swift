@@ -24,8 +24,19 @@ func log(messages: [String]) {
     }
 }
 
+func log(errors: [[String:String]]) {
+    for error in errors {
+        log("\(error["code"]) - \(error["message"])");
+    }
+}
+
 @available(iOS 8.0, *)
 @objc(HWPGeofencePlugin) class GeofencePlugin : CDVPlugin {
+    static let ERROR_GEOFENCE_NOT_AVAILABLE = "GEOFENCE_NOT_AVAILABLE"
+    static let ERROR_LOCATION_SERVICES_DISABLED = "LOCATION_SERVICES_DISABLED"
+    static let ERROR_PERMISSION_DENIED = "PERMISSION_DENIED"
+    
+    
     lazy var geoNotificationManager = GeoNotificationManager()
     let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
 
@@ -66,8 +77,8 @@ func log(messages: [String]) {
             result = CDVPluginResult(status: CDVCommandStatus_OK, messageAsString: warnings.joinWithSeparator("\n"))
         } else {
             result = CDVPluginResult(
-                status: CDVCommandStatus_ILLEGAL_ACCESS_EXCEPTION,
-                messageAsString: (errors + warnings).joinWithSeparator("\n")
+                status: CDVCommandStatus_ERROR,
+                messageAsDictionary: errors.first
             )
         }
 
@@ -225,28 +236,40 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         locationManager.startMonitoringForRegion(region)
     }
 
-    func checkRequirements() -> (Bool, [String], [String]) {
-        var errors = [String]()
+    func checkRequirements() -> (Bool, [String], [[String:String]]) {
+        var errors = [[String:String]]()
         var warnings = [String]()
 
         if (!CLLocationManager.isMonitoringAvailableForClass(CLRegion)) {
-            errors.append("Geofencing not available")
+            errors.append([
+                "code": GeofencePlugin.ERROR_GEOFENCE_NOT_AVAILABLE,
+                "message": "Geofencing not available"
+            ])
         }
 
         if (!CLLocationManager.locationServicesEnabled()) {
-            errors.append("Error: Locationservices not enabled")
+            errors.append([
+                "code": GeofencePlugin.ERROR_LOCATION_SERVICES_DISABLED,
+                "message": "Locationservices disabled"
+            ])
         }
 
         let authStatus = CLLocationManager.authorizationStatus()
 
         if (authStatus != CLAuthorizationStatus.AuthorizedAlways) {
-            errors.append("Warning: Location always permissions not granted")
+            errors.append([
+                "code": GeofencePlugin.ERROR_PERMISSION_DENIED,
+                "message": "Location always permissions not granted"
+            ])
         }
 
         if (iOS8) {
             if let notificationSettings = UIApplication.sharedApplication().currentUserNotificationSettings() {
                 if notificationSettings.types == .None {
-                    errors.append("Error: notification permission missing")
+                    errors.append([
+                        "code": GeofencePlugin.ERROR_PERMISSION_DENIED,
+                        "message": "Notification permission missing"
+                    ])
                 } else {
                     if !notificationSettings.types.contains(.Sound) {
                         warnings.append("Warning: notification settings - sound permission missing")
@@ -261,7 +284,10 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
                     }
                 }
             } else {
-                errors.append("Error: notification permission missing")
+                errors.append([
+                    "code": GeofencePlugin.ERROR_PERMISSION_DENIED,
+                    "message": "Notification permission missing"
+                ])
             }
         }
 
@@ -289,7 +315,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         store.remove(id)
         let region = getMonitoredRegion(id)
         if (region != nil) {
-            log("Stoping monitoring region \(id)")
+            log("Stop monitoring region \(id)")
             locationManager.stopMonitoringForRegion(region!)
         }
     }
@@ -298,7 +324,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         store.clear()
         for object in locationManager.monitoredRegions {
             let region = object
-            log("Stoping monitoring region \(region.identifier)")
+            log("Stop monitoring region \(region.identifier)")
             locationManager.stopMonitoringForRegion(region)
         }
     }
