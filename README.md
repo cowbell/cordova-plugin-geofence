@@ -61,9 +61,15 @@ Plugin is written in Swift. All xcode project options to enable swift support ar
 
 :warning: Swift 3 is not supported at the moment, the following preference has to be added in your project :
 
+For Cordova projects
+
 `<preference name="UseLegacySwiftLanguageVersion" value="true" />`
 
-## iOS Quirks
+For PhoneGap projects
+
+`<preference name="swift-version" value="2.3" />`
+
+### iOS Quirks
 
 Since iOS 10 it's mandatory to add a `NSLocationAlwaysUsageDescription` and `NSLocationWhenInUseUsageDescription` entries in the info.plist.
 

@@ -6,10 +6,8 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.Geofence;
-import com.google.android.gms.location.LocationRequest;
 
 import org.apache.cordova.CallbackContext;
 
@@ -19,9 +17,7 @@ import java.util.List;
 public class GeoNotificationManager {
     private Context context;
     private GeoNotificationStore geoNotificationStore;
-    //private LocationClient locationClient;
     private Logger logger;
-    private boolean connectionInProgress = false;
     private List<Geofence> geoFences;
     private PendingIntent pendingIntent;
     private GoogleServiceCommandExecutor googleServiceCommandExecutor;
@@ -46,8 +42,9 @@ public class GeoNotificationManager {
             geoFences.add(geo.toGeofence());
         }
         if (!geoFences.isEmpty()) {
-            googleServiceCommandExecutor.QueueToExecute(new AddGeofenceCommand(
-                context, pendingIntent, geoFences));
+            googleServiceCommandExecutor.QueueToExecute(
+                new AddGeofenceCommand(context, pendingIntent, geoFences)
+            );
         }
     }
 
@@ -57,10 +54,9 @@ public class GeoNotificationManager {
     }
 
     private boolean areGoogleServicesAvailable() {
-        // Check that Google Play services is available
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
+        GoogleApiAvailability api = GoogleApiAvailability.getInstance();
+        int resultCode = api.isGooglePlayServicesAvailable(context);
 
-        // If Google Play services is available
         if (ConnectionResult.SUCCESS == resultCode) {
             return true;
         } else {
@@ -69,14 +65,17 @@ public class GeoNotificationManager {
     }
 
     public void addGeoNotifications(List<GeoNotification> geoNotifications,
-            final CallbackContext callback) {
+                                    final CallbackContext callback) {
         List<Geofence> newGeofences = new ArrayList<Geofence>();
         for (GeoNotification geo : geoNotifications) {
             geoNotificationStore.setGeoNotification(geo);
             newGeofences.add(geo.toGeofence());
         }
-        AddGeofenceCommand geoFenceCmd = new AddGeofenceCommand(context,
-                pendingIntent, newGeofences);
+        AddGeofenceCommand geoFenceCmd = new AddGeofenceCommand(
+            context,
+            pendingIntent,
+            newGeofences
+        );
         if (callback != null) {
             geoFenceCmd.addListener(new IGoogleServiceCommandListener() {
                 @Override
@@ -88,14 +87,7 @@ public class GeoNotificationManager {
         googleServiceCommandExecutor.QueueToExecute(geoFenceCmd);
     }
 
-    public void removeGeoNotification(String id, final CallbackContext callback) {
-        List<String> ids = new ArrayList<String>();
-        ids.add(id);
-        removeGeoNotifications(ids, callback);
-    }
-
-    public void removeGeoNotifications(List<String> ids,
-            final CallbackContext callback) {
+    public void removeGeoNotifications(List<String> ids, final CallbackContext callback) {
         RemoveGeofenceCommand cmd = new RemoveGeofenceCommand(context, ids);
         if (callback != null) {
             cmd.addListener(new IGoogleServiceCommandListener() {
@@ -125,16 +117,9 @@ public class GeoNotificationManager {
      * geofence transition occurs.
      */
     private PendingIntent getTransitionPendingIntent() {
-        // Create an explicit Intent
-
-        Intent intent = new Intent(context,
-                ReceiveTransitionsIntentService.class);
-        /*
-         * Return the PendingIntent
-         */
+        Intent intent = new Intent(context, ReceiveTransitionsIntentService.class);
         logger.log(Log.DEBUG, "Geofence Intent created!");
-        return PendingIntent.getService(context, 0, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
 }

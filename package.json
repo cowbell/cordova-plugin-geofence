@@ -13,7 +13,9 @@
     ]
   },
   "scripts": {
-    "test": "cordova-paramedic --platform android --plugin ."
+    "pretest": "sed -i 's/play-services-location:+/play-services-location:9.8.0/g' plugin.xml",
+    "test": "cordova-paramedic --platform android@6.0 --plugin . --verbose",
+    "posttest": "sed -i 's/play-services-location:9.8.0/play-services-location:+/g' plugin.xml"
   },
   "repository": {
     "type": "git",
