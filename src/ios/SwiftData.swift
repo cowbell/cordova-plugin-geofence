@@ -1428,29 +1428,23 @@ public struct SwiftData {
                     for i: Int32 in 0 ..< columnCount {
                     //for var i: Int32 = 0; i < columnCount; ++i {
                         let columnName = String.fromCString(sqlite3_column_name(pStmt, i))!
-                        if let columnType = String.fromCString(sqlite3_column_decltype(pStmt, i))?.uppercaseString {
-                            if let columnValue: AnyObject = getColumnValue(pStmt, index: i, type: columnType) {
-                                row[columnName] = SDColumn(obj: columnValue)
-                            }
-                        } else {
-                            var columnType = ""
-                            switch sqlite3_column_type(pStmt, i) {
-                            case 1:
-                                columnType = "INTEGER"
-                            case 2:
-                                columnType = "FLOAT"
-                            case 3:
-                                columnType = "TEXT"
-                            case 4:
-                                columnType = "BLOB"
-                            case 5:
-                                columnType = "NULL"
-                            default:
-                                columnType = "NULL"
-                            }
-                            if let columnValue: AnyObject = getColumnValue(pStmt, index: i, type: columnType) {
-                                row[columnName] = SDColumn(obj: columnValue)
-                            }
+                        var columnType = ""
+                        switch sqlite3_column_type(pStmt, i) {
+                        case 1:
+                            columnType = "INTEGER"
+                        case 2:
+                            columnType = "FLOAT"
+                        case 3:
+                            columnType = "TEXT"
+                        case 4:
+                            columnType = "BLOB"
+                        case 5:
+                            columnType = "NULL"
+                        default:
+                            columnType = "NULL"
+                        }
+                        if let columnValue: AnyObject = getColumnValue(pStmt, index: i, type: columnType) {
+                            row[columnName] = SDColumn(obj: columnValue)
                         }
                     }
                     resultSet.append(row)
