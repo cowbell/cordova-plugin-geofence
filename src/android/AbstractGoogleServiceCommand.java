@@ -75,7 +75,7 @@ public abstract class AbstractGoogleServiceCommand implements
         CommandExecuted(null);
     }
 
-    protected void CommandExecuted(Throwable error) {
+    protected void CommandExecuted(Object error) {
         // Turn off the in progress flag and disconnect the client
         connectionInProgress = false;
         mGoogleApiClient.disconnect();

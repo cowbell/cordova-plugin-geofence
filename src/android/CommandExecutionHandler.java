@@ -12,16 +12,25 @@ public class CommandExecutionHandler implements IGoogleServiceCommandListener {
     }
 
     @Override
-    public void onCommandExecuted(Throwable error) {
+    public void onCommandExecuted(Object error) {
         if (error != null) try {
-            JSONObject errorObject = new JSONObject();
-            errorObject.put("message", error.getMessage());
-            if (error instanceof SecurityException) {
-                errorObject.put("code", GeofencePlugin.ERROR_PERMISSION_DENIED);
+            if (error instanceof Throwable) {
+                JSONObject errorObject = new JSONObject();
+                errorObject.put("message", ((Throwable) error).getMessage());
+                if (error instanceof SecurityException) {
+                    errorObject.put("code", GeofencePlugin.ERROR_PERMISSION_DENIED);
+                } else {
+                    errorObject.put("code", GeofencePlugin.ERROR_UNKNOWN);
+                }
+                callbackContext.error(errorObject);
+            } else if (error instanceof JSONObject) {
+                callbackContext.error((JSONObject) error);
             } else {
+                JSONObject errorObject = new JSONObject();
+                errorObject.put("message", "Unknown error");
                 errorObject.put("code", GeofencePlugin.ERROR_UNKNOWN);
+                callbackContext.error(errorObject);
             }
-            callbackContext.error(errorObject);
         } catch (JSONException exception) {
             callbackContext.error(exception.getMessage());
             exception.printStackTrace();

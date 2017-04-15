@@ -25,7 +25,11 @@ if (typeof Object.assign != 'function') {
 
 exports.defineAutoTests = function () {
     var ANDROID_MAX_ALLOWED_GEOFENCES = 100;
+    var IOS_MAX_ALLOWED_GEOFENCES = 20;
     var TESTS_TIMEOUT = 10000; // 10s
+    var MAX_ALLOWED_GEOFENCES = cordova.platformId === "android"
+            ? ANDROID_MAX_ALLOWED_GEOFENCES
+            : IOS_MAX_ALLOWED_GEOFENCES;
 
     var majorDeviceVersion = null;
     var versionRegex = /(\d)\..+/.exec(device.version);
@@ -34,7 +38,7 @@ exports.defineAutoTests = function () {
     }
     // Starting from Android 6.0 there are confirmation dialog which prevents us from running auto tests in silent mode (user interaction needed)
     // Also, Android emulator doesn't provide geo fix without manual interactions or mocks
-    var skipAndroid = cordova.platformId == "android" && device.isVirtual &&  majorDeviceVersion >= 6;
+    var skipAndroid = cordova.platformId === "android" && device.isVirtual &&  majorDeviceVersion >= 6;
 
     var fail = function (done, reason) {
         if (reason) {
@@ -167,7 +171,7 @@ exports.defineAutoTests = function () {
             beforeEach(function (done) {
                 geofences = [];
 
-                for (var i = 0; i < ANDROID_MAX_ALLOWED_GEOFENCES; i++) {
+                for (var i = 0; i < MAX_ALLOWED_GEOFENCES; i++) {
                     geofences.push(Object.assign({}, geofence, { id: i.toString() }));
                 }
                 done();
@@ -183,7 +187,7 @@ exports.defineAutoTests = function () {
                     .then(window.geofence.getWatched)
                     .then(function (geofencesJson) {
                         var geofences = JSON.parse(geofencesJson);
-                        expect(geofences.length).toBe(ANDROID_MAX_ALLOWED_GEOFENCES);
+                        expect(geofences.length).toBe(MAX_ALLOWED_GEOFENCES);
                         done();
                     })
                     .catch(fail.bind(this, done));
@@ -194,12 +198,12 @@ exports.defineAutoTests = function () {
                     pending();
                 }
 
-                geofences.push(Object.assign({}, geofence, { id: ANDROID_MAX_ALLOWED_GEOFENCES.toString() }));
+                geofences.push(Object.assign({}, geofence, { id: MAX_ALLOWED_GEOFENCES.toString() }));
                 window.geofence
                     .addOrUpdate(geofences)
                     .then(fail.bind(this, done))
                     .catch(function (error) {
-                        expect(error.code).toBe(0);
+                        expect(error.code).toEqual("GEOFENCE_LIMIT_EXCEEDED");
                         expect(error.message).toBeDefined();
                         done();
                     });
