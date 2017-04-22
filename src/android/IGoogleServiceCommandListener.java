@@ -1,5 +1,5 @@
 package com.cowbell.cordova.geofence;
 
 public interface IGoogleServiceCommandListener {
-    void onCommandExecuted(Throwable error);
+    void onCommandExecuted(Object error);
 }

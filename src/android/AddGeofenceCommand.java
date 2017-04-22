@@ -11,8 +11,12 @@ import com.google.android.gms.location.GeofenceStatusCodes;
 import com.google.android.gms.location.LocationServices;
 
 import org.apache.cordova.LOG;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AddGeofenceCommand extends AbstractGoogleServiceCommand {
     private List<Geofence> geofencesToAdd;
@@ -37,18 +41,28 @@ public class AddGeofenceCommand extends AbstractGoogleServiceCommand {
                         if (status.isSuccess()) {
                             logger.log(Log.DEBUG, "Geofences successfully added");
                             CommandExecuted();
-                        } else {
-                            // TODO: pass this codes or create own standard
-                            // check codes for iOS too
+                        } else try {
+                            Map<Integer, String> errorCodeMap = new HashMap<Integer, String>();
+                            errorCodeMap.put(GeofenceStatusCodes.GEOFENCE_NOT_AVAILABLE, GeofencePlugin.ERROR_GEOFENCE_NOT_AVAILABLE);
+                            errorCodeMap.put(GeofenceStatusCodes.GEOFENCE_TOO_MANY_GEOFENCES, GeofencePlugin.ERROR_GEOFENCE_LIMIT_EXCEEDED);
 
-                            // Status Codes
-                            // GeofenceStatusCodes.GEOFENCE_NOT_AVAILABLE
-                            // GeofenceStatusCodes.GEOFENCE_TOO_MANY_GEOFENCES
-                            // GeofenceStatusCodes.GEOFENCE_TOO_MANY_PENDING_INTENTS
+                            Integer statusCode = status.getStatusCode();
+                            String message = "Adding geofences failed - SystemCode: " + statusCode;
+                            JSONObject error = new JSONObject();
+                            error.put("message", message);
 
-                            String message = "Adding geofences failed - SystemCode: " + status.getStatusCode();
+                            if (statusCode == GeofenceStatusCodes.GEOFENCE_NOT_AVAILABLE) {
+                                error.put("code", GeofencePlugin.ERROR_GEOFENCE_NOT_AVAILABLE);
+                            } else if (statusCode == GeofenceStatusCodes.GEOFENCE_TOO_MANY_GEOFENCES) {
+                                error.put("code", GeofencePlugin.ERROR_GEOFENCE_LIMIT_EXCEEDED);
+                            } else {
+                                error.put("code", GeofencePlugin.ERROR_UNKNOWN);
+                            }
+
                             logger.log(Log.ERROR, message);
-                            CommandExecuted(new Error(message));
+                            CommandExecuted(error);
+                        } catch (JSONException exception) {
+                            CommandExecuted(exception);
                         }
                     }
                 });

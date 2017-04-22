@@ -25,8 +25,7 @@ public class GoogleServiceCommandExecutor implements IGoogleServiceCommandListen
     }
 
     @Override
-    public void onCommandExecuted(Throwable error) {
-        // TODO Auto-generated method stub
+    public void onCommandExecuted(Object error) {
         isExecuting = false;
         ExecuteNext();
     }

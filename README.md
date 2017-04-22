@@ -11,7 +11,7 @@ Plugin to monitor circular geofences using mobile devices. The purpose is to not
 
 *Geofences persist after device reboot. You do not have to open your app first to monitor added geofences*
 
-##Example applications
+## Example applications
 
 Check out our example applications:
 
@@ -50,11 +50,11 @@ cordova plugin rm cordova-plugin-geofence
 
 # Platform specifics
 
-##Android
+## Android
 
 This plugin uses Google Play Services so you need to have it installed on your device.
 
-##iOS
+## iOS
 
 Plugin is written in Swift. All xcode project options to enable swift support are set up automatically after plugin is installed thanks to
 [cordova-plugin-add-swift-support](https://github.com/akofman/cordova-plugin-add-swift-support).
@@ -69,7 +69,7 @@ For PhoneGap projects
 
 `<preference name="swift-version" value="2.3" />`
 
-##Windows phone 8.1
+## Windows phone 8.1
 
 Plugin can be used with both windows phone 8.1 type projects Univeral App, Silverlight App.
 
@@ -168,7 +168,7 @@ You can set vibration pattern for the notification or disable default vibrations
 
 To change vibration pattern set `vibrate` property of `notification` object in geofence.
 
-###Examples
+### Examples
 
 ```
 //disable vibrations
@@ -186,7 +186,7 @@ notification: {
 }
 ```
 
-###Platform quirks
+### Platform quirks
 
 Fully working only on Android.
 
@@ -204,7 +204,7 @@ As a value you can enter:
 
 `smallIcon` - supports only resources URI
 
-###Examples
+### Examples
 
 ```
 notification: {
@@ -213,7 +213,7 @@ notification: {
 }
 ```
 
-###Platform quirks
+### Platform quirks
 
 Works only on Android platform so far.
 
@@ -315,7 +315,7 @@ window.geofence.onNotificationClicked = function (notificationData) {
 };
 ```
 
-#Example usage
+# Example usage
 
 Adding geofence to monitor entering Gliwice city center area of radius 3km
 
@@ -341,26 +341,26 @@ window.geofence.addOrUpdate({
 
 # Development
 
-##Installation
+## Installation
 
 - git clone https://github.com/cowbell/cordova-plugin-geofence
 - change into the new directory
 - `npm install`
 
-##Running tests
+## Running tests
 
 - Start emulator
 - `cordova-paramedic --platform android --plugin .`
 
-###Testing on iOS
+### Testing on iOS
 
 Before you run `cordova-paramedic` install `npm install -g ios-sim`
 
-###Troubleshooting
+### Troubleshooting
 
 Add `--verbose` at the end of `cordova-paramedic` command.
 
-##License
+## License
 
 This software is released under the [Apache 2.0 License](http://opensource.org/licenses/Apache-2.0).
 
