@@ -354,18 +354,6 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         }
     }
 
-    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        log("update location")
-    }
-
-    func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
-        log("fail with error: \(error)")
-    }
-
-    func locationManager(manager: CLLocationManager, didFinishDeferredUpdatesWithError error: NSError?) {
-        log("deferred fail error: \(error)")
-    }
-
     func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion) {
         log("Entering region \(region.identifier)")
         handleTransition(region, transitionType: 1)
@@ -387,12 +375,8 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         }
     }
 
-    func locationManager(manager: CLLocationManager, didDetermineState state: CLRegionState, forRegion region: CLRegion) {
-        log("State for region " + region.identifier)
-    }
-
     func locationManager(manager: CLLocationManager, monitoringDidFailForRegion region: CLRegion?, withError error: NSError) {
-        log("Monitoring region " + region!.identifier + " failed " + error.description)
+        log("Monitoring region \(region!.identifier) failed. Reson: \(error.description)")
         if let clRegion = region as? CLCircularRegion {
             if let command = self.addOrUpdateCallbacks[clRegion] {
                 var errors = [[String:String]]()
@@ -439,6 +423,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     }
 }
 
+// TODO: pass errors to cordova application
 class GeoNotificationStore {
     init() {
         createDBStructure()
