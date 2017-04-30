@@ -30,12 +30,72 @@ func log(errors: [[String:String]]) {
     }
 }
 
+func checkRequirements() -> (Bool, [String], [[String:String]]) {
+    var errors = [[String:String]]()
+    var warnings = [String]()
+    
+    if (!CLLocationManager.isMonitoringAvailableForClass(CLRegion)) {
+        errors.append([
+            "code": GeofencePlugin.ERROR_GEOFENCE_NOT_AVAILABLE,
+            "message": "Geofencing not available"
+            ])
+    }
+    
+    if (!CLLocationManager.locationServicesEnabled()) {
+        errors.append([
+            "code": GeofencePlugin.ERROR_LOCATION_SERVICES_DISABLED,
+            "message": "Locationservices disabled"
+            ])
+    }
+    
+    let authStatus = CLLocationManager.authorizationStatus()
+    
+    if (authStatus != CLAuthorizationStatus.AuthorizedAlways) {
+        errors.append([
+            "code": GeofencePlugin.ERROR_PERMISSION_DENIED,
+            "message": "Location always permissions not granted"
+            ])
+    }
+    
+    if (iOS8) {
+        if let notificationSettings = UIApplication.sharedApplication().currentUserNotificationSettings() {
+            if notificationSettings.types == .None {
+                errors.append([
+                    "code": GeofencePlugin.ERROR_PERMISSION_DENIED,
+                    "message": "Notification permission missing"
+                    ])
+            } else {
+                if !notificationSettings.types.contains(.Sound) {
+                    warnings.append("Warning: notification settings - sound permission missing")
+                }
+                
+                if !notificationSettings.types.contains(.Alert) {
+                    warnings.append("Warning: notification settings - alert permission missing")
+                }
+                
+                if !notificationSettings.types.contains(.Badge) {
+                    warnings.append("Warning: notification settings - badge permission missing")
+                }
+            }
+        } else {
+            errors.append([
+                "code": GeofencePlugin.ERROR_PERMISSION_DENIED,
+                "message": "Notification permission missing"
+                ])
+        }
+    }
+    
+    let ok = (errors.count == 0)
+    
+    return (ok, warnings, errors)
+}
+
 @available(iOS 8.0, *)
 @objc(HWPGeofencePlugin) class GeofencePlugin : CDVPlugin {
     static let ERROR_GEOFENCE_NOT_AVAILABLE = "GEOFENCE_NOT_AVAILABLE"
     static let ERROR_LOCATION_SERVICES_DISABLED = "LOCATION_SERVICES_DISABLED"
     static let ERROR_PERMISSION_DENIED = "PERMISSION_DENIED"
-    
+    static let ERROR_UNKNOWN = "UNKNOWN"
     
     lazy var geoNotificationManager = GeoNotificationManager()
     let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
@@ -66,7 +126,7 @@ func log(errors: [[String:String]]) {
         geoNotificationManager = GeoNotificationManager()
         geoNotificationManager.registerPermissions()
 
-        let (ok, warnings, errors) = geoNotificationManager.checkRequirements()
+        let (ok, warnings, errors) = checkRequirements()
 
         log(warnings)
         log(errors)
@@ -209,7 +269,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     func addOrUpdateGeoNotification(geoNotification: JSON) {
         log("GeoNotificationManager addOrUpdate")
 
-        let (_, warnings, errors) = checkRequirements()
+        let (ok, warnings, errors) = checkRequirements()
 
         log(warnings)
         log(errors)
@@ -234,66 +294,6 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         //store
         store.addOrUpdate(geoNotification)
         locationManager.startMonitoringForRegion(region)
-    }
-
-    func checkRequirements() -> (Bool, [String], [[String:String]]) {
-        var errors = [[String:String]]()
-        var warnings = [String]()
-
-        if (!CLLocationManager.isMonitoringAvailableForClass(CLRegion)) {
-            errors.append([
-                "code": GeofencePlugin.ERROR_GEOFENCE_NOT_AVAILABLE,
-                "message": "Geofencing not available"
-            ])
-        }
-
-        if (!CLLocationManager.locationServicesEnabled()) {
-            errors.append([
-                "code": GeofencePlugin.ERROR_LOCATION_SERVICES_DISABLED,
-                "message": "Locationservices disabled"
-            ])
-        }
-
-        let authStatus = CLLocationManager.authorizationStatus()
-
-        if (authStatus != CLAuthorizationStatus.AuthorizedAlways) {
-            errors.append([
-                "code": GeofencePlugin.ERROR_PERMISSION_DENIED,
-                "message": "Location always permissions not granted"
-            ])
-        }
-
-        if (iOS8) {
-            if let notificationSettings = UIApplication.sharedApplication().currentUserNotificationSettings() {
-                if notificationSettings.types == .None {
-                    errors.append([
-                        "code": GeofencePlugin.ERROR_PERMISSION_DENIED,
-                        "message": "Notification permission missing"
-                    ])
-                } else {
-                    if !notificationSettings.types.contains(.Sound) {
-                        warnings.append("Warning: notification settings - sound permission missing")
-                    }
-
-                    if !notificationSettings.types.contains(.Alert) {
-                        warnings.append("Warning: notification settings - alert permission missing")
-                    }
-
-                    if !notificationSettings.types.contains(.Badge) {
-                        warnings.append("Warning: notification settings - badge permission missing")
-                    }
-                }
-            } else {
-                errors.append([
-                    "code": GeofencePlugin.ERROR_PERMISSION_DENIED,
-                    "message": "Notification permission missing"
-                ])
-            }
-        }
-
-        let ok = (errors.count == 0)
-
-        return (ok, warnings, errors)
     }
 
     func getWatchedGeoNotifications() -> [JSON]? {
