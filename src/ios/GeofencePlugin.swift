@@ -14,6 +14,8 @@ let TAG = "GeofencePlugin"
 let iOS8 = floor(NSFoundationVersionNumber) > floor(NSFoundationVersionNumber_iOS_7_1)
 let iOS7 = floor(NSFoundationVersionNumber) <= floor(NSFoundationVersionNumber_iOS_7_1)
 
+typealias Callback = ([[String:String]]?) -> Void
+
 func log(message: String){
     NSLog("%@ - %@", TAG, message)
 }
@@ -168,11 +170,24 @@ func checkRequirements() -> (Bool, [String], [[String:String]]) {
         dispatch_async(dispatch_get_global_queue(priority, 0)) {
             // do some task
             for geo in command.arguments {
-                self.geoNotificationManager.addOrUpdateGeoNotification(JSON(geo))
-            }
-            dispatch_async(dispatch_get_main_queue()) {
-                let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
-                self.commandDelegate!.sendPluginResult(pluginResult, callbackId: command.callbackId)
+                self.geoNotificationManager.addOrUpdateGeoNotification(JSON(geo), completion: {
+                    (errors: [[String:String]]?) -> Void in
+                    log("Callback")
+                    
+                    dispatch_async(dispatch_get_main_queue()) {
+                        var pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
+                        if (errors != nil) {
+                            pluginResult = CDVPluginResult(
+                                status: CDVCommandStatus_ERROR,
+                                messageAsDictionary: errors!.first
+                            )
+                        }
+                        
+                        log("Callback with results \(pluginResult)")
+                        
+                        self.commandDelegate!.sendPluginResult(pluginResult, callbackId: command.callbackId)
+                    }
+                })
             }
         }
     }
@@ -248,10 +263,16 @@ func checkRequirements() -> (Bool, [String], [[String:String]]) {
     }
 }
 
+struct Command {
+    var geoNotification: JSON
+    var callback: Callback
+}
+
 @available(iOS 8.0, *)
 class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     let locationManager = CLLocationManager()
     let store = GeoNotificationStore()
+    var addOrUpdateCallbacks = [CLCircularRegion:Command]()
 
     override init() {
         log("GeoNotificationManager init")
@@ -266,13 +287,17 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         }
     }
 
-    func addOrUpdateGeoNotification(geoNotification: JSON) {
+    func addOrUpdateGeoNotification(geoNotification: JSON, completion: Callback) {
         log("GeoNotificationManager addOrUpdate")
 
         let (ok, warnings, errors) = checkRequirements()
 
         log(warnings)
         log(errors)
+        
+        if (!ok) {
+            return completion(errors)
+        }
 
         let location = CLLocationCoordinate2DMake(
             geoNotification["latitude"].doubleValue,
@@ -291,8 +316,8 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         region.notifyOnEntry = 0 != transitionType & 1
         region.notifyOnExit = 0 != transitionType & 2
 
-        //store
-        store.addOrUpdate(geoNotification)
+        let command = Command(geoNotification: geoNotification, callback: completion)
+        addOrUpdateCallbacks[region] = command
         locationManager.startMonitoringForRegion(region)
     }
 
@@ -352,12 +377,13 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     }
 
     func locationManager(manager: CLLocationManager, didStartMonitoringForRegion region: CLRegion) {
-        if region is CLCircularRegion {
-            let lat = (region as! CLCircularRegion).center.latitude
-            let lng = (region as! CLCircularRegion).center.longitude
-            let radius = (region as! CLCircularRegion).radius
-
-            log("Starting monitoring for region \(region) lat \(lat) lng \(lng) of radius \(radius)")
+        if let clRegion = region as? CLCircularRegion {
+            if let command = self.addOrUpdateCallbacks[clRegion] {
+                store.addOrUpdate(command.geoNotification)
+                log("Starting monitoring for region \(region.identifier)")
+                command.callback(nil)
+                self.addOrUpdateCallbacks.removeValueForKey(clRegion)
+            }
         }
     }
 
@@ -367,6 +393,17 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
 
     func locationManager(manager: CLLocationManager, monitoringDidFailForRegion region: CLRegion?, withError error: NSError) {
         log("Monitoring region " + region!.identifier + " failed " + error.description)
+        if let clRegion = region as? CLCircularRegion {
+            if let command = self.addOrUpdateCallbacks[clRegion] {
+                var errors = [[String:String]]()
+                errors.append([
+                    "code": GeofencePlugin.ERROR_UNKNOWN,
+                    "message": error.description
+                    ])
+                command.callback(errors)
+                self.addOrUpdateCallbacks.removeValueForKey(clRegion)
+            }
+        }
     }
 
     func handleTransition(region: CLRegion!, transitionType: Int) {
