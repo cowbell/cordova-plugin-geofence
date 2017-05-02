@@ -48,6 +48,24 @@ cordova plugin rm cordova-plugin-geofence
     - using Universal App (cordova windows platform)
     - using Silverlight App (cordova wp8 platform retargeted to WP 8.1)
 
+## Known Limitations
+
+**This plugin is a wrapper on devices' native APIs** which mean it comes with **limitations of those APIs**.
+
+### Geofence Limit
+
+There are certain limits of geofences that you can set in your application depends on the platform of use.
+
+- iOS - 20 geofences
+- Android - 100 geofences
+
+### Javascript background execution
+
+This is known limitation. When in background your app may/will be suspended to not use system resources.
+Therefore, **any javascript code won't run**, only background services can run in the background. Local
+notification when user crosses a geofence region will still work, but any custom javascript code won't.
+If you want to perform a custom action on geofence crossing, [try to write it in native code](#listening-for-geofence-transitions-in-native-code).
+
 # Platform specifics
 
 ## Android
