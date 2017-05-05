@@ -1,3 +1,4 @@
+cordova.define("cordova-plugin-geofence.geofence", function(require, exports, module) {
 var exec = require("cordova/exec"),
     channel = require("cordova/channel");
 
@@ -32,7 +33,24 @@ module.exports = {
 
         geofences.forEach(coerceProperties);
 
-        return execPromise(success, error, "GeofencePlugin", "addOrUpdate", geofences);
+        var promises = geofences.map(function (geofence) {
+            return execPromise(null, null, "GeofencePlugin", "addOrUpdate", [geofence]);
+        });
+
+        return Promise
+            .all(promises)
+            .then(function (results) {
+                if (typeof success === "function") {
+                    success(results);
+                }
+                return results;
+            })
+            .catch(function (reason) {
+                if (typeof error === "function") {
+                    error(reason);
+                }
+                throw reason;
+            });
     },
     /**
      * Removing geofences with given ids
@@ -231,4 +249,6 @@ channel.deviceready.subscribe(function () {
     // Device is ready now, the listeners are registered
     // and all queued events can be executed.
     exec(null, null, "GeofencePlugin", "deviceReady", []);
+});
+
 });

@@ -40,14 +40,14 @@ func checkRequirements() -> (Bool, [String], [[String:String]]) {
         errors.append([
             "code": GeofencePlugin.ERROR_GEOFENCE_NOT_AVAILABLE,
             "message": "Geofencing not available"
-            ])
+        ])
     }
     
     if (!CLLocationManager.locationServicesEnabled()) {
         errors.append([
             "code": GeofencePlugin.ERROR_LOCATION_SERVICES_DISABLED,
             "message": "Locationservices disabled"
-            ])
+        ])
     }
     
     let authStatus = CLLocationManager.authorizationStatus()
@@ -56,7 +56,7 @@ func checkRequirements() -> (Bool, [String], [[String:String]]) {
         errors.append([
             "code": GeofencePlugin.ERROR_PERMISSION_DENIED,
             "message": "Location always permissions not granted"
-            ])
+        ])
     }
     
     if (iOS8) {
@@ -65,7 +65,7 @@ func checkRequirements() -> (Bool, [String], [[String:String]]) {
                 errors.append([
                     "code": GeofencePlugin.ERROR_PERMISSION_DENIED,
                     "message": "Notification permission missing"
-                    ])
+                ])
             } else {
                 if !notificationSettings.types.contains(.Sound) {
                     warnings.append("Warning: notification settings - sound permission missing")
@@ -83,7 +83,7 @@ func checkRequirements() -> (Bool, [String], [[String:String]]) {
             errors.append([
                 "code": GeofencePlugin.ERROR_PERMISSION_DENIED,
                 "message": "Notification permission missing"
-                ])
+            ])
         }
     }
     
@@ -168,27 +168,21 @@ func checkRequirements() -> (Bool, [String], [[String:String]]) {
 
     func addOrUpdate(command: CDVInvokedUrlCommand) {
         dispatch_async(dispatch_get_global_queue(priority, 0)) {
-            // do some task
-            for geo in command.arguments {
-                self.geoNotificationManager.addOrUpdateGeoNotification(JSON(geo), completion: {
-                    (errors: [[String:String]]?) -> Void in
-                    log("Callback")
-                    
-                    dispatch_async(dispatch_get_main_queue()) {
-                        var pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
-                        if (errors != nil) {
-                            pluginResult = CDVPluginResult(
-                                status: CDVCommandStatus_ERROR,
-                                messageAsDictionary: errors!.first
-                            )
-                        }
-                        
-                        log("Callback with results \(pluginResult)")
-                        
-                        self.commandDelegate!.sendPluginResult(pluginResult, callbackId: command.callbackId)
+            let geo = command.arguments[0]
+            self.geoNotificationManager.addOrUpdateGeoNotification(JSON(geo), completion: {
+                (errors: [[String:String]]?) -> Void in
+                
+                dispatch_async(dispatch_get_main_queue()) {
+                    var pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
+                    if (errors != nil) {
+                        pluginResult = CDVPluginResult(
+                            status: CDVCommandStatus_ERROR,
+                            messageAsDictionary: errors!.first
+                        )
                     }
-                })
-            }
+                    self.commandDelegate!.sendPluginResult(pluginResult, callbackId: command.callbackId)
+                }
+            })
         }
     }
 
