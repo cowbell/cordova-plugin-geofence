@@ -21,6 +21,12 @@ import java.util.List;
 
 public class GeofencePlugin extends CordovaPlugin {
     public static final String TAG = "GeofencePlugin";
+
+    public static final String ERROR_UNKNOWN = "UNKNOWN";
+    public static final String ERROR_PERMISSION_DENIED = "PERMISSION_DENIED";
+    public static final String ERROR_GEOFENCE_NOT_AVAILABLE = "GEOFENCE_NOT_AVAILABLE";
+    public static final String ERROR_GEOFENCE_LIMIT_EXCEEDED = "GEOFENCE_LIMIT_EXCEEDED";
+
     private GeoNotificationManager geoNotificationManager;
     private Context context;
     public static CordovaWebView webView = null;

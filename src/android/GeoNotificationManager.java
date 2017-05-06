@@ -10,6 +10,7 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.Geofence;
 
 import org.apache.cordova.CallbackContext;
+import org.apache.cordova.PluginResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,12 +78,7 @@ public class GeoNotificationManager {
             newGeofences
         );
         if (callback != null) {
-            geoFenceCmd.addListener(new IGoogleServiceCommandListener() {
-                @Override
-                public void onCommandExecuted() {
-                    callback.success();
-                }
-            });
+            geoFenceCmd.addListener(new CommandExecutionHandler(callback));
         }
         googleServiceCommandExecutor.QueueToExecute(geoFenceCmd);
     }
@@ -90,12 +86,7 @@ public class GeoNotificationManager {
     public void removeGeoNotifications(List<String> ids, final CallbackContext callback) {
         RemoveGeofenceCommand cmd = new RemoveGeofenceCommand(context, ids);
         if (callback != null) {
-            cmd.addListener(new IGoogleServiceCommandListener() {
-                @Override
-                public void onCommandExecuted() {
-                    callback.success();
-                }
-            });
+            cmd.addListener(new CommandExecutionHandler(callback));
         }
         for (String id : ids) {
             geoNotificationStore.remove(id);
