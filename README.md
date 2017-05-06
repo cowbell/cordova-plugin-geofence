@@ -108,6 +108,24 @@ For listening of geofence transistion you can override onTransitionReceived meth
 - `TransitionType.EXIT` = 2
 - `TransitionType.BOTH` = 3
 
+## Error Codes
+
+Both `onError` function handler and promise rejection take `error` object as an argument.
+
+```
+error: {
+    code: String,
+    message: String
+}
+```
+
+Error codes:
+
+- `UNKNOWN`
+- `PERMISSION_DENIED`
+- `GEOFENCE_NOT_AVAILABLE`
+- `GEOFENCE_LIMIT_EXCEEDED`
+
 ## Plugin initialization
 
 The plugin is not available until `deviceready` event is fired.
@@ -147,8 +165,8 @@ window.geofence.addOrUpdate({
     }
 }).then(function () {
     console.log('Geofence successfully added');
-}, function (reason) {
-    console.log('Adding geofence failed', reason);
+}, function (error) {
+    console.log('Adding geofence failed', error);
 });
 ```
 Adding more geofences at once
@@ -225,8 +243,8 @@ window.geofence.remove(geofenceId)
     .then(function () {
         console.log('Geofence sucessfully removed');
     }
-    , function (reason){
-        console.log('Removing geofence failed', reason);
+    , function (error){
+        console.log('Removing geofence failed', error);
     });
 ```
 Removing more than one geofence at once.
@@ -241,8 +259,8 @@ window.geofence.removeAll()
     .then(function () {
         console.log('All geofences successfully removed.');
     }
-    , function (reason) {
-        console.log('Removing geofences failed', reason);
+    , function (error) {
+        console.log('Removing geofences failed', error);
     });
 ```
 
