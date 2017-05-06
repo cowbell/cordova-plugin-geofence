@@ -94,6 +94,7 @@ func checkRequirements() -> (Bool, [String], [[String:String]]) {
 
 @available(iOS 8.0, *)
 @objc(HWPGeofencePlugin) class GeofencePlugin : CDVPlugin {
+    static let ERROR_GEOFENCE_LIMIT_EXCEEDED = "GEOFENCE_LIMIT_EXCEEDED"
     static let ERROR_GEOFENCE_NOT_AVAILABLE = "GEOFENCE_NOT_AVAILABLE"
     static let ERROR_LOCATION_SERVICES_DISABLED = "LOCATION_SERVICES_DISABLED"
     static let ERROR_PERMISSION_DENIED = "PERMISSION_DENIED"
@@ -374,10 +375,18 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         if let clRegion = region as? CLCircularRegion {
             if let command = self.addOrUpdateCallbacks[clRegion] {
                 var errors = [[String:String]]()
-                errors.append([
-                    "code": GeofencePlugin.ERROR_UNKNOWN,
-                    "message": error.description
+                if locationManager.monitoredRegions.count >= 20 {
+                    errors.append([
+                        "code": GeofencePlugin.ERROR_GEOFENCE_LIMIT_EXCEEDED,
+                        "message": error.description
                     ])
+                } else {
+                    errors.append([
+                        "code": GeofencePlugin.ERROR_UNKNOWN,
+                        "message": error.description
+                    ])
+                }
+                
                 command.callback(errors)
                 self.addOrUpdateCallbacks.removeValueForKey(clRegion)
             }
