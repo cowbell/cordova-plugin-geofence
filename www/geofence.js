@@ -1,4 +1,3 @@
-cordova.define("cordova-plugin-geofence.geofence", function(require, exports, module) {
 var exec = require("cordova/exec"),
     channel = require("cordova/channel");
 
@@ -249,6 +248,4 @@ channel.deviceready.subscribe(function () {
     // Device is ready now, the listeners are registered
     // and all queued events can be executed.
     exec(null, null, "GeofencePlugin", "deviceReady", []);
-});
-
 });
