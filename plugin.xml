@@ -111,6 +111,7 @@
 
     <!-- ios -->
     <platform name="ios">
+        <hook type="after_plugin_install" src="scripts/iosAddBridgingHeader.js" />
         <config-file target="*-Info.plist" parent="NSLocationAlwaysUsageDescription">
             <string>${EXECUTABLE_NAME} Would Like to Use Your Current Location Even In Background.</string>
         </config-file>
