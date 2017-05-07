@@ -58,6 +58,8 @@ public class GeoNotificationManager {
         GoogleApiAvailability api = GoogleApiAvailability.getInstance();
         int resultCode = api.isGooglePlayServicesAvailable(context);
 
+        logger.log(Log.DEBUG, "This plugin uses Play Services version: " + GoogleApiAvailability.GOOGLE_PLAY_SERVICES_VERSION_CODE);
+
         if (ConnectionResult.SUCCESS == resultCode) {
             return true;
         } else {

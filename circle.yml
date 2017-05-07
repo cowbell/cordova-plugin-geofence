@@ -14,14 +14,22 @@ dependencies:
     - echo y | android update sdk --no-ui --all --filter "extra-android-m2repository"
     - echo y | android update sdk --no-ui --all --filter "extra-google-m2repository"
     - if [ ! -d "$ANDROID_HOME/build-tools/24.0.3" ]; then echo y | android update sdk --no-ui --all --filter "build-tools-24.0.3"; fi
-    - echo y | android update sdk --no-ui --all --filter "addon-google_apis-google-22, sys-img-armeabi-v7a-addon-google_apis-google-22"
+    - echo y | android update sdk --no-ui --all --filter "addon-google_apis-google-22"
+    - echo y | android update sdk --no-ui --all --filter "sys-img-armeabi-v7a-google_apis-22"
     - echo 'no' | android create avd --force -n test -t "android-22" --abi armeabi-v7a --tag google_apis
     - emulator -avd test -no-audio -no-window:
         background: true
         parallel: true
     - circle-android wait-for-boot
+    - adb shell dumpsys package com.google.android.gms | grep versionName
+    - adb shell settings get secure location_providers_allowed
+    - adb shell settings put secure location_providers_allowed gps,network
+    - adb shell settings get secure location_providers_allowed
   override:
     - npm install
 test:
   override:
     - npm test
+  post:
+    - adb shell settings get secure location_providers_allowed
+    - adb logcat -d | grep GeofencePlugin
