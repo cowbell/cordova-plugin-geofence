@@ -26,7 +26,7 @@ if (typeof Object.assign != 'function') {
 exports.defineAutoTests = function () {
     var ANDROID_MAX_ALLOWED_GEOFENCES = 100;
     var IOS_MAX_ALLOWED_GEOFENCES = 20;
-    var TESTS_TIMEOUT = 10000; // 10s
+    var TESTS_TIMEOUT = 60000; // 1 min
     var MAX_ALLOWED_GEOFENCES = cordova.platformId === "android"
             ? ANDROID_MAX_ALLOWED_GEOFENCES
             : IOS_MAX_ALLOWED_GEOFENCES;
@@ -42,7 +42,7 @@ exports.defineAutoTests = function () {
 
     var fail = function (done, reason) {
         if (reason) {
-            console.log(reason);
+            console.log('Fail reason: ', reason);
         }
         expect(true).toBe(false);
         done();
