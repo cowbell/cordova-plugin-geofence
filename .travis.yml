@@ -1,16 +1,27 @@
 language: objective-c
-osx_image: xcode8
+osx_image: xcode8.2
 env:
   - PATH=$PATH:$TRAVIS_BUILD_DIR/node_modules/.bin
 git:
   depth: 2
 node_js:
-  - "4.1"
+  - 6
 install:
   - npm install -g ios-sim
   - npm install -g ios-deploy
+  - brew tap wix/brew
+  - brew install --HEAD applesimutils
   - npm install
 before_script:
-  - ios-sim start --devicetypeid=iPhone-6
+  - cordova -v
+  - cordova create test
+  - cd test
+  - cordova platform add ios
+  - cordova run --list --emulator
+  - instruments -s devices
+  - ios-sim showdevicetypes
+  - ios-sim start --devicetypeid='iPhone-6, 10.2'
+  - sleep 30
+  - applesimutils --simulator "iPhone 6, OS = 10.2" --bundle "io.cordova.hellocordova" --setPermissions "notifications=YES, location=always"
 script:
-  - FIX_PARAMEDIC=true cordova-paramedic --platform ios --plugin ${TRAVIS_BUILD_DIR} --verbose
+  - FIX_PARAMEDIC=true cordova-paramedic --platform ios --plugin ${TRAVIS_BUILD_DIR} --target "iPhone-6, 10.2" --verbose
