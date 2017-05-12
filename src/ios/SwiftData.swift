@@ -946,7 +946,7 @@ public struct SwiftData {
             } else {
                 if let err = SQLiteDB.sharedInstance.rollbackSavepoint() {
                     print("Error rolling back to savepoint")
-                    SQLiteDB.sharedInstance.savepointsOpen -= 1
+                    --SQLiteDB.sharedInstance.savepointsOpen
                     SQLiteDB.sharedInstance.close()
                     error = err
                     return
@@ -1017,7 +1017,7 @@ public struct SwiftData {
     */
     public static func deleteUIImageWithID(id: String) -> Bool {
 
-        let docsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0]
+        let docsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] 
         let imageDirPath = docsPath.stringByAppendingPathComponent("SwiftDataImages")
         let fullPath = imageDirPath.stringByAppendingPathComponent(id)
 
@@ -1205,7 +1205,7 @@ public struct SwiftData {
         //create the database path
         class func createPath() -> String {
 
-            let docsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0]
+            let docsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] 
             let databaseStr = "SwiftData.sqlite"
             let dbPath = docsPath.stringByAppendingPathComponent(databaseStr)
 
@@ -1269,7 +1269,7 @@ public struct SwiftData {
                 return error
             }
 
-            savepointsOpen += 1
+            ++savepointsOpen
 
             return nil
         }
@@ -1285,7 +1285,7 @@ public struct SwiftData {
 
             let error = executeChange("RELEASE 'savepoint\(savepointsOpen)'")
 
-            savepointsOpen -= 1
+            --savepointsOpen
 
             return error
         }
@@ -1425,8 +1425,7 @@ public struct SwiftData {
                 if status == SQLITE_ROW {
                     columnCount = sqlite3_column_count(pStmt)
                     var row = SDRow()
-                    for i: Int32 in 0 ..< columnCount {
-                    //for var i: Int32 = 0; i < columnCount; ++i {
+                    for var i: Int32 = 0; i < columnCount; ++i {
                         let columnName = String.fromCString(sqlite3_column_name(pStmt, i))!
                         if let columnType = String.fromCString(sqlite3_column_decltype(pStmt, i))?.uppercaseString {
                             if let columnValue: AnyObject = getColumnValue(pStmt, index: i, type: columnType) {
@@ -1580,7 +1579,7 @@ public struct SwiftData {
         */
         public func asUIImage() -> UIImage? {
             if let path = value as? String{
-                let docsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0]
+                let docsPath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] 
                 let imageDirPath = docsPath.stringByAppendingPathComponent("SwiftDataImages")
                 let fullPath = imageDirPath.stringByAppendingPathComponent(path)
                 if !NSFileManager.defaultManager().fileExistsAtPath(fullPath) {
@@ -1638,7 +1637,7 @@ extension SwiftData.SQLiteDB {
                     obj = escapeValue(objects[bindIndex])
                 }
                 newSql += obj
-                bindIndex += 1
+                ++bindIndex
             } else {
                 newSql.append(char)
             }
@@ -2100,53 +2099,53 @@ extension SwiftData.SDError {
 public typealias SD = SwiftData
 
 extension String {
-
+    
     var lastPathComponent: String {
-
+        
         get {
             return (self as NSString).lastPathComponent
         }
     }
     var pathExtension: String {
-
+        
         get {
-
+            
             return (self as NSString).pathExtension
         }
     }
     var stringByDeletingLastPathComponent: String {
-
+        
         get {
-
+            
             return (self as NSString).stringByDeletingLastPathComponent
         }
     }
     var stringByDeletingPathExtension: String {
-
+        
         get {
-
+            
             return (self as NSString).stringByDeletingPathExtension
         }
     }
     var pathComponents: [String] {
-
+        
         get {
-
+            
             return (self as NSString).pathComponents
         }
     }
-
+    
     func stringByAppendingPathComponent(path: String) -> String {
-
+        
         let nsSt = self as NSString
-
+        
         return nsSt.stringByAppendingPathComponent(path)
     }
-
+    
     func stringByAppendingPathExtension(ext: String) -> String? {
-
+        
         let nsSt = self as NSString
-
+        
         return nsSt.stringByAppendingPathExtension(ext)
     }
 }
