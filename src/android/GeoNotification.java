@@ -12,7 +12,7 @@ public class GeoNotification {
     @Expose public int transitionType;
     
     @Expose public String url;
-    @Expose public Map<String,String> headers;
+    @Expose public String auth;
     
     @Expose public Notification notification;
 

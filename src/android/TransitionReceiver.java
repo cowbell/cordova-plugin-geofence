@@ -4,11 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.HttpResponse;
 import android.os.AsyncTask;
+import com.goebl.david;
 import java.util.*;
 
 public class TransitionReceiver extends BroadcastReceiver {
@@ -43,6 +40,15 @@ public class TransitionReceiver extends BroadcastReceiver {
                 for (int i=0; i < geoNotifications.length; i++){
                     GeoNotification geoNotification = geoNotifications[i];
 
+                    Webb webb = Webb.create();
+                    webb.setDefaultHeader(Webb.HDR_AUTHORIZATION, geoNotification.auth);
+                    Response<String> response = webb.post(geoNotification.url).asVoid();
+                    if (response.isSuccess()) {
+                        Log.println(Log.DEBUG, GeofencePlugin.TAG,  "Reponse OK");
+                    } else {
+                        Log.println(Log.DEBUG, GeofencePlugin.TAG,  "Reponse KO");
+                    }
+/*
                     DefaultHttpClient httpClient = new DefaultHttpClient();
                     HttpPost request = new HttpPost(geoNotification.url);
 
@@ -56,13 +62,14 @@ public class TransitionReceiver extends BroadcastReceiver {
                     }
 
                     HttpResponse response = httpClient.execute(request);
-
+                    
                     Log.println(Log.DEBUG, GeofencePlugin.TAG,  "Response received"+ response.getStatusLine());
                     if (response.getStatusLine().getStatusCode() == 200) {
                         Log.println(Log.DEBUG, GeofencePlugin.TAG,  "Reponse OK");
                     } else {
                         Log.println(Log.DEBUG, GeofencePlugin.TAG,  "Reponse KO");
                     }
+                    */
                 }
             } catch (Throwable e) {
                 Log.println(Log.ERROR, GeofencePlugin.TAG, "Exception posting geofence: " + e);    
