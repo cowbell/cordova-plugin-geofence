@@ -5,7 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.os.AsyncTask;
-import com.goebl.david;
+import com.goebl.david.Response;
+import com.goebl.david.Webb;
 import java.util.*;
 
 public class TransitionReceiver extends BroadcastReceiver {
