@@ -43,7 +43,7 @@ public class TransitionReceiver extends BroadcastReceiver {
 
                     Webb webb = Webb.create();
                     webb.setDefaultHeader(Webb.HDR_AUTHORIZATION, geoNotification.auth);
-                    Response<String> response = webb.post(geoNotification.url).asVoid();
+                    Response<String> response = webb.post(geoNotification.url).asString();
                     if (response.isSuccess()) {
                         Log.println(Log.DEBUG, GeofencePlugin.TAG,  "Reponse OK");
                     } else {
