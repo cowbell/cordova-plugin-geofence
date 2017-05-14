@@ -87,6 +87,20 @@ For PhoneGap projects
 
 `<preference name="swift-version" value="2.3" />`
 
+### iOS Quirks
+
+Since iOS 10 it's mandatory to add a `NSLocationAlwaysUsageDescription` and `NSLocationWhenInUseUsageDescription` entries in the info.plist.
+
+`NSLocationWhenInUseUsageDescription` describes the reason that the app accesses the user's location.
+`NSLocationAlwaysUsageDescription` describes the reason that the app accesses the user's location when not in use (in the background).
+
+When the system prompts the user to allow access, this string is displayed as part of the dialog box. To add this entry you can pass the variable `GEOFENCE_IN_USE_USAGE_DESCRIPTION` and `GEOFENCE_ALWAYS_USAGE_DESCRIPTION` on plugin install.
+
+Example:
+`cordova plugin add cordova-plugin-geofence --variable GEOFENCE_IN_USE_USAGE_DESCRIPTION="your usage message" --variable GEOFENCE_ALWAYS_USAGE_DESCRIPTION="your usage message"`
+
+If you don't pass the variable, the plugin will add a default string as value.
+
 ## Windows phone 8.1
 
 Plugin can be used with both windows phone 8.1 type projects Univeral App, Silverlight App.
