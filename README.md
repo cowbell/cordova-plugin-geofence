@@ -11,7 +11,7 @@ Plugin to monitor circular geofences using mobile devices. The purpose is to not
 
 *Geofences persist after device reboot. You do not have to open your app first to monitor added geofences*
 
-##Example applications
+## Example applications
 
 Check out our example applications:
 
@@ -48,13 +48,31 @@ cordova plugin rm cordova-plugin-geofence
     - using Universal App (cordova windows platform)
     - using Silverlight App (cordova wp8 platform retargeted to WP 8.1)
 
+## Known Limitations
+
+**This plugin is a wrapper on devices' native APIs** which mean it comes with **limitations of those APIs**.
+
+### Geofence Limit
+
+There are certain limits of geofences that you can set in your application depends on the platform of use.
+
+- iOS - 20 geofences
+- Android - 100 geofences
+
+### Javascript background execution
+
+This is known limitation. When in background your app may/will be suspended to not use system resources.
+Therefore, **any javascript code won't run**, only background services can run in the background. Local
+notification when user crosses a geofence region will still work, but any custom javascript code won't.
+If you want to perform a custom action on geofence crossing, [try to write it in native code](#listening-for-geofence-transitions-in-native-code).
+
 # Platform specifics
 
-##Android
+## Android
 
 This plugin uses Google Play Services so you need to have it installed on your device.
 
-##iOS
+## iOS
 
 Plugin is written in Swift. All xcode project options to enable swift support are set up automatically after plugin is installed thanks to
 [cordova-plugin-add-swift-support](https://github.com/akofman/cordova-plugin-add-swift-support).
@@ -83,7 +101,7 @@ Example:
 
 If you don't pass the variable, the plugin will add a default string as value.
 
-##Windows phone 8.1
+## Windows phone 8.1
 
 Plugin can be used with both windows phone 8.1 type projects Univeral App, Silverlight App.
 
@@ -121,6 +139,24 @@ For listening of geofence transistion you can override onTransitionReceived meth
 - `TransitionType.ENTER` = 1
 - `TransitionType.EXIT` = 2
 - `TransitionType.BOTH` = 3
+
+## Error Codes
+
+Both `onError` function handler and promise rejection take `error` object as an argument.
+
+```
+error: {
+    code: String,
+    message: String
+}
+```
+
+Error codes:
+
+- `UNKNOWN`
+- `PERMISSION_DENIED`
+- `GEOFENCE_NOT_AVAILABLE`
+- `GEOFENCE_LIMIT_EXCEEDED`
 
 ## Plugin initialization
 
@@ -161,8 +197,8 @@ window.geofence.addOrUpdate({
     }
 }).then(function () {
     console.log('Geofence successfully added');
-}, function (reason) {
-    console.log('Adding geofence failed', reason);
+}, function (error) {
+    console.log('Adding geofence failed', error);
 });
 ```
 Adding more geofences at once
@@ -182,7 +218,7 @@ You can set vibration pattern for the notification or disable default vibrations
 
 To change vibration pattern set `vibrate` property of `notification` object in geofence.
 
-###Examples
+### Examples
 
 ```
 //disable vibrations
@@ -200,7 +236,7 @@ notification: {
 }
 ```
 
-###Platform quirks
+### Platform quirks
 
 Fully working only on Android.
 
@@ -218,7 +254,7 @@ As a value you can enter:
 
 `smallIcon` - supports only resources URI
 
-###Examples
+### Examples
 
 ```
 notification: {
@@ -227,7 +263,7 @@ notification: {
 }
 ```
 
-###Platform quirks
+### Platform quirks
 
 Works only on Android platform so far.
 
@@ -239,8 +275,8 @@ window.geofence.remove(geofenceId)
     .then(function () {
         console.log('Geofence sucessfully removed');
     }
-    , function (reason){
-        console.log('Removing geofence failed', reason);
+    , function (error){
+        console.log('Removing geofence failed', error);
     });
 ```
 Removing more than one geofence at once.
@@ -255,8 +291,8 @@ window.geofence.removeAll()
     .then(function () {
         console.log('All geofences successfully removed.');
     }
-    , function (reason) {
-        console.log('Removing geofences failed', reason);
+    , function (error) {
+        console.log('Removing geofences failed', error);
     });
 ```
 
@@ -329,7 +365,7 @@ window.geofence.onNotificationClicked = function (notificationData) {
 };
 ```
 
-#Example usage
+# Example usage
 
 Adding geofence to monitor entering Gliwice city center area of radius 3km
 
@@ -355,26 +391,26 @@ window.geofence.addOrUpdate({
 
 # Development
 
-##Installation
+## Installation
 
 - git clone https://github.com/cowbell/cordova-plugin-geofence
 - change into the new directory
 - `npm install`
 
-##Running tests
+## Running tests
 
 - Start emulator
 - `cordova-paramedic --platform android --plugin .`
 
-###Testing on iOS
+### Testing on iOS
 
 Before you run `cordova-paramedic` install `npm install -g ios-sim`
 
-###Troubleshooting
+### Troubleshooting
 
 Add `--verbose` at the end of `cordova-paramedic` command.
 
-##License
+## License
 
 This software is released under the [Apache 2.0 License](http://opensource.org/licenses/Apache-2.0).
 

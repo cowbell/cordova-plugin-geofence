@@ -1,5 +1,28 @@
-var exec = require("cordova/exec"),
-    channel = require("cordova/channel");
+var exec = require("cordova/exec");
+var channel = require("cordova/channel");
+
+var isIOS = cordova.platformId === "ios"
+
+function addOrUpdateIOS (geofences, success, error) {
+    var promises = geofences.map(function (geofence) {
+        return execPromise(null, null, "GeofencePlugin", "addOrUpdate", [geofence]);
+    });
+
+    return Promise
+        .all(promises)
+        .then(function (results) {
+            if (typeof success === "function") {
+                success(results);
+            }
+            return results;
+        })
+        .catch(function (reason) {
+            if (typeof error === "function") {
+                error(reason);
+            }
+            throw reason;
+        });
+}
 
 module.exports = {
     /**
@@ -31,6 +54,10 @@ module.exports = {
         }
 
         geofences.forEach(coerceProperties);
+
+        if (isIOS) {
+            return addOrUpdateIOS(geofences, success, error);
+        }
 
         return execPromise(success, error, "GeofencePlugin", "addOrUpdate", geofences);
     },

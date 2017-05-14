@@ -21,6 +21,12 @@ import java.util.List;
 
 public class GeofencePlugin extends CordovaPlugin {
     public static final String TAG = "GeofencePlugin";
+
+    public static final String ERROR_UNKNOWN = "UNKNOWN";
+    public static final String ERROR_PERMISSION_DENIED = "PERMISSION_DENIED";
+    public static final String ERROR_GEOFENCE_NOT_AVAILABLE = "GEOFENCE_NOT_AVAILABLE";
+    public static final String ERROR_GEOFENCE_LIMIT_EXCEEDED = "GEOFENCE_LIMIT_EXCEEDED";
+
     private GeoNotificationManager geoNotificationManager;
     private Context context;
     public static CordovaWebView webView = null;
@@ -56,38 +62,40 @@ public class GeofencePlugin extends CordovaPlugin {
     }
 
     @Override
-    public boolean execute(String action, JSONArray args,
-                           CallbackContext callbackContext) throws JSONException {
+    public boolean execute(final String action, final JSONArray args,
+                           final CallbackContext callbackContext) throws JSONException {
         Log.d(TAG, "GeofencePlugin execute action: " + action + " args: " + args.toString());
         executedAction = new Action(action, args, callbackContext);
 
-        if (action.equals("addOrUpdate")) {
-            List<GeoNotification> geoNotifications = new ArrayList<GeoNotification>();
-            for (int i = 0; i < args.length(); i++) {
-                GeoNotification not = parseFromJSONObject(args.getJSONObject(i));
-                if (not != null) {
-                    geoNotifications.add(not);
+        cordova.getThreadPool().execute(new Runnable() {
+            public void run() {
+                if (action.equals("addOrUpdate")) {
+                    List<GeoNotification> geoNotifications = new ArrayList<GeoNotification>();
+                    for (int i = 0; i < args.length(); i++) {
+                        GeoNotification not = parseFromJSONObject(args.optJSONObject(i));
+                        if (not != null) {
+                            geoNotifications.add(not);
+                        }
+                    }
+                    geoNotificationManager.addGeoNotifications(geoNotifications, callbackContext);
+                } else if (action.equals("remove")) {
+                    List<String> ids = new ArrayList<String>();
+                    for (int i = 0; i < args.length(); i++) {
+                        ids.add(args.optString(i));
+                    }
+                    geoNotificationManager.removeGeoNotifications(ids, callbackContext);
+                } else if (action.equals("removeAll")) {
+                    geoNotificationManager.removeAllGeoNotifications(callbackContext);
+                } else if (action.equals("getWatched")) {
+                    List<GeoNotification> geoNotifications = geoNotificationManager.getWatched();
+                    callbackContext.success(Gson.get().toJson(geoNotifications));
+                } else if (action.equals("initialize")) {
+                    initialize(callbackContext);
+                } else if (action.equals("deviceReady")) {
+                    deviceReady();
                 }
             }
-            geoNotificationManager.addGeoNotifications(geoNotifications, callbackContext);
-        } else if (action.equals("remove")) {
-            List<String> ids = new ArrayList<String>();
-            for (int i = 0; i < args.length(); i++) {
-                ids.add(args.getString(i));
-            }
-            geoNotificationManager.removeGeoNotifications(ids, callbackContext);
-        } else if (action.equals("removeAll")) {
-            geoNotificationManager.removeAllGeoNotifications(callbackContext);
-        } else if (action.equals("getWatched")) {
-            List<GeoNotification> geoNotifications = geoNotificationManager.getWatched();
-            callbackContext.success(Gson.get().toJson(geoNotifications));
-        } else if (action.equals("initialize")) {
-            initialize(callbackContext);
-        } else if (action.equals("deviceReady")) {
-            deviceReady();
-        } else {
-            return false;
-        }
+        });
 
         return true;
     }
@@ -124,7 +132,7 @@ public class GeofencePlugin extends CordovaPlugin {
         }
     }
 
-    private void initialize(CallbackContext callbackContext) throws JSONException {
+    private void initialize(CallbackContext callbackContext) {
         String[] permissions = {
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION
