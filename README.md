@@ -410,4 +410,4 @@ Add `--verbose` at the end of `cordova-paramedic` command.
 
 This software is released under the [Apache 2.0 License](http://opensource.org/licenses/Apache-2.0).
 
-© 2014-2016 Cowbell-labs. All rights reserved
+© 2014-2017 Cowbell-labs. All rights reserved
