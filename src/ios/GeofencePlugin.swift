@@ -120,6 +120,7 @@ func checkRequirements() -> (Bool, [String], [[String:String]]) {
         )
     }
 
+    @objc(initialize:)
     func initialize(command: CDVInvokedUrlCommand) {
         log(message: "Plugin initialization")
 
@@ -150,17 +151,20 @@ func checkRequirements() -> (Bool, [String], [[String:String]]) {
         commandDelegate!.send(result, callbackId: command.callbackId)
     }
 
+    @objc(deviceReady:)
     func deviceReady(command: CDVInvokedUrlCommand) {
         let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
         commandDelegate!.send(pluginResult, callbackId: command.callbackId)
     }
 
+    @objc(ping:)
     func ping(command: CDVInvokedUrlCommand) {
         log(message: "Ping")
         let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK)
         commandDelegate!.send(pluginResult, callbackId: command.callbackId)
     }
 
+    @objc(promptForNotificationPermission)
     func promptForNotificationPermission() {
         UIApplication.shared.registerUserNotificationSettings(UIUserNotificationSettings(
             types: [UIUserNotificationType.sound, UIUserNotificationType.alert, UIUserNotificationType.badge],
@@ -169,6 +173,7 @@ func checkRequirements() -> (Bool, [String], [[String:String]]) {
         )
     }
 
+    @objc(addOrUpdate:)
     func addOrUpdate(command: CDVInvokedUrlCommand) {
         //dispatch_async(dispatch_get_global_queue(priority, 0)) {
         DispatchQueue.global(qos: .background).async {
@@ -191,6 +196,7 @@ func checkRequirements() -> (Bool, [String], [[String:String]]) {
         }
     }
 
+    @objc(getWatched:)
     func getWatched(command: CDVInvokedUrlCommand) {
         //dispatch_async(dispatch_get_global_queue(priority, 0)) {
         DispatchQueue.global(qos: .background).async {
@@ -204,6 +210,7 @@ func checkRequirements() -> (Bool, [String], [[String:String]]) {
         }
     }
 
+    @objc(remove:)
     func remove(command: CDVInvokedUrlCommand) {
         //dispatch_async(dispatch_get_global_queue(priority, 0)) {
         DispatchQueue.global(qos: .background).async {
@@ -218,6 +225,7 @@ func checkRequirements() -> (Bool, [String], [[String:String]]) {
         }
     }
 
+    @objc(removeAll:)
     func removeAll(command: CDVInvokedUrlCommand) {
         //dispatch_async(dispatch_get_global_queue(priority, 0)) {
         DispatchQueue.global(qos: .background).async {
@@ -230,6 +238,7 @@ func checkRequirements() -> (Bool, [String], [[String:String]]) {
         }
     }
 
+    @objc(didReceiveTransition:)
     func didReceiveTransition (notification: NSNotification) {
         log(message: "didReceiveTransition")
         if let geoNotificationString = notification.object as? String {
@@ -240,6 +249,7 @@ func checkRequirements() -> (Bool, [String], [[String:String]]) {
         }
     }
 
+    @objc(didReceiveLocalNotification:)
     func didReceiveLocalNotification (notification: NSNotification) {
         log(message: "didReceiveLocalNotification")
         if UIApplication.shared.applicationState != UIApplicationState.active {
