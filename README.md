@@ -7,10 +7,10 @@ For all that requires to run this plugin using Xcode 8.3.2+, please use the swif
 cordova plugin add https://github.com/coolmate/cordova-plugin-geofence.git#swift3
 
 The updates:
-- Update SwiftyJSON.swift, from https://github.com/SwiftyJSON/SwiftyJSON, it is officially support swift 3.
-- SwiftData.swift, the author doesn't upgrade to swift 3, so I do it myself
+- Update SwiftyJSON.swift, from https://github.com/SwiftyJSON/SwiftyJSON, it is officially supporting swift 3.
+- SwiftData.swift, the author doesn't upgrade to swift 3, so I have to update it myself
 - The plugin itself.
-- Change 'deviceReady' on javascript to 'deviceready' for Cordova 7.0.1
+- Add @Objc to swift functions
 
 Plugin to monitor circular geofences using mobile devices. The purpose is to notify user if crossing the boundary of the monitored geofence.
 
