@@ -176,7 +176,7 @@ func checkRequirements() -> (Bool, [String], [[String:String]]) {
     @objc(addOrUpdate:)
     func addOrUpdate(command: CDVInvokedUrlCommand) {
         //dispatch_async(dispatch_get_global_queue(priority, 0)) {
-        DispatchQueue.global(qos: .background).async {
+        DispatchQueue.global(qos: .default).async {
             let geo = command.arguments[0]
             self.geoNotificationManager.addOrUpdateGeoNotification(geoNotification: JSON(geo), completion: {
                 (errors: [[String:String]]?) -> Void in
@@ -322,7 +322,12 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         let radius = geoNotification["radius"].doubleValue as CLLocationDistance
         let id = geoNotification["id"].stringValue
 
+        log(message: "id : \(id)")
+        
+        
         let region = CLCircularRegion(center: location, radius: radius, identifier: id)
+        
+        log(message: "region : \(region)")
 
         var transitionType = 0
         if let i = geoNotification["transitionType"].int {
@@ -369,17 +374,19 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         }
     }
 
-    func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion) {
+    
+    func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
         log(message: "Entering region \(region.identifier)")
         handleTransition(region: region, transitionType: 1)
     }
-
-    func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion) {
+    
+    func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
         log(message: "Exiting region \(region.identifier)")
         handleTransition(region: region, transitionType: 2)
     }
 
-    func locationManager(manager: CLLocationManager, didStartMonitoringForRegion region: CLRegion) {
+    
+    func locationManager(_ manager: CLLocationManager, didStartMonitoringFor region: CLRegion) {
         if let clRegion = region as? CLCircularRegion {
             if let command = self.addOrUpdateCallbacks[clRegion] {
                 store.addOrUpdate(geoNotification: command.geoNotification)
@@ -389,22 +396,22 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
             }
         }
     }
-
-    func locationManager(manager: CLLocationManager, monitoringDidFailForRegion region: CLRegion?, withError error: NSError) {
-        log(message: "Monitoring region \(region!.identifier) failed. Reson: \(error.description)")
+    
+    func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
+        log(message: "Monitoring region \(region!.identifier) failed. Reson: \(error.localizedDescription)")
         if let clRegion = region as? CLCircularRegion {
             if let command = self.addOrUpdateCallbacks[clRegion] {
                 var errors = [[String:String]]()
                 if locationManager.monitoredRegions.count >= 20 {
                     errors.append([
                         "code": GeofencePlugin.ERROR_GEOFENCE_LIMIT_EXCEEDED,
-                        "message": error.description
-                    ])
+                        "message": error.localizedDescription
+                        ])
                 } else {
                     errors.append([
                         "code": GeofencePlugin.ERROR_UNKNOWN,
-                        "message": error.description
-                    ])
+                        "message": error.localizedDescription
+                        ])
                 }
                 
                 command.callback(errors)
