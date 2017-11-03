@@ -122,6 +122,11 @@
             <string>$GEOFENCE_IN_USE_USAGE_DESCRIPTION</string>
         </config-file>
 
+        <preference name="GEOFENCE_ALWAYS_AND_IN_USE_USAGE_DESCRIPTION" default="${EXECUTABLE_NAME} Would Like to Use Your Current Location When In Use And Even In Background." />
+        <config-file target="*-Info.plist" parent="NSLocationAlwaysAndWhenInUseUsageDescription">
+            <string>$GEOFENCE_IN_USE_USAGE_DESCRIPTION</string>
+        </config-file>
+
 
         <config-file target="*-Info.plist" parent="UIBackgroundModes">
             <array>
