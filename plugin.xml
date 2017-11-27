@@ -45,8 +45,8 @@
         <source-file src="src/android/ReceiveTransitionsIntentService.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/RemoveGeofenceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
 
-        <framework src="com.google.android.gms:play-services-location:+" />
-        <framework src="com.google.code.gson:gson:2.8.2" />
+        <framework src="com.google.android.gms:play-services-location:11.0+" />
+        <framework src="com.google.code.gson:gson:2.8.+" />
         
         <config-file target="config.xml" parent="/*">
             <feature name="GeofencePlugin">
