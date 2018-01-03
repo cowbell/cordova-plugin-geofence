@@ -69,30 +69,42 @@ public class GeofencePlugin extends CordovaPlugin {
 
         cordova.getThreadPool().execute(new Runnable() {
             public void run() {
-                if (action.equals("addOrUpdate")) {
-                    List<GeoNotification> geoNotifications = new ArrayList<GeoNotification>();
-                    for (int i = 0; i < args.length(); i++) {
-                        GeoNotification not = parseFromJSONObject(args.optJSONObject(i));
-                        if (not != null) {
-                            geoNotifications.add(not);
+                try {
+                    if (action.equals("addOrUpdate")) {
+                        List<GeoNotification> geoNotifications = new ArrayList<GeoNotification>();
+                        for (int i = 0; i < args.length(); i++) {
+                            GeoNotification not = parseFromJSONObject(args.optJSONObject(i));
+                            if (not != null) {
+                                geoNotifications.add(not);
+                            }
                         }
+                        geoNotificationManager.addGeoNotifications(geoNotifications, callbackContext);
+                    } else if (action.equals("remove")) {
+                        List<String> ids = new ArrayList<String>();
+                        for (int i = 0; i < args.length(); i++) {
+                            ids.add(args.optString(i));
+                        }
+                        geoNotificationManager.removeGeoNotifications(ids, callbackContext);
+                    } else if (action.equals("removeAll")) {
+                        geoNotificationManager.removeAllGeoNotifications(callbackContext);
+                    } else if (action.equals("getWatched")) {
+                        List<GeoNotification> geoNotifications = geoNotificationManager.getWatched();
+                        callbackContext.success(Gson.get().toJson(geoNotifications));
+                    } else if (action.equals("initialize")) {
+                        initialize(callbackContext);
+                    } else if (action.equals("deviceReady")) {
+                        deviceReady();
                     }
-                    geoNotificationManager.addGeoNotifications(geoNotifications, callbackContext);
-                } else if (action.equals("remove")) {
-                    List<String> ids = new ArrayList<String>();
-                    for (int i = 0; i < args.length(); i++) {
-                        ids.add(args.optString(i));
+                } catch (Exception e) {
+                    Log.w(TAG, "GeofencePlugin executing action: " + action + " args: " + args.toString(), e);
+                    try {
+                        JSONObject errorObject = new JSONObject();
+                        errorObject.put("message", e.toString());
+                        errorObject.put("code", ERROR_UNKNOWN);
+                        callbackContext.error(errorObject);
+                    } catch (JSONException exception) {
+                        callbackContext.error(e.toString());
                     }
-                    geoNotificationManager.removeGeoNotifications(ids, callbackContext);
-                } else if (action.equals("removeAll")) {
-                    geoNotificationManager.removeAllGeoNotifications(callbackContext);
-                } else if (action.equals("getWatched")) {
-                    List<GeoNotification> geoNotifications = geoNotificationManager.getWatched();
-                    callbackContext.success(Gson.get().toJson(geoNotifications));
-                } else if (action.equals("initialize")) {
-                    initialize(callbackContext);
-                } else if (action.equals("deviceReady")) {
-                    deviceReady();
                 }
             }
         });
