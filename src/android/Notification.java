@@ -49,7 +49,7 @@ public class Notification {
             Uri uri = assets.parse(this.icon);
             bmp = assets.getIconFromUri(uri);
         } catch (Exception e){
-            bmp = assets.getIconFromDrawable(this.icon);
+            bmp = null;
         }
 
         return bmp;
