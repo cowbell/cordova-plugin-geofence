@@ -186,6 +186,7 @@ window.geofence.addOrUpdate({
         text:           String, //Text of notification
         smallIcon:      String, //Small icon showed in notification area, only res URI
         icon:           String, //icon showed in notification drawer
+        color:          String, //Notification color, only hex
         openAppOnClick: Boolean,//is main app activity should be opened after clicking on notification
         vibration:      [Integer], //Optional vibration pattern - see description
         data:           Object  //Custom object associated with notification
