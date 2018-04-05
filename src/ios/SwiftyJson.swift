@@ -271,7 +271,7 @@ extension JSON : Swift.CollectionType, Swift.SequenceType, Swift.Indexable {
     }
 }
 
-public struct JSONIndex: ForwardIndexType, _Incrementable, Equatable, Comparable {
+public struct JSONIndex: ForwardIndexType, Equatable, Comparable {
 
     let arrayIndex: Int?
     let dictionaryIndex: DictionaryIndex<String, AnyObject>?
