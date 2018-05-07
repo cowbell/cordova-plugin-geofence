@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest" xmlns:android="http://schemas.android.com/apk/res/android" id="cordova-plugin-geofence" version="0.6.0">
+<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest" xmlns:android="http://schemas.android.com/apk/res/android" id="cordova-plugin-geofence" version="0.6.1">
     <name>geofence</name>
     <description>Geofence plugin</description>
     <license>Apache 2.0</license>
@@ -19,8 +19,8 @@
         <clobbers target="geofence" />
     </js-module>
 
-    <dependency id="cordova-plugin-add-swift-support" version="1.6.0" />
-    <dependency id="cordova-plugin-compat" version="^1.0.0" />
+    <dependency id="cordova-plugin-add-swift-support" version=">=1.6.0" />
+    <dependency id="cordova-plugin-compat" version=">=1.0.0" />
     <dependency id="es6-promise-plugin" />
 
     <!-- android -->
@@ -48,7 +48,7 @@
         <framework src="com.google.android.gms:play-services-location:$FCM_VERSION" />
         <preference name="FCM_VERSION" default="11.0.1"/>
         <framework src="com.google.code.gson:gson:2.8.+" />
-        
+
         <config-file target="config.xml" parent="/*">
             <feature name="GeofencePlugin">
                 <param name="android-package" value="com.cowbell.cordova.geofence.GeofencePlugin" />
@@ -127,6 +127,12 @@
           <feature name="GeofencePlugin">
             <param name="ios-package" value="HWPGeofencePlugin"/>
           </feature>
+        </config-file>
+        <config-file mode="add" parent="NSLocationAlwaysAndWhenInUseUsageDescription" target="*-Info.plist">
+            <string>This app requires constant access to your location in order for auto alarm on/off to work.</string>
+        </config-file>
+        <config-file mode="add" parent="NSLocationWhenInUseUsageDescription" target="*-Info.plist">
+            <string>This app requires access to your location in find estate address distance.</string>
         </config-file>
         <header-file src="src/ios/Geofence-Plugin-Bridging-Header.h" />
         <source-file src="src/ios/GeofencePlugin.swift"/>
