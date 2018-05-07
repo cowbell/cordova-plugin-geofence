@@ -112,12 +112,21 @@
 
     <!-- ios -->
     <platform name="ios">
+        <preference name="GEOFENCE_ALWAYS_USAGE_DESCRIPTION" default="${EXECUTABLE_NAME} Would Like to Use Your Current Location Even In Background." />
         <config-file target="*-Info.plist" parent="NSLocationAlwaysUsageDescription">
-            <string>${EXECUTABLE_NAME} Would Like to Use Your Current Location Even In Background.</string>
+            <string>$GEOFENCE_ALWAYS_USAGE_DESCRIPTION</string>
         </config-file>
+
+        <preference name="GEOFENCE_IN_USE_USAGE_DESCRIPTION" default="${EXECUTABLE_NAME} Would Like to Use Your Current Location When In Use." />
         <config-file target="*-Info.plist" parent="NSLocationWhenInUseUsageDescription">
-            <string>${EXECUTABLE_NAME} Would Like to Use Your Current Location When In Use.</string>
+            <string>$GEOFENCE_IN_USE_USAGE_DESCRIPTION</string>
         </config-file>
+
+        <preference name="GEOFENCE_ALWAYS_AND_IN_USE_USAGE_DESCRIPTION" default="${EXECUTABLE_NAME} Would Like to Use Your Current Location When In Use And Even In Background." />
+        <config-file target="*-Info.plist" parent="NSLocationAlwaysAndWhenInUseUsageDescription">
+            <string>$GEOFENCE_ALWAYS_AND_IN_USE_USAGE_DESCRIPTION</string>
+        </config-file>
+
         <config-file target="*-Info.plist" parent="UIBackgroundModes">
             <array>
                 <string>remote-notification</string>
@@ -127,12 +136,6 @@
           <feature name="GeofencePlugin">
             <param name="ios-package" value="HWPGeofencePlugin"/>
           </feature>
-        </config-file>
-        <config-file mode="add" parent="NSLocationAlwaysAndWhenInUseUsageDescription" target="*-Info.plist">
-            <string>This app requires constant access to your location in order for auto alarm on/off to work.</string>
-        </config-file>
-        <config-file mode="add" parent="NSLocationWhenInUseUsageDescription" target="*-Info.plist">
-            <string>This app requires access to your location in find estate address distance.</string>
         </config-file>
         <header-file src="src/ios/Geofence-Plugin-Bridging-Header.h" />
         <source-file src="src/ios/GeofencePlugin.swift"/>
