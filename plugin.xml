@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest" xmlns:android="http://schemas.android.com/apk/res/android" id="cordova-plugin-geofence" version="0.6.0">
+<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest" xmlns:android="http://schemas.android.com/apk/res/android" id="cordova-plugin-geofence" version="0.6.1">
     <name>geofence</name>
     <description>Geofence plugin</description>
     <license>Apache 2.0</license>
@@ -19,8 +19,8 @@
         <clobbers target="geofence" />
     </js-module>
 
-    <dependency id="cordova-plugin-add-swift-support" version="1.6.0" />
-    <dependency id="cordova-plugin-compat" version="^1.0.0" />
+    <dependency id="cordova-plugin-add-swift-support" version=">=1.6.0" />
+    <dependency id="cordova-plugin-compat" version=">=1.0.0" />
     <dependency id="es6-promise-plugin" />
 
     <!-- android -->
@@ -48,7 +48,7 @@
         <framework src="com.google.android.gms:play-services-location:$FCM_VERSION" />
         <preference name="FCM_VERSION" default="11.0.1"/>
         <framework src="com.google.code.gson:gson:2.8.+" />
-        
+
         <config-file target="config.xml" parent="/*">
             <feature name="GeofencePlugin">
                 <param name="android-package" value="com.cowbell.cordova.geofence.GeofencePlugin" />
@@ -112,14 +112,24 @@
 
     <!-- ios -->
     <platform name="ios">
+        <preference name="GEOFENCE_ALWAYS_USAGE_DESCRIPTION" default="${EXECUTABLE_NAME} Would Like to Use Your Current Location Even In Background." />
         <config-file target="*-Info.plist" parent="NSLocationAlwaysUsageDescription">
-            <string>${EXECUTABLE_NAME} Would Like to Use Your Current Location Even In Background.</string>
+            <string>$GEOFENCE_ALWAYS_USAGE_DESCRIPTION</string>
         </config-file>
+
+        <preference name="GEOFENCE_IN_USE_USAGE_DESCRIPTION" default="${EXECUTABLE_NAME} Would Like to Use Your Current Location When In Use." />
         <config-file target="*-Info.plist" parent="NSLocationWhenInUseUsageDescription">
-            <string>${EXECUTABLE_NAME} Would Like to Use Your Current Location When In Use.</string>
+            <string>$GEOFENCE_IN_USE_USAGE_DESCRIPTION</string>
         </config-file>
+
+        <preference name="GEOFENCE_ALWAYS_AND_IN_USE_USAGE_DESCRIPTION" default="${EXECUTABLE_NAME} Would Like to Use Your Current Location When In Use And Even In Background." />
+        <config-file target="*-Info.plist" parent="NSLocationAlwaysAndWhenInUseUsageDescription">
+            <string>$GEOFENCE_ALWAYS_AND_IN_USE_USAGE_DESCRIPTION</string>
+        </config-file>
+
         <config-file target="*-Info.plist" parent="UIBackgroundModes">
             <array>
+                <string>location</string>
                 <string>remote-notification</string>
             </array>
         </config-file>
