@@ -22,6 +22,7 @@
 // THE SOFTWARE.
 
 import Foundation
+import SQLite3
 import UIKit
 
 

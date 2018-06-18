@@ -6,6 +6,7 @@
 //
 //
 import Foundation
+import CoreLocation
 import AudioToolbox
 import WebKit
 
