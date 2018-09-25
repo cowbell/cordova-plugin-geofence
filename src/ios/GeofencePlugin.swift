@@ -8,6 +8,7 @@
 import Foundation
 import AudioToolbox
 import WebKit
+import CoreLocation
 
 let TAG = "GeofencePlugin"
 let iOS8 = floor(NSFoundationVersionNumber) > floor(NSFoundationVersionNumber_iOS_7_1)

@@ -23,7 +23,7 @@
 
 import Foundation
 import UIKit
-
+import CoreLocation
 
 // MARK: - SwiftData
 public struct SwiftData {
