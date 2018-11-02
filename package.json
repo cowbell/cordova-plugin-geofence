@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-geofence",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Cordova geofence plugin",
   "cordova": {
     "id": "cordova-plugin-geofence",
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cowbell/cordova-plugin-geofence.git"
+    "url": "git+https://github.com/damian-tarnawsky/cordova-plugin-geofence.git"
   },
   "keywords": [
     "cordova",
@@ -36,9 +36,9 @@
   "author": "Cowbell Labs",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/cowbell/cordova-plugin-geofence/issues"
+    "url": "https://github.com/damian-tarnawsky/cordova-plugin-geofence/issues"
   },
-  "homepage": "https://github.com/cowbell/cordova-plugin-geofence#readme",
+  "homepage": "https://github.com/damian-tarnawsky/cordova-plugin-geofence#readme",
   "engines": [
     {
       "name": "cordova",

@@ -1,5 +1,9 @@
 # ChangeLog
 
+## Version 0.8.0 - 11.02.2018
+
+- Included upgraded swift files
+
 ## Version 0.7.0 - 14.05.2017
 
 - Adding/removing geofences now throw errors correctly
@@ -46,22 +50,24 @@
 - Vibrations on/off for iOS
 - Vibration patterns for android
 
-    ```
-    //Vibrate for 1 sec
-    //Wait for 0.5 sec
-    //Vibrate for 2 sec
-    notification: {
-        vibrate: [1000, 500, 2000]
-    }
-    ```
+  ```
+  //Vibrate for 1 sec
+  //Wait for 0.5 sec
+  //Vibrate for 2 sec
+  notification: {
+      vibrate: [1000, 500, 2000]
+  }
+  ```
+
 - Custom notification icons for android
 
-    ```
-    notification: {
-        smallIcon: 'res://my_location_icon',
-        icon: 'file://img/geofence.png'
-    }
-    ```
+  ```
+  notification: {
+      smallIcon: 'res://my_location_icon',
+      icon: 'file://img/geofence.png'
+  }
+  ```
+
 - `onNotificationClicked` event
 - `receiveTransition` event is deprecated see `onTransitionReceived`
 - Google Support and Play Services load externally
