@@ -4,21 +4,22 @@
 
 Plugin to monitor circular geofences using mobile devices. The purpose is to notify user if crossing the boundary of the monitored geofence.
 
-*Geofences persist after device reboot. You do not have to open your app first to monitor added geofences*
+_Geofences persist after device reboot. You do not have to open your app first to monitor added geofences_
 
 ## Example applications
 
 Check out our example applications:
 
-* https://github.com/cowbell/ionic-geofence built with [Ionic](http://ionic.io/) framework
-* https://github.com/tsubik/ionic2-geofence built with [Ionic 2](http://ionic.io/2) framework
-* https://github.com/cowbell/ember-geofence built with [Ember.js](http://emberjs.com/), [Cordova](https://cordova.apache.org/), [Material Design](https://www.google.com/design/spec/material-design/introduction.html)
+- https://github.com/cowbell/ionic-geofence built with [Ionic](http://ionic.io/) framework
+- https://github.com/tsubik/ionic2-geofence built with [Ionic 2](http://ionic.io/2) framework
+- https://github.com/cowbell/ember-geofence built with [Ember.js](http://emberjs.com/), [Cordova](https://cordova.apache.org/), [Material Design](https://www.google.com/design/spec/material-design/introduction.html)
 
 ## Installation
 
 From master
+
 ```
-cordova plugin add https://github.com/cowbell/cordova-plugin-geofence
+cordova plugin add https://github.com/damian-tarnawsky/cordova-plugin-geofence
 ```
 
 Latest stable version
@@ -40,8 +41,8 @@ cordova plugin rm cordova-plugin-geofence
 - Android
 - iOS >=7.0
 - Windows Phone 8.1
-    - using Universal App (cordova windows platform)
-    - using Silverlight App (cordova wp8 platform retargeted to WP 8.1)
+  - using Universal App (cordova windows platform)
+  - using Silverlight App (cordova wp8 platform retargeted to WP 8.1)
 
 ## Known Limitations
 
@@ -72,15 +73,11 @@ This plugin uses Google Play Services so you need to have it installed on your d
 Plugin is written in Swift. All xcode project options to enable swift support are set up automatically after plugin is installed thanks to
 [cordova-plugin-add-swift-support](https://github.com/akofman/cordova-plugin-add-swift-support).
 
-:warning: Swift 3 is not supported at the moment, the following preference has to be added in your project :
+:note: Swift 3 is supported at the moment make sure you remove :
 
-For Cordova projects
+For Cordova projects make sure to remove UseLegacySwiftLanguageVersion
 
-`<preference name="UseLegacySwiftLanguageVersion" value="true" />`
-
-For PhoneGap projects
-
-`<preference name="swift-version" value="2.3" />`
+`<preference name="UseLegacySwiftLanguageVersion" value="false" />`
 
 ### iOS Quirks
 
@@ -127,6 +124,7 @@ All methods returning promises, but you can also use standard callback functions
 - `window.geofence.getWatched(onSuccess, onError)`
 
 For listening of geofence transistion you can override onTransitionReceived method
+
 - `window.geofence.onTransitionReceived(geofences)`
 
 ## Constants
@@ -158,14 +156,21 @@ Error codes:
 The plugin is not available until `deviceready` event is fired.
 
 ```javascript
-document.addEventListener('deviceready', function () {
+document.addEventListener(
+  "deviceready",
+  function() {
     // window.geofence is now available
-    window.geofence.initialize().then(function () {
+    window.geofence.initialize().then(
+      function() {
         console.log("Successful initialization");
-    }, function (error) {
+      },
+      function(error) {
         console.log("Error", error);
-    });
-}, false);
+      }
+    );
+  },
+  false
+);
 ```
 
 Initialization process is responsible for requesting neccessary permissions.
@@ -174,36 +179,44 @@ If required permissions are not granted then initialization fails with error mes
 ## Adding new geofence to monitor
 
 ```javascript
-window.geofence.addOrUpdate({
-    id:             String, //A unique identifier of geofence
-    latitude:       Number, //Geo latitude of geofence
-    longitude:      Number, //Geo longitude of geofence
-    radius:         Number, //Radius of geofence in meters
+window.geofence
+  .addOrUpdate({
+    id: String, //A unique identifier of geofence
+    latitude: Number, //Geo latitude of geofence
+    longitude: Number, //Geo longitude of geofence
+    radius: Number, //Radius of geofence in meters
     transitionType: Number, //Type of transition 1 - Enter, 2 - Exit, 3 - Both
-    notification: {         //Notification object
-        id:             Number, //optional should be integer, id of notification
-        title:          String, //Title of notification
-        text:           String, //Text of notification
-        smallIcon:      String, //Small icon showed in notification area, only res URI
-        icon:           String, //icon showed in notification drawer
-        openAppOnClick: Boolean,//is main app activity should be opened after clicking on notification
-        vibration:      [Integer], //Optional vibration pattern - see description
-        data:           Object  //Custom object associated with notification
+    notification: {
+      //Notification object
+      id: Number, //optional should be integer, id of notification
+      title: String, //Title of notification
+      text: String, //Text of notification
+      smallIcon: String, //Small icon showed in notification area, only res URI
+      icon: String, //icon showed in notification drawer
+      openAppOnClick: Boolean, //is main app activity should be opened after clicking on notification
+      vibration: [Integer], //Optional vibration pattern - see description
+      data: Object //Custom object associated with notification
     }
-}).then(function () {
-    console.log('Geofence successfully added');
-}, function (error) {
-    console.log('Adding geofence failed', error);
-});
+  })
+  .then(
+    function() {
+      console.log("Geofence successfully added");
+    },
+    function(error) {
+      console.log("Adding geofence failed", error);
+    }
+  );
 ```
+
 Adding more geofences at once
+
 ```javascript
 window.geofence.addOrUpdate([geofence1, geofence2, geofence3]);
 ```
 
 Geofence overrides the previously one with the same `id`.
 
-*All geofences are stored on the device and restored to monitor after device reboot.*
+_All geofences are stored on the device and restored to monitor after device reboot._
 
 Notification overrides the previously one with the same `notification.id`.
 
@@ -244,6 +257,7 @@ Windows Phone - current status is TODO
 To set notification icons use `icon` and `smallIcon` property in `notification` object.
 
 As a value you can enter:
+
 - name of native resource or your application resource e.g. `res://ic_menu_mylocation`, `res://icon`, `res://ic_menu_call`
 - relative path to file in `www` directory e.g. `file://img/ionic.png`
 
@@ -265,16 +279,20 @@ Works only on Android platform so far.
 ## Removing
 
 Removing single geofence
+
 ```javascript
-window.geofence.remove(geofenceId)
-    .then(function () {
-        console.log('Geofence sucessfully removed');
-    }
-    , function (error){
-        console.log('Removing geofence failed', error);
-    });
+window.geofence.remove(geofenceId).then(
+  function() {
+    console.log("Geofence sucessfully removed");
+  },
+  function(error) {
+    console.log("Removing geofence failed", error);
+  }
+);
 ```
+
 Removing more than one geofence at once.
+
 ```javascript
 window.geofence.remove([geofenceId1, geofenceId2, geofenceId3]);
 ```
@@ -282,30 +300,31 @@ window.geofence.remove([geofenceId1, geofenceId2, geofenceId3]);
 ## Removing all geofences
 
 ```javascript
-window.geofence.removeAll()
-    .then(function () {
-        console.log('All geofences successfully removed.');
-    }
-    , function (error) {
-        console.log('Removing geofences failed', error);
-    });
+window.geofence.removeAll().then(
+  function() {
+    console.log("All geofences successfully removed.");
+  },
+  function(error) {
+    console.log("Removing geofences failed", error);
+  }
+);
 ```
 
 ## Getting watched geofences from device
 
 ```javascript
-window.geofence.getWatched().then(function (geofencesJson) {
-    var geofences = JSON.parse(geofencesJson);
+window.geofence.getWatched().then(function(geofencesJson) {
+  var geofences = JSON.parse(geofencesJson);
 });
 ```
 
 ## Listening for geofence transitions
 
 ```javascript
-window.geofence.onTransitionReceived = function (geofences) {
-    geofences.forEach(function (geo) {
-        console.log('Geofence transition detected', geo);
-    });
+window.geofence.onTransitionReceived = function(geofences) {
+  geofences.forEach(function(geo) {
+    console.log("Geofence transition detected", geo);
+  });
 };
 ```
 
@@ -355,8 +374,8 @@ public class TransitionReceiver extends BroadcastReceiver {
 Android, iOS only
 
 ```javascript
-window.geofence.onNotificationClicked = function (notificationData) {
-    console.log('App opened from Geo Notification!', notificationData);
+window.geofence.onNotificationClicked = function(notificationData) {
+  console.log("App opened from Geo Notification!", notificationData);
 };
 ```
 
@@ -365,23 +384,28 @@ window.geofence.onNotificationClicked = function (notificationData) {
 Adding geofence to monitor entering Gliwice city center area of radius 3km
 
 ```javascript
-window.geofence.addOrUpdate({
-    id:             "69ca1b88-6fbe-4e80-a4d4-ff4d3748acdb",
-    latitude:       50.2980049,
-    longitude:      18.6593152,
-    radius:         3000,
+window.geofence
+  .addOrUpdate({
+    id: "69ca1b88-6fbe-4e80-a4d4-ff4d3748acdb",
+    latitude: 50.2980049,
+    longitude: 18.6593152,
+    radius: 3000,
     transitionType: TransitionType.ENTER,
     notification: {
-        id:             1,
-        title:          "Welcome in Gliwice",
-        text:           "You just arrived to Gliwice city center.",
-        openAppOnClick: true
+      id: 1,
+      title: "Welcome in Gliwice",
+      text: "You just arrived to Gliwice city center.",
+      openAppOnClick: true
     }
-}).then(function () {
-    console.log('Geofence successfully added');
-}, function (reason) {
-    console.log('Adding geofence failed', reason);
-})
+  })
+  .then(
+    function() {
+      console.log("Geofence successfully added");
+    },
+    function(reason) {
+      console.log("Adding geofence failed", reason);
+    }
+  );
 ```
 
 # Development
