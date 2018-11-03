@@ -21,33 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-
 import Foundation
 import UIKit
-
+import CoreLocation
 
 // MARK: - SwiftData
-
 public struct SwiftData {
 
 
     // MARK: - Public SwiftData Functions
 
-
     // MARK: - Execute Statements
-
     /**
     Execute a non-query SQL statement (e.g. INSERT, UPDATE, DELETE, etc.)
-
     This function will execute the provided SQL and return an Int with the error code, or nil if there was no error.
     It is recommended to always verify that the return value is nil to ensure that the operation was successful.
-
     Possible errors returned by this function are:
-
     - SQLite errors (0 - 101)
-
     - parameter sqlStr:  The non-query string of SQL to be executed (INSERT, UPDATE, DELETE, etc.)
-
     - returns:       An Int with the error code, or nil if there was no error
     */
     public static func executeChange(_ sqlStr: String) -> Int? {

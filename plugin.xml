@@ -114,12 +114,12 @@
 
     <!-- ios -->
     <platform name="ios">
-        <preference name="GEOFENCE_ALWAYS_USAGE_DESCRIPTION" default="${EXECUTABLE_NAME} Would Like to Use Your Current Location Even In Background." />
+        <preference name="GEOFENCE_ALWAYS_USAGE_DESCRIPTION" default="${EXECUTABLE_NAME} needs your location to provide information about the local casino" />
         <config-file target="*-Info.plist" parent="NSLocationAlwaysUsageDescription">
             <string>$GEOFENCE_ALWAYS_USAGE_DESCRIPTION</string>
         </config-file>
 
-        <preference name="GEOFENCE_IN_USE_USAGE_DESCRIPTION" default="${EXECUTABLE_NAME} Would Like to Use Your Current Location When In Use." />
+        <preference name="GEOFENCE_IN_USE_USAGE_DESCRIPTION" default="${EXECUTABLE_NAME} needs your location to provide information about the local casino" />
         <config-file target="*-Info.plist" parent="NSLocationWhenInUseUsageDescription">
             <string>$GEOFENCE_IN_USE_USAGE_DESCRIPTION</string>
         </config-file>
