@@ -1680,7 +1680,7 @@ extension SwiftData.SQLiteDB {
             if obj is Data {
                 let str = "\(obj)"
                 var newStr = ""
-                for char in str.characters {
+                for char in str {
                     if char != "<" && char != ">" && char != " " {
                         newStr.append(char)
                     }
@@ -1723,7 +1723,7 @@ extension SwiftData.SQLiteDB {
     //escape string
     func escapeStringValue(_ str: String) -> String {
         var escapedStr = ""
-        for char in str.characters {
+        for char in str {
             if char == "'" {
                 escapedStr += "'"
             }
@@ -1736,7 +1736,7 @@ extension SwiftData.SQLiteDB {
     //escape string
     func escapeStringIdentifier(_ str: String) -> String {
         var escapedStr = ""
-        for char in str.characters {
+        for char in str {
             if char == "\"" {
                 escapedStr += "\""
             }
