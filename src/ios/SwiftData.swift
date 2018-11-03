@@ -972,29 +972,8 @@ public struct SwiftData {
     - returns:      The ID of the saved image as a String, or nil if there was an error saving the image to disk
     */
     public static func saveUIImage(_ image: UIImage) -> String? {
-
-        let docsPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0]
-        let imageDirPath = docsPath.stringByAppendingPathComponent("SwiftDataImages")
-
-        if !FileManager.default.fileExists(atPath: imageDirPath) {
-            do {
-                try FileManager.default.createDirectory(atPath: imageDirPath, withIntermediateDirectories: false, attributes: nil)
-            } catch _ {
-                print("Error creating SwiftData image folder")
-                return nil
-            }
-        }
-
+        /* not required */
         let imageID = UUID().uuidString
-
-        let imagePath = imageDirPath.stringByAppendingPathComponent(imageID)
-
-        let imageAsData = image.pngData()
-        if !((try? imageAsData!.write(to: URL(fileURLWithPath: imagePath), options: [.atomic])) != nil) {
-            print("Error saving image")
-            return nil
-        }
-
         return imageID
 
     }
