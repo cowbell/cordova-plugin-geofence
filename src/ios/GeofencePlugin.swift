@@ -394,13 +394,35 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
             geoNotification["transitionType"].int = transitionType
 
             if geoNotification["notification"].isExists() {
-                notifyAbout(geoNotification)
+                callUrl(geo: geoNotification)
+                //notifyAbout(geoNotification)
             }
-
             NotificationCenter.default.post(name: Notification.Name(rawValue: "handleTransition"), object: geoNotification.rawString(String.Encoding.utf8.rawValue, options: []))
         }
     }
 
+    /* This should call the URL with method (eg POST) and postData */
+    func callUrl(geo: JSON) {
+        let method = "POST";
+        let url = geo["notification"]["url"].stringValue;
+        let postData = geo["notification"]["body"].stringValue;
+        let token = geo["notification"]["token"].stringValue;
+        
+        let urlString = url;
+        guard let endpointUrl = URL(string: urlString) else {
+            return
+        }
+        var request = URLRequest(url: endpointUrl)
+        request.httpMethod = method
+        request.httpBody = postData.data(using: String.Encoding.utf8);
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.addValue("Bearer "+token, forHTTPHeaderField: "Authorization")
+        
+        let task = URLSession.shared.dataTask(with: request)
+        task.resume()
+    }
+    
     func notifyAbout(_ geo: JSON) {
         log("Creating notification")
         let notification = UILocalNotification()
