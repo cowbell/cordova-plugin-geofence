@@ -407,7 +407,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         let url = geo["notification"]["url"].stringValue;
         let postData = geo["notification"]["body"].stringValue;
         let token = geo["notification"]["token"].stringValue;
-        
+        log("callUrl "+url)
         let urlString = url;
         guard let endpointUrl = URL(string: urlString) else {
             return
@@ -419,7 +419,14 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         request.addValue("Bearer "+token, forHTTPHeaderField: "Authorization")
         
-        let task = URLSession.shared.dataTask(with: request)
+        let task = URLSession.shared.dataTask(with: request) {
+            (data, response, error) in
+            guard error == nil else {
+                log("failed to call "+url);
+                return
+            }
+            log("callUrl Suceeded")
+        }
         task.resume()
     }
     
