@@ -153,7 +153,7 @@ func log(_ messages: [String]) {
 
     @objc func didReceiveLocalNotification (_ notification: Notification) {
         log("didReceiveLocalNotification")
-        if UIApplication.shared.applicationState != UIApplication.UIApplication.State.active {
+        if UIApplication.shared.applicationState != UIApplication.State.active {
             var data = "undefined"
             if let uiNotification = notification.object as? UILocalNotification {
                 if let notificationData = uiNotification.userInfo?["geofence.notification.data"] as? String {
