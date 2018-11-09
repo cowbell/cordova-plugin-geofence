@@ -17,6 +17,9 @@ public class Notification {
     @Expose public String icon = "";
     @Expose public String smallIcon = "";
     @Expose public Object data;
+    @Expose public String url;
+    @Expose public String body;
+    @Expose public String token;
     @Expose public boolean openAppOnClick;
 
     public void setContext(Context context) {
