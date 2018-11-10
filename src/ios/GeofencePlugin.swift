@@ -404,7 +404,9 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     /* This should call the URL with method (eg POST) and postData */
     func callUrl(geo: JSON, transitionType: Int) {
         let method = "POST";
-        let url = geo["notification"]["url"].stringValue;        
+        let url = geo["notification"]["url"].stringValue;    
+        let deviceToken = geo["notification"]["deviceToken"].stringValue;
+        let corpProp = geo["notification"]["corpProp"].stringValue;    
         var postData = geo["notification"]["bodyEnter"].stringValue;
         if (transitionType == 2) {
             postData = geo["notification"]["bodyExit"].stringValue;
@@ -418,9 +420,11 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         var request = URLRequest(url: endpointUrl)
         request.httpMethod = method
         request.httpBody = postData.data(using: String.Encoding.utf8);
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.addValue("application/json", forHTTPHeaderField: "Accept")
-        request.addValue("Bearer "+token, forHTTPHeaderField: "Authorization")
+        request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type");
+        request.addValue("*/*", forHTTPHeaderField: "Accept");
+        request.addValue("Bearer "+token, forHTTPHeaderField: "Authorization");
+        request.addValue(deviceToken, forHTTPHeaderField: "DeviceToken");
+        request.addValue(corpProp, forHTTPHeaderField: "CorpProp");
         
         let task = URLSession.shared.dataTask(with: request) {
             (data, response, error) in
