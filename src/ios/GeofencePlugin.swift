@@ -394,7 +394,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
             geoNotification["transitionType"].int = transitionType
 
             if geoNotification["notification"].isExists() {
-                callUrl(geo: geoNotification, Int: transitionType)
+                callUrl(geo: geoNotification, transitionType: transitionType)
                 //notifyAbout(geoNotification)
             }
             NotificationCenter.default.post(name: Notification.Name(rawValue: "handleTransition"), object: geoNotification.rawString(String.Encoding.utf8.rawValue, options: []))
