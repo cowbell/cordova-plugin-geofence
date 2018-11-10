@@ -394,7 +394,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
             geoNotification["transitionType"].int = transitionType
 
             if geoNotification["notification"].isExists() {
-                callUrl(geo: geoNotification)
+                callUrl(geo: geoNotification, transitionType: Int)
                 //notifyAbout(geoNotification)
             }
             NotificationCenter.default.post(name: Notification.Name(rawValue: "handleTransition"), object: geoNotification.rawString(String.Encoding.utf8.rawValue, options: []))
@@ -402,10 +402,13 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
     }
 
     /* This should call the URL with method (eg POST) and postData */
-    func callUrl(geo: JSON) {
+    func callUrl(geo: JSON, transitionType: Int) {
         let method = "POST";
-        let url = geo["notification"]["url"].stringValue;
-        let postData = geo["notification"]["body"].stringValue;
+        let url = geo["notification"]["url"].stringValue;        
+        let postData = geo["notification"]["bodyEnter"].stringValue;
+        if (transitionType == 2) {
+            postData = geo["notification"]["bodyExit"].stringValue;
+        }
         let token = geo["notification"]["token"].stringValue;
         log("callUrl "+url)
         let urlString = url;
