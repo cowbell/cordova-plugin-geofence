@@ -195,6 +195,10 @@ window.geofence
       icon: String, //icon showed in notification drawer
       openAppOnClick: Boolean, //is main app activity should be opened after clicking on notification
       vibration: [Integer], //Optional vibration pattern - see description
+      url: String, // URL to call
+      bodyEnter: String, // Body of the url used when entering a geofence
+      bodyExit: String, // Body of the url used when exiting a geofence
+      token: String, // Authorization bearer Token header added when calling url
       data: Object //Custom object associated with notification
     }
   })
