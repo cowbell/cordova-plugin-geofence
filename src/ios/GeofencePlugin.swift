@@ -421,7 +421,7 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         var request = URLRequest(url: endpointUrl)
         request.httpMethod = method
         request.httpBody = postData.data(using: String.Encoding.utf8);
-        request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type");
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type");
         request.addValue("*/*", forHTTPHeaderField: "Accept");
         request.addValue(token, forHTTPHeaderField: "Token");
         request.addValue(deviceToken, forHTTPHeaderField: "DeviceToken");
