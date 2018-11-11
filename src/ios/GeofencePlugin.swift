@@ -406,7 +406,8 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         let method = "POST";
         let url = geo["notification"]["url"].stringValue;    
         let deviceToken = geo["notification"]["deviceToken"].stringValue;
-        let corpProp = geo["notification"]["corpProp"].stringValue;    
+        let corpProp = geo["notification"]["corpProp"].stringValue;
+        let clientID = geo["notification"]["clientID"].stringValue;
         var postData = geo["notification"]["bodyEnter"].stringValue;
         if (transitionType == 2) {
             postData = geo["notification"]["bodyExit"].stringValue;
@@ -422,8 +423,9 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
         request.httpBody = postData.data(using: String.Encoding.utf8);
         request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type");
         request.addValue("*/*", forHTTPHeaderField: "Accept");
-        request.addValue("Bearer "+token, forHTTPHeaderField: "Authorization");
+        request.addValue(token, forHTTPHeaderField: "Token");
         request.addValue(deviceToken, forHTTPHeaderField: "DeviceToken");
+        request.addValue(clientID, forHTTPHeaderField: "Client-ID");
         request.addValue(corpProp, forHTTPHeaderField: "CorpProp");
         
         let task = URLSession.shared.dataTask(with: request) {
@@ -432,7 +434,9 @@ class GeoNotificationManager : NSObject, CLLocationManagerDelegate {
                 log("failed to call "+url);
                 return
             }
-            log("callUrl Suceeded")
+            if let httpResponse = response as? HTTPURLResponse {
+                log("callUrl Returned: \(httpResponse.statusCode)")
+            }
         }
         task.resume()
     }
