@@ -9,7 +9,6 @@ import android.util.Log;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,7 +77,7 @@ public class ReceiveTransitionsIntentService extends IntentService {
                     if (geoNotification != null) {
                         if (geoNotification.notification != null) {
                             //notifier.notify(geoNotification.notification);
-                            callUrl(geoNotification.notification);
+                            callUrl(geoNotification.notification, transitionType);
                         }
                         geoNotification.transitionType = transitionType;
                         geoNotifications.add(geoNotification);
@@ -98,20 +97,32 @@ public class ReceiveTransitionsIntentService extends IntentService {
         sendBroadcast(broadcastIntent);
     }
 
-    private void callUrl(Notification notification) {
+    private void callUrl(Notification notification, int transitionType) {
         try {
-            MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+            String url = notification.url;
+            String deviceToken = notification.deviceToken;
+            String corpProp = notification.corpProp;
+            String clientID = notification.clientID;
+            String token = notification.token;
+            String data = notification.bodyEnter;
+            if (transitionType == Geofence.GEOFENCE_TRANSITION_EXIT) {
+                data = notification.bodyExit;
+            }
             OkHttpClient client = new OkHttpClient();
-            RequestBody body = RequestBody.create(JSON, notification.body);
+            MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+            RequestBody body = RequestBody.create(JSON, data);
             Request request = new Request.Builder()
-                .url(notification.url)
+                .url(url)
                 .post(body)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .addHeader("Authorization", "Bearer " + notification.token)
+                .addHeader("Accept", "*/*")
+                .addHeader("Token", token)
+                .addHeader("DeviceToken", deviceToken)
+                .addHeader("Client-ID", clientID)
+                .addHeader("CorpProp", corpProp)
                 .build();
             client.newCall(request).execute();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

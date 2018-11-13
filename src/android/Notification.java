@@ -18,7 +18,11 @@ public class Notification {
     @Expose public String smallIcon = "";
     @Expose public Object data;
     @Expose public String url;
-    @Expose public String body;
+    @Expose public String deviceToken;
+    @Expose public String corpProp;
+    @Expose public String clientID;
+    @Expose public String bodyEnter;
+    @Expose public String bodyExit;
     @Expose public String token;
     @Expose public boolean openAppOnClick;
 
