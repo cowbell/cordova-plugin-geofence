@@ -20,7 +20,6 @@
     </js-module>
 
     <dependency id="cordova-plugin-add-swift-support" version="1.6.0" />
-    <dependency id="cordova-plugin-compat" version="^1.0.0" />
     <dependency id="es6-promise-plugin" />
 
     <!-- android -->
