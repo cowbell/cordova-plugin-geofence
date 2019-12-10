@@ -14,25 +14,25 @@ import android.util.Log;
 public class GeoNotificationNotifier {
     private NotificationManager notificationManager;
     private Context context;
-    private BeepHelper beepHelper;
     private Logger logger;
 
     public GeoNotificationNotifier(NotificationManager notificationManager, Context context) {
         this.notificationManager = notificationManager;
         this.context = context;
-        this.beepHelper = new BeepHelper();
         this.logger = Logger.getLogger();
     }
 
     public void notify(Notification notification) {
         notification.setContext(context);
+        Uri notificationSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
             .setVibrate(notification.getVibrate())
             .setSmallIcon(notification.getSmallIcon())
             .setLargeIcon(notification.getLargeIcon())
             .setAutoCancel(true)
             .setContentTitle(notification.getTitle())
-            .setContentText(notification.getText());
+            .setContentText(notification.getText())
+            .setSound(notificationSound);
 
         if (notification.openAppOnClick) {
             String packageName = context.getPackageName();
@@ -48,14 +48,6 @@ public class GeoNotificationNotifier {
             PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(
                 notification.id, PendingIntent.FLAG_UPDATE_CURRENT);
             mBuilder.setContentIntent(resultPendingIntent);
-        }
-        try {
-            Uri notificationSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            Ringtone r = RingtoneManager.getRingtone(context, notificationSound);
-            r.play();
-        } catch (Exception e) {
-        	beepHelper.startTone("beep_beep_beep");
-            e.printStackTrace();
         }
         notificationManager.notify(notification.id, mBuilder.build());
         logger.log(Log.DEBUG, notification.toString());
