@@ -98,7 +98,9 @@ public class GeoNotificationManager {
         List<GeoNotification> geoNotifications = geoNotificationStore.getAll();
         List<String> geoNotificationsIds = new ArrayList<String>();
         for (GeoNotification geo : geoNotifications) {
-            geoNotificationsIds.add(geo.id);
+            if(geo != null && geo._id != null) {
+                geoNotificationsIds.add(geo._id);
+            }
         }
         removeGeoNotifications(geoNotificationsIds, callback);
     }

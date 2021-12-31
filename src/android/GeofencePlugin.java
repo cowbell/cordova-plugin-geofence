@@ -15,6 +15,7 @@ import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONStringer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +27,11 @@ public class GeofencePlugin extends CordovaPlugin {
     public static final String ERROR_PERMISSION_DENIED = "PERMISSION_DENIED";
     public static final String ERROR_GEOFENCE_NOT_AVAILABLE = "GEOFENCE_NOT_AVAILABLE";
     public static final String ERROR_GEOFENCE_LIMIT_EXCEEDED = "GEOFENCE_LIMIT_EXCEEDED";
+    private static VolleyApi volleyApi;
 
     private GeoNotificationManager geoNotificationManager;
+    //private VolleyApi volleyApi;
+    private LocalStorage localStorage;
     private Context context;
     public static CordovaWebView webView = null;
 
@@ -59,6 +63,8 @@ public class GeofencePlugin extends CordovaPlugin {
         context = this.cordova.getActivity().getApplicationContext();
         Logger.setLogger(new Logger(TAG, context, false));
         geoNotificationManager = new GeoNotificationManager(context);
+        volleyApi = new VolleyApi(context);
+        localStorage = new LocalStorage(context);
     }
 
     @Override
@@ -78,6 +84,11 @@ public class GeofencePlugin extends CordovaPlugin {
                         }
                     }
                     geoNotificationManager.addGeoNotifications(geoNotifications, callbackContext);
+//                    try {
+//                       // volleyApi.tryRelogin();
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
                 } else if (action.equals("remove")) {
                     List<String> ids = new ArrayList<String>();
                     for (int i = 0; i < args.length(); i++) {
@@ -86,6 +97,11 @@ public class GeofencePlugin extends CordovaPlugin {
                     geoNotificationManager.removeGeoNotifications(ids, callbackContext);
                 } else if (action.equals("removeAll")) {
                     geoNotificationManager.removeAllGeoNotifications(callbackContext);
+//                    try {
+//                       // volleyApi.tryRelogin();
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
                 } else if (action.equals("getWatched")) {
                     List<GeoNotification> geoNotifications = geoNotificationManager.getWatched();
                     callbackContext.success(Gson.get().toJson(geoNotifications));
@@ -93,6 +109,16 @@ public class GeofencePlugin extends CordovaPlugin {
                     initialize(callbackContext);
                 } else if (action.equals("deviceReady")) {
                     deviceReady();
+                } else if (action.equals("setItem")) {
+                    JSONObject item = args.optJSONObject(0);
+                    JSONObject user = args.optJSONObject(1);
+                    try {
+                        localStorage.setItem("token", item.getString("token"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    localStorage.setItem("user", user.toString());
+
                 }
             }
         });
@@ -109,8 +135,10 @@ public class GeofencePlugin extends CordovaPlugin {
         return geo;
     }
 
-    public static void onTransitionReceived(List<GeoNotification> notifications) {
+    public static void onTransitionReceived(List<GeoNotification> notifications) throws JSONException {
         Log.d(TAG, "Transition Event Received!");
+        //volleyApi.getApi();
+        volleyApi.tryRelogin();
         String js = "setTimeout('geofence.onTransitionReceived("
             + Gson.get().toJson(notifications) + ")',0)";
         if (webView == null) {

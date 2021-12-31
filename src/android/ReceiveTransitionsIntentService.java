@@ -9,6 +9,8 @@ import android.util.Log;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,7 +82,11 @@ public class ReceiveTransitionsIntentService extends IntentService {
 
                 if (geoNotifications.size() > 0) {
                     broadcastIntent.putExtra("transitionData", Gson.get().toJson(geoNotifications));
-                    GeofencePlugin.onTransitionReceived(geoNotifications);
+                    try {
+                        GeofencePlugin.onTransitionReceived(geoNotifications);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             } else {
                 String error = "Geofence transition error: " + transitionType;

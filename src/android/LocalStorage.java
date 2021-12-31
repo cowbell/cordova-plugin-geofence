@@ -29,7 +29,7 @@ public class LocalStorage {
         ArrayList<String> results = new ArrayList<String>();
         database = localStorageDBHelper.getReadableDatabase();
         Cursor cursor = database.query(
-                LocalStorageDBHelper.LOCALSTORAGE_TABLE_NAME, null, null, null,
+                LocalStorageDBHelper.LOCALSTORAGE_TABLE_NAME, null, LocalStorageDBHelper.LOCALSTORAGE_ID +"!= ? AND " + LocalStorageDBHelper.LOCALSTORAGE_ID +"!= ?" , new String[] { "token" , "user" },
                 null, null, null);
         while (cursor.moveToNext()) {
             results.add(cursor.getString(1));

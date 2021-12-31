@@ -7,8 +7,8 @@ import android.content.Intent;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
+//import android.support.v4.app.NotificationCompat;
+//import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 public class GeoNotificationNotifier {
@@ -26,29 +26,29 @@ public class GeoNotificationNotifier {
 
     public void notify(Notification notification) {
         notification.setContext(context);
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
-            .setVibrate(notification.getVibrate())
-            .setSmallIcon(notification.getSmallIcon())
-            .setLargeIcon(notification.getLargeIcon())
-            .setAutoCancel(true)
-            .setContentTitle(notification.getTitle())
-            .setContentText(notification.getText());
+//        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
+//            .setVibrate(notification.getVibrate())
+//            .setSmallIcon(notification.getSmallIcon())
+//            .setLargeIcon(notification.getLargeIcon())
+//            .setAutoCancel(true)
+//            .setContentTitle(notification.getTitle())
+//            .setContentText(notification.getText());
 
-        if (notification.openAppOnClick) {
-            String packageName = context.getPackageName();
-            Intent resultIntent = context.getPackageManager()
-                .getLaunchIntentForPackage(packageName);
-
-            if (notification.data != null) {
-                resultIntent.putExtra("geofence.notification.data", notification.getDataJson());
-            }
-
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-            stackBuilder.addNextIntent(resultIntent);
-            PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(
-                notification.id, PendingIntent.FLAG_UPDATE_CURRENT);
-            mBuilder.setContentIntent(resultPendingIntent);
-        }
+//        if (notification.openAppOnClick) {
+//            String packageName = context.getPackageName();
+//            Intent resultIntent = context.getPackageManager()
+//                .getLaunchIntentForPackage(packageName);
+//
+//            if (notification.data != null) {
+//                resultIntent.putExtra("geofence.notification.data", notification.getDataJson());
+//            }
+//
+//            TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+//            stackBuilder.addNextIntent(resultIntent);
+//            PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(
+//                notification.id, PendingIntent.FLAG_UPDATE_CURRENT);
+//            mBuilder.setContentIntent(resultPendingIntent);
+//        }
         try {
             Uri notificationSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             Ringtone r = RingtoneManager.getRingtone(context, notificationSound);
@@ -57,7 +57,7 @@ public class GeoNotificationNotifier {
         	beepHelper.startTone("beep_beep_beep");
             e.printStackTrace();
         }
-        notificationManager.notify(notification.id, mBuilder.build());
+        //notificationManager.notify(notification.id, mBuilder.build());
         logger.log(Log.DEBUG, notification.toString());
     }
 }
