@@ -15,15 +15,17 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 public class VolleyApi {
     private Context context;
+    private VolleyCallback callback;
     private Logger logger;
     private RequestQueue queue;
     private LocalStorage localStorage;
-    private String BASE_URL = "http://9333-45-249-77-185.ngrok.io/";
+    private String BASE_URL = "https://api.kiot.io/";
     private String baseUrl = BASE_URL+"api/v1/";
     Map<String, String> headers = new HashMap<>();
 
@@ -67,18 +69,18 @@ public class VolleyApi {
         }
     }
 
-    public JSONObject tryRelogin() throws JSONException {
+    public JSONObject tryRelogin(VolleyCallback callback) throws JSONException {
         JSONObject userData = new JSONObject(localStorage.getItem("user"));
-        JSONObject res = postLogin(userData.getJSONObject("user"));
-        if(res.get("restype")=="success"){
-            afterRelogin(true,res,userData);
-        } else {
-            afterRelogin(false,res,userData);
-        }
-        return res;
+        JSONObject res = postLogin(userData.getJSONObject("user"),callback);
+//        if(res.get("restype")=="success"){
+//            afterRelogin(true,res,userData);
+//        } else {
+//            afterRelogin(false,res,userData);
+//        }
+       return res;
     }
 
-    public JSONObject volleyPost(String url, JSONObject obj, Boolean except_url){
+    public JSONObject volleyPost(String url, JSONObject obj, Boolean except_url, VolleyCallback callback){
         String postUrl = getTokens(except_url);//"https://reqres.in/api/users";
        // RequestQueue requestQueue = Volley.newRequestQueue(this);
 
@@ -98,6 +100,7 @@ public class VolleyApi {
             public void onResponse(JSONObject response) {
                 try {
                     response.put("restype","success");
+                    callback.onSuccess(response);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -116,12 +119,22 @@ public class VolleyApi {
                 }
                 res[0] = err;
                 //Map<String, String> responseHeaders = error.networkResponse.headers;
+                byte[] bytes = error.networkResponse.data;
+                String s = new String(bytes, StandardCharsets.UTF_8);
+                try {
+                    err.put("message",s);
+                    if(error.networkResponse.statusCode == 424){
+                        callback.onSuccess(err);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 if(error.networkResponse.statusCode == 401 ||error.networkResponse.statusCode == 403){
                     try {
-                        JSONObject resp = tryRelogin();
-                        if(resp.get("restype")=="success"){
-                            volleyPost(url,obj,except_url);
-                        }
+                        JSONObject resp = tryRelogin(callback);
+//                        if(resp.get("restype")=="success"){
+//                            volleyPost(url,obj,except_url);
+//                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -154,18 +167,18 @@ public class VolleyApi {
         }
     }
 
-    public JSONObject postLogin(JSONObject user){
-        JSONObject res = volleyPost("user/authenticate",user,true);
+    public JSONObject postLogin(JSONObject user, VolleyCallback callback){
+        JSONObject res = volleyPost("user/authenticate",user,true, callback);
         return res;
     }
 
-    public JSONObject postTriggerScene(JSONObject data) {
-        JSONObject res = volleyPost("scenes/trigger",data,false);
+    public JSONObject postTriggerScene(JSONObject data, VolleyCallback callback) {
+        JSONObject res = volleyPost("scenes/trigger",data,false, callback);
         return res;
     }
 
-    public JSONObject postTriggerSwitch(JSONObject data) {
-        JSONObject res = volleyPost("deviceevents/switch",data,false);
+    public JSONObject postTriggerSwitch(JSONObject data, VolleyCallback callback) {
+        JSONObject res = volleyPost("deviceevents/switch",data,false, callback);
         return res;
     }
 }

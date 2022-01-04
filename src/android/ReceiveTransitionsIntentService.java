@@ -10,6 +10,7 @@ import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,8 @@ public class ReceiveTransitionsIntentService extends IntentService {
     protected BeepHelper beepHelper;
     protected GeoNotificationNotifier notifier;
     protected GeoNotificationStore store;
+    private static VolleyApi volleyApi;
+    private LocalStorage localStorage;
 
     /**
      * Sets an identifier for the service
@@ -62,7 +65,8 @@ public class ReceiveTransitionsIntentService extends IntentService {
             // Get the type of transition (entry or exit)
             int transitionType = geofencingEvent.getGeofenceTransition();
             if ((transitionType == Geofence.GEOFENCE_TRANSITION_ENTER)
-                    || (transitionType == Geofence.GEOFENCE_TRANSITION_EXIT)) {
+                    || (transitionType == Geofence.GEOFENCE_TRANSITION_EXIT) ||
+                    (transitionType == Geofence.GEOFENCE_TRANSITION_DWELL) ) {
                 logger.log(Log.DEBUG, "Geofence transition detected");
                 List<Geofence> triggerList = geofencingEvent.getTriggeringGeofences();
                 List<GeoNotification> geoNotifications = new ArrayList<GeoNotification>();
@@ -83,7 +87,16 @@ public class ReceiveTransitionsIntentService extends IntentService {
                 if (geoNotifications.size() > 0) {
                     broadcastIntent.putExtra("transitionData", Gson.get().toJson(geoNotifications));
                     try {
-                        GeofencePlugin.onTransitionReceived(geoNotifications);
+                        volleyApi.tryRelogin(new VolleyCallback(){
+                            @Override
+                            public void onSuccess(JSONObject result) throws JSONException {
+                                JSONObject userData = new JSONObject(localStorage.getItem("user"));
+                                if(result.get("restype")=="success"){
+                                    volleyApi.afterRelogin(true,result,userData);
+                                    GeofencePlugin.onTransitionReceived(geoNotifications);
+                                }
+                            }
+                        });
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

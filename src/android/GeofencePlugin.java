@@ -6,6 +6,8 @@ import android.content.pm.PackageManager;
 import android.util.Log;
 import android.Manifest;
 
+import com.google.gson.JsonParser;
+
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
@@ -15,7 +17,6 @@ import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONStringer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ public class GeofencePlugin extends CordovaPlugin {
     public static final String ERROR_GEOFENCE_NOT_AVAILABLE = "GEOFENCE_NOT_AVAILABLE";
     public static final String ERROR_GEOFENCE_LIMIT_EXCEEDED = "GEOFENCE_LIMIT_EXCEEDED";
     private static VolleyApi volleyApi;
+    protected GeoNotificationStore store;
 
     private GeoNotificationManager geoNotificationManager;
     //private VolleyApi volleyApi;
@@ -65,6 +67,7 @@ public class GeofencePlugin extends CordovaPlugin {
         geoNotificationManager = new GeoNotificationManager(context);
         volleyApi = new VolleyApi(context);
         localStorage = new LocalStorage(context);
+        store = new GeoNotificationStore(context);
     }
 
     @Override
@@ -83,12 +86,8 @@ public class GeofencePlugin extends CordovaPlugin {
                             geoNotifications.add(not);
                         }
                     }
+                   // geoNotificationManager.removeAllGeoNotifications(callbackContext);
                     geoNotificationManager.addGeoNotifications(geoNotifications, callbackContext);
-//                    try {
-//                       // volleyApi.tryRelogin();
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
                 } else if (action.equals("remove")) {
                     List<String> ids = new ArrayList<String>();
                     for (int i = 0; i < args.length(); i++) {
@@ -97,11 +96,6 @@ public class GeofencePlugin extends CordovaPlugin {
                     geoNotificationManager.removeGeoNotifications(ids, callbackContext);
                 } else if (action.equals("removeAll")) {
                     geoNotificationManager.removeAllGeoNotifications(callbackContext);
-//                    try {
-//                       // volleyApi.tryRelogin();
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
                 } else if (action.equals("getWatched")) {
                     List<GeoNotification> geoNotifications = geoNotificationManager.getWatched();
                     callbackContext.success(Gson.get().toJson(geoNotifications));
@@ -120,6 +114,12 @@ public class GeofencePlugin extends CordovaPlugin {
                     localStorage.setItem("user", user.toString());
 
                 }
+//                else if (action.equals("getNotification")) {
+//
+//                    PluginResult pluginResult = new  PluginResult(PluginResult.Status.NO_RESULT);
+//                    pluginResult.setKeepCallback(true);
+//                    callbackContext.sendPluginResult(pluginResult);
+//                }
             }
         });
 
@@ -136,16 +136,41 @@ public class GeofencePlugin extends CordovaPlugin {
     }
 
     public static void onTransitionReceived(List<GeoNotification> notifications) throws JSONException {
-        Log.d(TAG, "Transition Event Received!");
-        //volleyApi.getApi();
-        volleyApi.tryRelogin();
-        String js = "setTimeout('geofence.onTransitionReceived("
-            + Gson.get().toJson(notifications) + ")',0)";
-        if (webView == null) {
-            Log.d(TAG, "Webview is null");
-        } else {
-            webView.sendJavascript(js);
+        Log.d(TAG, "Transition Event Received!"+ notifications);
+        for (int i=0; i<notifications.size();i++){
+            String action = notifications.get(i).w_actions;
+            JSONArray obj = new JSONArray(action);
+            for(int j=0; j<obj.length(); j++) {
+                JSONObject act = obj.getJSONObject(j);
+                if (act.get("type").equals("scene")) {
+                    JSONObject scene_obj = new JSONObject();
+                    scene_obj.put("sceneId", act.get("scene_id"));
+                    volleyApi.postTriggerScene(scene_obj, new VolleyCallback() {
+                        @Override
+                        public void onSuccess(JSONObject result) throws JSONException {
+
+                        }
+                    });
+                } else if (act.get("type").equals("switch")) {
+                    JSONObject switch_obj = new JSONObject();
+                    switch_obj.put("switch_no",act.get("switch_no"));
+                    switch_obj.put("switch_state",act.get("switch_state"));
+                    switch_obj.put("key",act.get("key"));
+                    switch_obj.put("mobId",act.get("mobId"));
+                    switch_obj.put("switch_appliance_id",act.get("switch_appliance_id"));
+                    switch_obj.put("dimm_value",act.get("dimm_value"));
+                    switch_obj.put("act_type",act.get("act_type"));
+                    switch_obj.put("userdevice",act.get("userdevice"));
+                    volleyApi.postTriggerSwitch(switch_obj, new VolleyCallback() {
+                        @Override
+                        public void onSuccess(JSONObject result) throws JSONException {
+
+                        }
+                    });
+                }
+            }
         }
+
     }
 
     private void deviceReady() {
