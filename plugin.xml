@@ -47,6 +47,7 @@
         <source-file src="src/android/ReceiveTransitionsIntentService.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/RemoveGeofenceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/VolleyApi.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/VolleyCallback.java" target-dir="src/com/cowbell/cordova/geofence" />
 
         <framework src="com.google.android.gms:play-services-location:+" />
         <framework src="com.android.volley:volley:1.2.1" />
