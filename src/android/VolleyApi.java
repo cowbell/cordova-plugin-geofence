@@ -1,6 +1,7 @@
 package com.cowbell.cordova.geofence;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
@@ -11,6 +12,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.cowbell.cordova.geofence.GeofencePlugin;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,9 +27,10 @@ public class VolleyApi {
     private Logger logger;
     private RequestQueue queue;
     private LocalStorage localStorage;
-    private String BASE_URL = "https://api.kiot.io/";
-    private String baseUrl = BASE_URL+"api/v1/";
+    private String DEFAULT_BASE_URL = "https://api.kiot.io/";
+    private String baseUrlExt = "api/v1/";
     Map<String, String> headers = new HashMap<>();
+    private String BASE_URL = "";
 
     public VolleyApi(Context context) {
         this.context = context;
@@ -35,8 +38,7 @@ public class VolleyApi {
         localStorage = new LocalStorage(context);
         // Instantiate the RequestQueue.
         this.queue = Volley.newRequestQueue(context);
-        //this.headers.put("Content-type", "application/json");
-        //String url ="https://www.google.com";
+        BASE_URL = GeofencePlugin.webView.getPreferences().getString("kapibase", DEFAULT_BASE_URL);
     }
 
     public void volleyGet(){
@@ -81,20 +83,10 @@ public class VolleyApi {
     }
 
     public JSONObject volleyPost(String url, JSONObject obj, Boolean except_url, VolleyCallback callback){
-        String postUrl = getTokens(except_url);//"https://reqres.in/api/users";
-       // RequestQueue requestQueue = Volley.newRequestQueue(this);
-
+        String postUrl = getTokens(except_url);
         JSONObject postData = new JSONObject();
         postData = obj;
         final JSONObject[] res = {new JSONObject()};
-//        try {
-//            postData.put("name", "Jonathan");
-//            postData.put("job", "Software Engineer");
-//
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, postUrl+url, postData, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -145,8 +137,6 @@ public class VolleyApi {
         }){
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-               // Map<String, String> headers = new HashMap<>();
-               // headers.put("Authorization", "Bearer XXXXXXXXXX");
                 return headers;
             }
         };
@@ -163,7 +153,7 @@ public class VolleyApi {
         } else {
             String token = localStorage.getItem("token");
             headers.put("Authorization", "Bearer " + token);
-            return baseUrl;
+            return BASE_URL + baseUrlExt;
         }
     }
 
