@@ -1,9 +1,9 @@
 {
   "name": "kiot-cordova-plugin-geofence",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Cordova geofence plugin",
   "cordova": {
-    "id": "cordova-plugin-geofence",
+    "id": "kiot-cordova-plugin-geofence",
     "platforms": [
       "android",
       "ios",

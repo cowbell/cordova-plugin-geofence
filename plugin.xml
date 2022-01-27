@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest" xmlns:android="http://schemas.android.com/apk/res/android" id="cordova-plugin-geofence" version="0.7.0">
+<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest" xmlns:android="http://schemas.android.com/apk/res/android" id="kiot-cordova-plugin-geofence" version="0.7.0">
     <name>geofence</name>
     <description>Geofence plugin</description>
     <license>Apache 2.0</license>
     <keywords>phonegap,background geolocation, geofence</keywords>
-    <repo>https://github.com/cowbell/cordova-plugin-geofence.git</repo>
-    <issue>https://github.com/cowbell/cordova-plugin-geofence/issues</issue>
+    <repo>https://github.com/Kiot-innovations-pvt/cordova-plugin-geofence.git</repo>
+    <issue>https://github.com/Kiot-innovations-pvt/cordova-plugin-geofence/issues</issue>
     <engines>
         <engine name="cordova" version=">=5.0.0" />
     </engines>
