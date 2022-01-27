@@ -50,7 +50,8 @@
 
         <framework src="com.google.android.gms:play-services-location:+" />
         <framework src="com.android.volley:volley:1.2.1" />
-        <lib-file src="src/android/libs/gson-2.3.jar" />
+        <framework src="com.google.code.gson:gson:2.8.5" />
+        <!-- <lib-file src="src/android/libs/gson-2.8.5.jar" /> -->
 
         <config-file target="config.xml" parent="/*">
             <feature name="GeofencePlugin">
