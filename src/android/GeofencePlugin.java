@@ -135,10 +135,11 @@ public class GeofencePlugin extends CordovaPlugin {
         return geo;
     }
 
-    public static void onTransitionReceived(List<GeoNotification> notifications) throws JSONException {
+    public static void onTransitionReceived(List<GeoNotification> notifications, GeoNotificationNotifier notifier) throws JSONException {
         Log.d(TAG, "Transition Event Received!"+ notifications);
         for (int i=0; i<notifications.size();i++){
             String action = notifications.get(i).w_actions;
+            Notification notification = notifications.get(i).notification;
             JSONArray obj = new JSONArray(action);
             for(int j=0; j<obj.length(); j++) {
                 JSONObject act = obj.getJSONObject(j);
@@ -148,7 +149,7 @@ public class GeofencePlugin extends CordovaPlugin {
                     volleyApi.postTriggerScene(scene_obj, new VolleyCallback() {
                         @Override
                         public void onSuccess(JSONObject result) throws JSONException {
-
+                            notifier.notify(notification);
                         }
                     });
                 } else if (act.get("type").equals("switch")) {
@@ -164,7 +165,7 @@ public class GeofencePlugin extends CordovaPlugin {
                     volleyApi.postTriggerSwitch(switch_obj, new VolleyCallback() {
                         @Override
                         public void onSuccess(JSONObject result) throws JSONException {
-
+                            notifier.notify(notification);
                         }
                     });
                 }
@@ -185,7 +186,7 @@ public class GeofencePlugin extends CordovaPlugin {
         }
     }
 
-   private void initialize(CallbackContext callbackContext) {
+    private void initialize(CallbackContext callbackContext) {
         String[] permissions = {
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION

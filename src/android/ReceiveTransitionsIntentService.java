@@ -77,7 +77,7 @@ public class ReceiveTransitionsIntentService extends IntentService {
 
                     if (geoNotification != null) {
                         if (geoNotification.notification != null) {
-                            notifier.notify(geoNotification.notification);
+                           // notifier.notify(geoNotification.notification);
                         }
                         geoNotification.transitionType = transitionType;
                         geoNotifications.add(geoNotification);
@@ -93,7 +93,7 @@ public class ReceiveTransitionsIntentService extends IntentService {
                                 JSONObject userData = new JSONObject(localStorage.getItem("user"));
                                 if(result.get("restype")=="success"){
                                     volleyApi.afterRelogin(true,result,userData);
-                                    GeofencePlugin.onTransitionReceived(geoNotifications);
+                                    GeofencePlugin.onTransitionReceived(geoNotifications,notifier);
                                 }
                             }
                         });
