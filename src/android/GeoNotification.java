@@ -32,20 +32,12 @@ public class GeoNotification {
     }
 
     public Geofence toGeofence() {
-        // List geofenceArrayList;
-       // List<Geofence> geofenceArrayList = new ArrayList<>();
-//        geofenceArrayList.add(new Geofence.Builder()
-//                .setRequestId(id)
-//                .setLoiteringDelay(10000)
-//                .setCircularRegion(17.44885, 78.39177, 100)
-//                .setExpirationDuration(Long.MAX_VALUE)
-//                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER|Geofence.GEOFENCE_TRANSITION_EXIT).build());
-
         return new Geofence.Builder()
                 .setRequestId(id)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER|Geofence.GEOFENCE_TRANSITION_EXIT)
+                .setTransitionTypes(transitionType == 1 ? Geofence.GEOFENCE_TRANSITION_ENTER: transitionType == 2 ?Geofence.GEOFENCE_TRANSITION_EXIT
+                        :Geofence.GEOFENCE_TRANSITION_ENTER |Geofence.GEOFENCE_TRANSITION_EXIT )
                 .setLoiteringDelay(10000)
-                .setCircularRegion(17.44885, 78.39177, 100)
+                .setCircularRegion(latitude, longitude, radius)
                 .setExpirationDuration(Long.MAX_VALUE).build();
     }
 

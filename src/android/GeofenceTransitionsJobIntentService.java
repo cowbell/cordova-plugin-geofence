@@ -37,7 +37,6 @@ public class GeofenceTransitionsJobIntentService extends JobIntentService {
 
     private static final int JOB_ID = 573;
     protected GeoNotificationStore store;
-    //private static VolleyApi volleyApi;
     private static LocalStorage localStorage;
 
     private static final String TAG = "GeofenceTransitionsIS";
@@ -45,8 +44,6 @@ public class GeofenceTransitionsJobIntentService extends JobIntentService {
     private static final String CHANNEL_ID = "channel_01";
     public GeofenceTransitionsJobIntentService() {
         super();
-        //volleyApi = new VolleyApi();
-        //beepHelper = new BeepHelper();
         localStorage = new LocalStorage(this);
         store = new GeoNotificationStore(this);
         Logger.setLogger(new Logger(GeofencePlugin.TAG, this, false));
@@ -117,13 +114,6 @@ public class GeofenceTransitionsJobIntentService extends JobIntentService {
                     e.printStackTrace();
                 }
             }
-            // Get the transition details as a String.
-//            String geofenceTransitionDetails = getGeofenceTransitionDetails(geofenceTransition,
-//                    triggeringGeofences);
-
-            // Send notification and log the transition details.
-          //  sendNotification(geofenceTransitionDetails);
-       //     Log.i(TAG, geofenceTransitionDetails);
         } else {
             // Log the error.
             Log.e(TAG, "Geofence transition error: invalid transition type %1$d");
@@ -136,6 +126,7 @@ public class GeofenceTransitionsJobIntentService extends JobIntentService {
             String action = notifications.get(i).w_actions;
             GeoNotification notification = notifications.get(i);
             JSONArray obj = new JSONArray(action);
+            final Boolean[] notifFlag = {false};
             for(int j=0; j<obj.length(); j++) {
                 JSONObject act = obj.getJSONObject(j);
                 if (act.get("type").equals("scene")) {
@@ -144,7 +135,8 @@ public class GeofenceTransitionsJobIntentService extends JobIntentService {
                     VolleyApi.postTriggerScene(scene_obj, new VolleyCallback() {
                         @Override
                         public void onSuccess(JSONObject result) throws JSONException {
-                            sendNotification(notification);
+                            notifFlag[0] = true;
+                           // sendNotification(notification);
                             //notifier.notify(notification);
                         }
                     });
@@ -161,11 +153,15 @@ public class GeofenceTransitionsJobIntentService extends JobIntentService {
                     VolleyApi.postTriggerSwitch(switch_obj, new VolleyCallback() {
                         @Override
                         public void onSuccess(JSONObject result) throws JSONException {
-                            sendNotification(notification);
+                            notifFlag[0] = true;
+                            //sendNotification(notification);
                            // notifier.notify(notification);
                         }
                     });
                 }
+            }
+            if(notifFlag[0] == true){
+                sendNotification(notification);
             }
         }
 
@@ -205,10 +201,10 @@ public class GeofenceTransitionsJobIntentService extends JobIntentService {
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         String description = "";
         if (notificationDetails.transitionType == Geofence.GEOFENCE_TRANSITION_ENTER){
-             description = "Triggered "+notificationDetails.name+", on entering home" ;
+             description = "Triggered "+notificationDetails.name ;
         }
         if (notificationDetails.transitionType == Geofence.GEOFENCE_TRANSITION_EXIT){
-             description = "Triggered "+notificationDetails.name+", on exiting home";
+             description = "Triggered "+notificationDetails.name ;
         }
 
         // Android O requires a Notification Channel.

@@ -95,10 +95,8 @@ public class GeofencePlugin extends CordovaPlugin {
                         ids.add(args.optString(i));
                     }
                     geoNotificationManager.removeGeoNotifications(ids, callbackContext);
-                   // callbackContext.success();
                 } else if (action.equals("removeAll")) {
                     geoNotificationManager.removeAllGeoNotifications(callbackContext);
-                    //callbackContext.success();
                 } else if (action.equals("getWatched")) {
                     List<GeoNotification> geoNotifications = geoNotificationManager.getWatched();
                     callbackContext.success(Gson.get().toJson(geoNotifications));
@@ -117,12 +115,6 @@ public class GeofencePlugin extends CordovaPlugin {
                     localStorage.setItem("user", user.toString());
 
                 }
-//                else if (action.equals("getNotification")) {
-//
-//                    PluginResult pluginResult = new  PluginResult(PluginResult.Status.NO_RESULT);
-//                    pluginResult.setKeepCallback(true);
-//                    callbackContext.sendPluginResult(pluginResult);
-//                }
             }
         });
 
