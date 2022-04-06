@@ -54,7 +54,7 @@ public class GeoNotificationNotifier {
             Ringtone r = RingtoneManager.getRingtone(context, notificationSound);
             r.play();
         } catch (Exception e) {
-        	beepHelper.startTone("beep_beep_beep");
+            beepHelper.startTone("beep_beep_beep");
             e.printStackTrace();
         }
         //notificationManager.notify(notification.id, mBuilder.build());

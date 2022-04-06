@@ -24,15 +24,15 @@ import java.util.Map;
 public class VolleyApi {
     private Context context;
     private VolleyCallback callback;
-    private Logger logger;
-    private RequestQueue queue;
-    private LocalStorage localStorage;
+    private static Logger logger;
+    private static RequestQueue queue;
+    private static LocalStorage localStorage;
     private String DEFAULT_BASE_URL = "https://api.kiot.io/";
-    private String baseUrlExt = "api/v1/";
-    Map<String, String> headers = new HashMap<>();
-    private String BASE_URL = "";
+    private static String baseUrlExt = "api/v1/";
+    static Map<String, String> headers = new HashMap<>();
+    private static String BASE_URL = "";
 
-    public VolleyApi(Context context) {
+    public  VolleyApi(Context context) {
         this.context = context;
         logger = Logger.getLogger();
         localStorage = new LocalStorage(context);
@@ -51,18 +51,18 @@ public class VolleyApi {
                     public void onResponse(String response) {
                         // Display the first 500 characters of the response string.
                         logger.log(Log.DEBUG, "Response is: "+ response.substring(0,500));
-                       // textView.setText("Response is: "+ response.substring(0,500));
+                        // textView.setText("Response is: "+ response.substring(0,500));
                     }
                 }, error -> {
-                    logger.log(Log.DEBUG, "That didn't work!");
-                   // textView.setText("That didn't work!");
-                });
+            logger.log(Log.DEBUG, "That didn't work!");
+            // textView.setText("That didn't work!");
+        });
 
 // Add the request to the RequestQueue.
         queue.add(stringRequest);
     }
 
-    public void afterRelogin(Boolean success,JSONObject data, JSONObject userData) throws JSONException {
+    public static void afterRelogin(Boolean success, JSONObject data, JSONObject userData) throws JSONException {
         if(success == true){
             String token = data.getString("token");
             JSONObject user =  data.getJSONObject("user");
@@ -71,18 +71,19 @@ public class VolleyApi {
         }
     }
 
-    public JSONObject tryRelogin(VolleyCallback callback) throws JSONException {
+    public static JSONObject tryRelogin(VolleyCallback callback) throws JSONException {
         JSONObject userData = new JSONObject(localStorage.getItem("user"));
         JSONObject res = postLogin(userData.getJSONObject("user"),callback);
+       // JSONObject res = null;
 //        if(res.get("restype")=="success"){
 //            afterRelogin(true,res,userData);
 //        } else {
 //            afterRelogin(false,res,userData);
 //        }
-       return res;
+        return res;
     }
 
-    public JSONObject volleyPost(String url, JSONObject obj, Boolean except_url, VolleyCallback callback){
+    public static JSONObject volleyPost(String url, JSONObject obj, Boolean except_url, VolleyCallback callback){
         String postUrl = getTokens(except_url);
         JSONObject postData = new JSONObject();
         postData = obj;
@@ -110,9 +111,16 @@ public class VolleyApi {
                     e.printStackTrace();
                 }
                 res[0] = err;
+                byte[] bytes;
+                String s;
                 //Map<String, String> responseHeaders = error.networkResponse.headers;
-                byte[] bytes = error.networkResponse.data;
-                String s = new String(bytes, StandardCharsets.UTF_8);
+                if(error.networkResponse != null && error.networkResponse.data != null) {
+                     bytes = error.networkResponse.data;
+                     s = new String(bytes, StandardCharsets.UTF_8);
+                } else {
+                     s = "error";
+                }
+
                 try {
                     err.put("message",s);
                     if(error.networkResponse.statusCode == 424){
@@ -131,7 +139,7 @@ public class VolleyApi {
                         e.printStackTrace();
                     }
                 }
-                logger.log(Log.DEBUG,error.getMessage());
+                //logger.log(Log.DEBUG,error.getMessage());
                 error.printStackTrace();
             }
         }){
@@ -146,28 +154,28 @@ public class VolleyApi {
 
     }
 
-    public String getTokens(Boolean except_url){
+    public static String getTokens(Boolean except_url){
         if(except_url==true){
             headers.remove("Authorization");
-            return BASE_URL;
+            return BASE_URL+'/';
         } else {
             String token = localStorage.getItem("token");
             headers.put("Authorization", "Bearer " + token);
-            return BASE_URL + baseUrlExt;
+            return BASE_URL +'/'+ baseUrlExt;
         }
     }
 
-    public JSONObject postLogin(JSONObject user, VolleyCallback callback){
+    public static JSONObject postLogin(JSONObject user, VolleyCallback callback){
         JSONObject res = volleyPost("user/authenticate",user,true, callback);
         return res;
     }
 
-    public JSONObject postTriggerScene(JSONObject data, VolleyCallback callback) {
+    public static JSONObject postTriggerScene(JSONObject data, VolleyCallback callback) {
         JSONObject res = volleyPost("scenes/trigger",data,false, callback);
         return res;
     }
 
-    public JSONObject postTriggerSwitch(JSONObject data, VolleyCallback callback) {
+    public static JSONObject postTriggerSwitch(JSONObject data, VolleyCallback callback) {
         JSONObject res = volleyPost("deviceevents/switch",data,false, callback);
         return res;
     }

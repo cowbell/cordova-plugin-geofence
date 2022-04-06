@@ -24,17 +24,17 @@ public abstract class AbstractGoogleServiceCommand implements
     public AbstractGoogleServiceCommand(Context context) {
         this.context = context;
         mGoogleApiClient = new GoogleApiClient.Builder(context)
-            .addConnectionCallbacks(this)
-            .addOnConnectionFailedListener(this)
-            .addApi(LocationServices.API)
-            .build();
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
         logger = Logger.getLogger();
         listeners = new ArrayList<IGoogleServiceCommandListener>();
     }
 
     private void connectToGoogleServices() {
         if (!mGoogleApiClient.isConnected() ||
-            (!mGoogleApiClient.isConnecting() && !connectionInProgress)) {
+                (!mGoogleApiClient.isConnecting() && !connectionInProgress)) {
             connectionInProgress = true;
             logger.log(Log.DEBUG, "Connecting location client");
             mGoogleApiClient.connect();

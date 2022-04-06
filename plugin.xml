@@ -47,6 +47,9 @@
         <source-file src="src/android/RemoveGeofenceCommand.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/VolleyApi.java" target-dir="src/com/cowbell/cordova/geofence" />
         <source-file src="src/android/VolleyCallback.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/GeofenceTransitionsJobIntentService.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/GeofenceBroadcastReceiver.java" target-dir="src/com/cowbell/cordova/geofence" />
+        <source-file src="src/android/GeofenceErrorMessages.java" target-dir="src/com/cowbell/cordova/geofence" />
 
         <framework src="com.google.android.gms:play-services-location:+" />
         <framework src="com.android.volley:volley:1.2.1" />
@@ -60,8 +63,10 @@
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <service android:name="com.cowbell.cordova.geofence.ReceiveTransitionsIntentService" android:label="@string/app_name" android:exported="false">
-            </service>
+                <service
+            android:name="com.cowbell.cordova.geofence.GeofenceTransitionsJobIntentService"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
@@ -70,6 +75,10 @@
                     <action android:name="android.intent.action.BOOT_COMPLETED" />
                 </intent-filter>
             </receiver>
+             <receiver
+            android:name="com.cowbell.cordova.geofence.GeofenceBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true" />
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest">
