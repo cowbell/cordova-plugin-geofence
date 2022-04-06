@@ -1,6 +1,10 @@
 package com.cowbell.cordova.geofence;
 
 import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.gson.annotations.Expose;
 
@@ -28,24 +32,21 @@ public class GeoNotification {
     }
 
     public Geofence toGeofence() {
-       // List geofenceArrayList;
-        List<Geofence> geofenceArrayList = new ArrayList<>();
-        geofenceArrayList.add(new Geofence.Builder()
-                .setRequestId(id)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER|Geofence.GEOFENCE_TRANSITION_EXIT|Geofence.GEOFENCE_TRANSITION_DWELL)
-                .setLoiteringDelay(10000)
-                .setCircularRegion(latitude, longitude, 10)
-                .setExpirationDuration(Long.MAX_VALUE).build());
-        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
-        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
-        builder.addGeofences(geofenceArrayList);
-        builder.build();
+        // List geofenceArrayList;
+       // List<Geofence> geofenceArrayList = new ArrayList<>();
+//        geofenceArrayList.add(new Geofence.Builder()
+//                .setRequestId(id)
+//                .setLoiteringDelay(10000)
+//                .setCircularRegion(17.44885, 78.39177, 100)
+//                .setExpirationDuration(Long.MAX_VALUE)
+//                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER|Geofence.GEOFENCE_TRANSITION_EXIT).build());
+
         return new Geofence.Builder()
-            .setRequestId(id)
-            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER|Geofence.GEOFENCE_TRANSITION_EXIT|Geofence.GEOFENCE_TRANSITION_DWELL)
+                .setRequestId(id)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER|Geofence.GEOFENCE_TRANSITION_EXIT)
                 .setLoiteringDelay(10000)
-            .setCircularRegion(latitude, longitude, 10)
-            .setExpirationDuration(Long.MAX_VALUE).build();
+                .setCircularRegion(17.44885, 78.39177, 100)
+                .setExpirationDuration(Long.MAX_VALUE).build();
     }
 
     public String toJson() {
