@@ -40,7 +40,7 @@ public class LocalStorage {
 
     /**
      * This method allows to get an item for the given key
-     * 
+     *
      * @param key
      *            : the key to look for in the local storage
      * @return the item having the given key
@@ -64,7 +64,7 @@ public class LocalStorage {
     /**
      * set the value for the given key, or create the set of datas if the key
      * does not exist already.
-     * 
+     *
      * @param key
      * @param value
      */
@@ -88,7 +88,7 @@ public class LocalStorage {
 
     /**
      * removes the item corresponding to the given key
-     * 
+     *
      * @param key
      */
     public void removeItem(String key) {
