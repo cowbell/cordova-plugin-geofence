@@ -1,20 +1,17 @@
 package com.cowbell.cordova.geofence;
 
-import android.Manifest;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.util.Log;
-
-import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofenceStatusCodes;
+import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 
-import org.apache.cordova.LOG;
+//import org.apache.cordova.LOG;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,18 +22,21 @@ import java.util.Map;
 public class AddGeofenceCommand extends AbstractGoogleServiceCommand {
     private List<Geofence> geofencesToAdd;
     private PendingIntent pendingIntent;
+    private GeofencingRequest geofencingRequest;
 
-    public AddGeofenceCommand(Context context, PendingIntent pendingIntent,
+    public AddGeofenceCommand(Context context, GeofencingRequest geofencingRequest, PendingIntent pendingIntent,
                               List<Geofence> geofencesToAdd) {
         super(context);
         this.geofencesToAdd = geofencesToAdd;
         this.pendingIntent = pendingIntent;
+        this.geofencingRequest = geofencingRequest;
     }
 
     @Override
     public void ExecuteCustomCode() {
         logger.log(Log.DEBUG, "Adding new geofences...");
         if (geofencesToAdd != null && geofencesToAdd.size() > 0) try {
+            //mGeofencingClient.addGeofences(geofencingRequest, pendingIntent);
             LocationServices.GeofencingApi
                     .addGeofences(mGoogleApiClient, geofencesToAdd, pendingIntent)
                     .setResultCallback(new ResultCallback<Status>() {
@@ -71,7 +71,7 @@ public class AddGeofenceCommand extends AbstractGoogleServiceCommand {
                         }
                     });
         } catch (Exception exception) {
-            logger.log(LOG.ERROR, "Exception while adding geofences");
+            logger.log(2, "Exception while adding geofences");
             exception.printStackTrace();
             CommandExecuted(exception);
         }
