@@ -86,16 +86,19 @@ public class GeofencePlugin extends CordovaPlugin {
                             geoNotifications.add(not);
                         }
                     }
-                   // geoNotificationManager.removeAllGeoNotifications(callbackContext);
+                    // geoNotificationManager.removeAllGeoNotifications(callbackContext);
                     geoNotificationManager.addGeoNotifications(geoNotifications, callbackContext);
+                    //callbackContext.success();
                 } else if (action.equals("remove")) {
                     List<String> ids = new ArrayList<String>();
                     for (int i = 0; i < args.length(); i++) {
                         ids.add(args.optString(i));
                     }
                     geoNotificationManager.removeGeoNotifications(ids, callbackContext);
+                   // callbackContext.success();
                 } else if (action.equals("removeAll")) {
                     geoNotificationManager.removeAllGeoNotifications(callbackContext);
+                    //callbackContext.success();
                 } else if (action.equals("getWatched")) {
                     List<GeoNotification> geoNotifications = geoNotificationManager.getWatched();
                     callbackContext.success(Gson.get().toJson(geoNotifications));
@@ -135,45 +138,6 @@ public class GeofencePlugin extends CordovaPlugin {
         return geo;
     }
 
-    public static void onTransitionReceived(List<GeoNotification> notifications, GeoNotificationNotifier notifier) throws JSONException {
-        Log.d(TAG, "Transition Event Received!"+ notifications);
-        for (int i=0; i<notifications.size();i++){
-            String action = notifications.get(i).w_actions;
-            Notification notification = notifications.get(i).notification;
-            JSONArray obj = new JSONArray(action);
-            for(int j=0; j<obj.length(); j++) {
-                JSONObject act = obj.getJSONObject(j);
-                if (act.get("type").equals("scene")) {
-                    JSONObject scene_obj = new JSONObject();
-                    scene_obj.put("sceneId", act.get("scene_id"));
-                    volleyApi.postTriggerScene(scene_obj, new VolleyCallback() {
-                        @Override
-                        public void onSuccess(JSONObject result) throws JSONException {
-                            notifier.notify(notification);
-                        }
-                    });
-                } else if (act.get("type").equals("switch")) {
-                    JSONObject switch_obj = new JSONObject();
-                    switch_obj.put("switch_no",act.get("switch_no"));
-                    switch_obj.put("switch_state",act.get("switch_state"));
-                    switch_obj.put("key",act.get("key"));
-                    switch_obj.put("mobId",act.get("mobId"));
-                    switch_obj.put("switch_appliance_id",act.get("switch_appliance_id"));
-                    switch_obj.put("dimm_value",act.get("dimm_value"));
-                    switch_obj.put("act_type",act.get("act_type"));
-                    switch_obj.put("userdevice",act.get("userdevice"));
-                    volleyApi.postTriggerSwitch(switch_obj, new VolleyCallback() {
-                        @Override
-                        public void onSuccess(JSONObject result) throws JSONException {
-                            notifier.notify(notification);
-                        }
-                    });
-                }
-            }
-        }
-
-    }
-
     private void deviceReady() {
         Intent intent = cordova.getActivity().getIntent();
         String data = intent.getStringExtra("geofence.notification.data");
@@ -188,8 +152,8 @@ public class GeofencePlugin extends CordovaPlugin {
 
     private void initialize(CallbackContext callbackContext) {
         String[] permissions = {
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION
         };
 
         if (!hasPermissions(permissions)) {
