@@ -201,10 +201,10 @@ public class GeofenceTransitionsJobIntentService extends JobIntentService {
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         String description = "";
         if (notificationDetails.transitionType == Geofence.GEOFENCE_TRANSITION_ENTER){
-             description = "Triggered "+notificationDetails.name ;
+             description = "Triggered "+notificationDetails.event ;
         }
         if (notificationDetails.transitionType == Geofence.GEOFENCE_TRANSITION_EXIT){
-             description = "Triggered "+notificationDetails.name ;
+             description = "Triggered "+notificationDetails.event ;
         }
 
         // Android O requires a Notification Channel.

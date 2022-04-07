@@ -18,6 +18,7 @@ public class GeoNotification {
     @Expose public String _id;
     @Expose public String id;
     @Expose public String name;
+    @Expose public String event;
     @Expose public String home_id;
     @Expose public String user_id;
     @Expose public String w_actions;
