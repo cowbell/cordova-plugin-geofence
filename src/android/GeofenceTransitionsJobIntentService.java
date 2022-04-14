@@ -201,10 +201,10 @@ public class GeofenceTransitionsJobIntentService extends JobIntentService {
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         String description = "";
         if (notificationDetails.transitionType == Geofence.GEOFENCE_TRANSITION_ENTER){
-             description = "Triggered "+notificationDetails.event ;
+             description = "Triggered "+notificationDetails.name ;
         }
         if (notificationDetails.transitionType == Geofence.GEOFENCE_TRANSITION_EXIT){
-             description = "Triggered "+notificationDetails.event ;
+             description = "Triggered "+notificationDetails.name ;
         }
 
         // Android O requires a Notification Channel.
@@ -242,8 +242,8 @@ public class GeofenceTransitionsJobIntentService extends JobIntentService {
                 .setSmallIcon(_getResource("ic_launcher", "mipmap"))
 //                 In a real app, you may want to use a library like Volley
 //                 to decode the Bitmap.
-                .setColor(Color.RED)
-                .setContentTitle("Location Automation!")
+                .setColor(Color.WHITE)
+                .setContentTitle("Location Automation")
                 .setContentText(description)
                 .setContentIntent(notificationPendingIntent);
 
