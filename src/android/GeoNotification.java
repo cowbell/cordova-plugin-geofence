@@ -33,13 +33,22 @@ public class GeoNotification {
     }
 
     public Geofence toGeofence() {
-        return new Geofence.Builder()
-                .setRequestId(id)
-                .setTransitionTypes(transitionType == 1 ? Geofence.GEOFENCE_TRANSITION_ENTER: transitionType == 2 ?Geofence.GEOFENCE_TRANSITION_EXIT
-                        :Geofence.GEOFENCE_TRANSITION_ENTER |Geofence.GEOFENCE_TRANSITION_EXIT )
-                .setLoiteringDelay(10000)
-                .setCircularRegion(latitude, longitude, radius)
-                .setExpirationDuration(Long.MAX_VALUE).build();
+        if(transitionType == 1 || transitionType == 2){
+            return new Geofence.Builder()
+                    .setRequestId(id)
+                    .setTransitionTypes(transitionType )
+                    .setLoiteringDelay(10000)
+                    .setCircularRegion(latitude, longitude, radius)
+                    .setExpirationDuration(Long.MAX_VALUE).build();
+        } else {
+            return new Geofence.Builder()
+                    .setRequestId(id)
+                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |Geofence.GEOFENCE_TRANSITION_EXIT )
+                    .setLoiteringDelay(10000)
+                    .setCircularRegion(latitude, longitude, radius)
+                    .setExpirationDuration(Long.MAX_VALUE).build();
+        }
+
     }
 
     public String toJson() {
@@ -47,7 +56,7 @@ public class GeoNotification {
     }
 
     public static GeoNotification fromJson(String json) {
-        if (json == null) return null;
+        if (json == null ) return null;
         return Gson.get().fromJson(json, GeoNotification.class);
     }
 }

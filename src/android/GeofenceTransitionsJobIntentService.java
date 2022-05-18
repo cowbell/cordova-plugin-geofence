@@ -26,6 +26,8 @@ import java.util.List;
 
 import io.kiot.MainActivity;
 
+//import io.kiot.MainActivity;
+
 /**
  * Listener for geofence transition changes.
  *
@@ -36,17 +38,40 @@ import io.kiot.MainActivity;
 public class GeofenceTransitionsJobIntentService extends JobIntentService {
 
     private static final int JOB_ID = 573;
+    public static VolleyApi volleyApi;
     protected GeoNotificationStore store;
     private static LocalStorage localStorage;
+    public Context context;
 
     private static final String TAG = "GeofenceTransitionsIS";
 
     private static final String CHANNEL_ID = "channel_01";
     public GeofenceTransitionsJobIntentService() {
         super();
-        localStorage = new LocalStorage(this);
-        store = new GeoNotificationStore(this);
+//        localStorage = new LocalStorage(this);
+//        try {
+//            new VolleyApi(this);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        volleyApi = VolleyApi.getInstance();
+//        store = new GeoNotificationStore(this);
         Logger.setLogger(new Logger(GeofencePlugin.TAG, this, false));
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        context = this;
+        localStorage = new LocalStorage(this);
+        try {
+            new VolleyApi(this);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        volleyApi = VolleyApi.getInstance();
+        store = new GeoNotificationStore(this);
+        //context = MyApp.getContext();
     }
 
     /**
@@ -64,6 +89,14 @@ public class GeofenceTransitionsJobIntentService extends JobIntentService {
     @Override
     protected void onHandleWork(Intent intent) {
         Logger logger = Logger.getLogger();
+        logger.log(Log.DEBUG, "Geofence transition detected");
+//        GeoNotification geoNotification1 = store
+//                .getGeoNotification("627278d45f89d3a9cd14deb2");
+//        try {
+//            sendNotification(geoNotification1);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {
             String errorMessage = GeofenceErrorMessages.getErrorString(this,
@@ -100,12 +133,12 @@ public class GeofenceTransitionsJobIntentService extends JobIntentService {
                 //broadcastIntent.putExtra("transitionData", Gson.get().toJson(geoNotifications));
                 try {
 
-                    VolleyApi.tryRelogin(new VolleyCallback(){
+                    volleyApi.tryRelogin(new VolleyCallback(){
                         @Override
                         public void onSuccess(JSONObject result) throws JSONException {
                             JSONObject userData = new JSONObject(localStorage.getItem("user"));
                             if(result.get("restype")=="success"){
-                                VolleyApi.afterRelogin(true,result,userData);
+                                volleyApi.afterRelogin(true,result,userData);
                                 onTransitionReceived(geoNotifications);
                             }
                         }
@@ -132,7 +165,7 @@ public class GeofenceTransitionsJobIntentService extends JobIntentService {
                 if (act.get("type").equals("scene")) {
                     JSONObject scene_obj = new JSONObject();
                     scene_obj.put("sceneId", act.get("scene_id"));
-                    VolleyApi.postTriggerScene(scene_obj, new VolleyCallback() {
+                    volleyApi.postTriggerScene(scene_obj, new VolleyCallback() {
                         @Override
                         public void onSuccess(JSONObject result) throws JSONException {
                             notifFlag[0] = true;
@@ -143,14 +176,14 @@ public class GeofenceTransitionsJobIntentService extends JobIntentService {
                 } else if (act.get("type").equals("switch")) {
                     JSONObject switch_obj = new JSONObject();
                     switch_obj.put("switch_no",act.get("switch_no"));
-                    switch_obj.put("switch_state",act.get("switch_state"));
+                    switch_obj.put("switch_state",act.get("switch_value"));
                     switch_obj.put("key",act.get("key"));
                     switch_obj.put("mobId",act.get("mobId"));
-                    switch_obj.put("switch_appliance_id",act.get("switch_appliance_id"));
-                    switch_obj.put("dimm_value",act.get("dimm_value"));
-                    switch_obj.put("act_type",act.get("act_type"));
-                    switch_obj.put("userdevice",act.get("userdevice"));
-                    VolleyApi.postTriggerSwitch(switch_obj, new VolleyCallback() {
+                    switch_obj.put("switch_appliance_id",act.get("switch_appliance"));
+                   // switch_obj.put("dimm_value",act.get("dimm_value"));
+                    switch_obj.put("act_type",act.get("type"));
+                    switch_obj.put("userdevice",act.get("device"));
+                    volleyApi.postTriggerSwitch(switch_obj, new VolleyCallback() {
                         @Override
                         public void onSuccess(JSONObject result) throws JSONException {
                             notifFlag[0] = true;
@@ -161,6 +194,8 @@ public class GeofenceTransitionsJobIntentService extends JobIntentService {
                 }
             }
             if(notifFlag[0] == true){
+                sendNotification(notification);
+            } else {
                 sendNotification(notification);
             }
         }
@@ -218,14 +253,18 @@ public class GeofenceTransitionsJobIntentService extends JobIntentService {
             mNotificationManager.createNotificationChannel(mChannel);
         }
 
+        String packageName = getApplication().getPackageName();
+        Intent launchIntent = getApplication().getPackageManager().getLaunchIntentForPackage(packageName);
+        //String className = launchIntent.getComponent().getClassName();
+
         // Create an explicit content Intent that starts the main Activity.
-        Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
+        Intent notificationIntent = new Intent(getApplicationContext(), launchIntent.getComponent().getClass());
 
         // Construct a task stack.
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
 
         // Add the main Activity to the task stack as the parent.
-        stackBuilder.addParentStack(MainActivity.class);
+        stackBuilder.addParentStack(getApplication().getPackageManager().getLaunchIntentForPackage(getApplication().getPackageName()).getComponent());
 
         // Push the content Intent onto the stack.
         stackBuilder.addNextIntent(notificationIntent);

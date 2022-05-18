@@ -13,7 +13,7 @@ public class GeoNotificationStore {
     }
 
     public void setGeoNotification(GeoNotification geoNotification) {
-        storage.setItem(geoNotification._id, Gson.get().toJson(geoNotification));
+        storage.setItem(geoNotification.id, Gson.get().toJson(geoNotification));
     }
 
     public GeoNotification getGeoNotification(String id) {
@@ -25,7 +25,7 @@ public class GeoNotificationStore {
         List<String> objectJsonList = storage.getAllItems();
         List<GeoNotification> result = new ArrayList<GeoNotification>();
         for (String json : objectJsonList) {
-            result.add(GeoNotification.fromJson(json));
+                result.add(GeoNotification.fromJson(json));
         }
         return result;
     }

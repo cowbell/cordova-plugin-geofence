@@ -18,6 +18,7 @@ import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import org.apache.cordova.CallbackContext;
@@ -78,7 +79,7 @@ public class GeoNotificationManager implements OnCompleteListener<Void> {
                 //                                          int[] grantResults)
                 // to handle the case where the user grants the permission. See the documentation
                 // for ActivityCompat#requestPermissions for more details.
-                return;
+               // return;
             }
             GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
 
@@ -90,7 +91,13 @@ public class GeoNotificationManager implements OnCompleteListener<Void> {
             // Add the geofences to be monitored by geofencing service.
             builder.addGeofences(geoFences);
             mGeofencingClient.addGeofences(builder.build(), getGeofencePendingIntent())
-                    .addOnCompleteListener(this);
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            logger.log(Log.DEBUG, "Geofences successfully added");
+                        }
+                    });
+                    //.addOnCompleteListener(this);
         }
     }
 
@@ -136,10 +143,16 @@ public class GeoNotificationManager implements OnCompleteListener<Void> {
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            return;
+           // return;
         }
         mGeofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent())
-                .addOnCompleteListener(this);
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        logger.log(Log.DEBUG, "Geofences successfully added");
+                    }
+                });
+                //.addOnCompleteListener(this);
     }
 
     public void removeGeoNotifications(List<String> ids, final CallbackContext callback) {

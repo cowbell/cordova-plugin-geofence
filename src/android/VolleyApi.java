@@ -21,24 +21,33 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class VolleyApi {
     private Context context;
     private VolleyCallback callback;
     private static Logger logger;
     private static RequestQueue queue;
     private static LocalStorage localStorage;
-    private String DEFAULT_BASE_URL = "https://api.kiot.io/";
+    private String DEFAULT_BASE_URL = "https://api.kiot.io";
     private static String baseUrlExt = "api/v1/";
     static Map<String, String> headers = new HashMap<>();
     private static String BASE_URL = "";
+    private static VolleyApi mThis;
 
-    public  VolleyApi(Context context) {
+    public  VolleyApi(Context context) throws JSONException {
         this.context = context;
+        mThis = this;
         logger = Logger.getLogger();
         localStorage = new LocalStorage(context);
         // Instantiate the RequestQueue.
         this.queue = Volley.newRequestQueue(context);
-        BASE_URL = GeofencePlugin.webView.getPreferences().getString("kapibase", DEFAULT_BASE_URL);
+        //BASE_URL = GeofencePlugin.webView.getPreferences().getString("kapibase", DEFAULT_BASE_URL);
+        // JSONObject baseurlobj = new JSONObject(localStorage.getItem("base_url"));
+         BASE_URL = DEFAULT_BASE_URL;//baseurlobj.getString("base_url");
+    }
+
+    public static VolleyApi getInstance(){
+        return mThis;
     }
 
     public void volleyGet(){
@@ -84,7 +93,12 @@ public class VolleyApi {
     }
 
     public static JSONObject volleyPost(String url, JSONObject obj, Boolean except_url, VolleyCallback callback){
-        String postUrl = getTokens(except_url);
+        String postUrl = null;
+        try {
+            postUrl = getTokens(except_url);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         JSONObject postData = new JSONObject();
         postData = obj;
         final JSONObject[] res = {new JSONObject()};
@@ -154,7 +168,9 @@ public class VolleyApi {
 
     }
 
-    public static String getTokens(Boolean except_url){
+    public static String getTokens(Boolean except_url) throws JSONException {
+        JSONObject baseurlobj = new JSONObject(localStorage.getItem("base_url"));
+        BASE_URL = baseurlobj.getString("base_url");
         if(except_url==true){
             headers.remove("Authorization");
             return BASE_URL+'/';

@@ -65,7 +65,11 @@ public class GeofencePlugin extends CordovaPlugin {
         context = this.cordova.getActivity().getApplicationContext();
         Logger.setLogger(new Logger(TAG, context, false));
         geoNotificationManager = new GeoNotificationManager(context);
-        volleyApi = new VolleyApi(context);
+        try {
+            volleyApi = new VolleyApi(context);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         localStorage = new LocalStorage(context);
         store = new GeoNotificationStore(context);
     }
@@ -107,12 +111,22 @@ public class GeofencePlugin extends CordovaPlugin {
                 } else if (action.equals("setItem")) {
                     JSONObject item = args.optJSONObject(0);
                     JSONObject user = args.optJSONObject(1);
+                    JSONObject url = new JSONObject();
+                    String base_url = null;
+                    try {
+                        base_url = args.getString(2);
+                        url.put("base_url",base_url);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     try {
                         localStorage.setItem("token", item.getString("token"));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+
                     localStorage.setItem("user", user.toString());
+                    localStorage.setItem("base_url", url.toString());
 
                 }
             }
