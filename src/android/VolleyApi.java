@@ -41,9 +41,7 @@ public class VolleyApi {
         localStorage = new LocalStorage(context);
         // Instantiate the RequestQueue.
         this.queue = Volley.newRequestQueue(context);
-        //BASE_URL = GeofencePlugin.webView.getPreferences().getString("kapibase", DEFAULT_BASE_URL);
-        // JSONObject baseurlobj = new JSONObject(localStorage.getItem("base_url"));
-         BASE_URL = DEFAULT_BASE_URL;//baseurlobj.getString("base_url");
+         BASE_URL = DEFAULT_BASE_URL;
     }
 
     public static VolleyApi getInstance(){
@@ -146,9 +144,6 @@ public class VolleyApi {
                 if(error.networkResponse.statusCode == 401 ||error.networkResponse.statusCode == 403){
                     try {
                         JSONObject resp = tryRelogin(callback);
-//                        if(resp.get("restype")=="success"){
-//                            volleyPost(url,obj,except_url);
-//                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
