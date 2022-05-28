@@ -25,7 +25,7 @@ public class GeoNotificationStore {
         List<String> objectJsonList = storage.getAllItems();
         List<GeoNotification> result = new ArrayList<GeoNotification>();
         for (String json : objectJsonList) {
-            result.add(GeoNotification.fromJson(json));
+                result.add(GeoNotification.fromJson(json));
         }
         return result;
     }

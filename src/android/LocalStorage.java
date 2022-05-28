@@ -29,7 +29,7 @@ public class LocalStorage {
         ArrayList<String> results = new ArrayList<String>();
         database = localStorageDBHelper.getReadableDatabase();
         Cursor cursor = database.query(
-                LocalStorageDBHelper.LOCALSTORAGE_TABLE_NAME, null, null, null,
+                LocalStorageDBHelper.LOCALSTORAGE_TABLE_NAME, null, LocalStorageDBHelper.LOCALSTORAGE_ID +"!= ? AND " + LocalStorageDBHelper.LOCALSTORAGE_ID +"!= ?" , new String[] { "token" , "user" },
                 null, null, null);
         while (cursor.moveToNext()) {
             results.add(cursor.getString(1));
@@ -40,7 +40,7 @@ public class LocalStorage {
 
     /**
      * This method allows to get an item for the given key
-     * 
+     *
      * @param key
      *            : the key to look for in the local storage
      * @return the item having the given key
@@ -64,7 +64,7 @@ public class LocalStorage {
     /**
      * set the value for the given key, or create the set of datas if the key
      * does not exist already.
-     * 
+     *
      * @param key
      * @param value
      */
@@ -88,7 +88,7 @@ public class LocalStorage {
 
     /**
      * removes the item corresponding to the given key
-     * 
+     *
      * @param key
      */
     public void removeItem(String key) {

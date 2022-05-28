@@ -11,8 +11,8 @@ public class BeepHelper {
     }
 
     /**
-     * Plays debug sound
-     * 
+     * Plays debug sounda
+     *
      * @param name
      */
     public void startTone(String name) {

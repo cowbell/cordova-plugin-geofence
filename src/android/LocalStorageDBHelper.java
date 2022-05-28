@@ -8,7 +8,7 @@ import android.util.Log;
 /**
  * {@link SQLiteOpenHelper} that is used as replacement of the localStorage of
  * the webviews.
- * 
+ *
  * @details this class should not be used. Everything about the localStorage
  *          through the application is already handled in HTMLFragment.
  * @author Diane taken from
@@ -43,7 +43,7 @@ public class LocalStorageDBHelper extends SQLiteOpenHelper {
 
     /**
      * Returns an instance of LocalStorage
-     * 
+     *
      * @param ctx
      *            : a Context used to create the database
      * @return the instance of LocalStorage of the application or a new one if

@@ -6,6 +6,8 @@ import android.content.pm.PackageManager;
 import android.util.Log;
 import android.Manifest;
 
+import com.google.gson.JsonParser;
+
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
@@ -26,8 +28,12 @@ public class GeofencePlugin extends CordovaPlugin {
     public static final String ERROR_PERMISSION_DENIED = "PERMISSION_DENIED";
     public static final String ERROR_GEOFENCE_NOT_AVAILABLE = "GEOFENCE_NOT_AVAILABLE";
     public static final String ERROR_GEOFENCE_LIMIT_EXCEEDED = "GEOFENCE_LIMIT_EXCEEDED";
+    private static VolleyApi volleyApi;
+    protected GeoNotificationStore store;
 
     private GeoNotificationManager geoNotificationManager;
+    //private VolleyApi volleyApi;
+    private LocalStorage localStorage;
     private Context context;
     public static CordovaWebView webView = null;
 
@@ -59,6 +65,13 @@ public class GeofencePlugin extends CordovaPlugin {
         context = this.cordova.getActivity().getApplicationContext();
         Logger.setLogger(new Logger(TAG, context, false));
         geoNotificationManager = new GeoNotificationManager(context);
+        try {
+            volleyApi = new VolleyApi(context);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        localStorage = new LocalStorage(context);
+        store = new GeoNotificationStore(context);
     }
 
     @Override
@@ -77,7 +90,9 @@ public class GeofencePlugin extends CordovaPlugin {
                             geoNotifications.add(not);
                         }
                     }
+                    // geoNotificationManager.removeAllGeoNotifications(callbackContext);
                     geoNotificationManager.addGeoNotifications(geoNotifications, callbackContext);
+                    //callbackContext.success();
                 } else if (action.equals("remove")) {
                     List<String> ids = new ArrayList<String>();
                     for (int i = 0; i < args.length(); i++) {
@@ -93,6 +108,26 @@ public class GeofencePlugin extends CordovaPlugin {
                     initialize(callbackContext);
                 } else if (action.equals("deviceReady")) {
                     deviceReady();
+                } else if (action.equals("setItem")) {
+                    JSONObject item = args.optJSONObject(0);
+                    JSONObject user = args.optJSONObject(1);
+                    JSONObject url = new JSONObject();
+                    String base_url = null;
+                    try {
+                        base_url = args.getString(2);
+                        url.put("base_url",base_url);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        localStorage.setItem("token", item.getString("token"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    localStorage.setItem("user", user.toString());
+                    localStorage.setItem("base_url", url.toString());
+
                 }
             }
         });
@@ -109,17 +144,6 @@ public class GeofencePlugin extends CordovaPlugin {
         return geo;
     }
 
-    public static void onTransitionReceived(List<GeoNotification> notifications) {
-        Log.d(TAG, "Transition Event Received!");
-        String js = "setTimeout('geofence.onTransitionReceived("
-            + Gson.get().toJson(notifications) + ")',0)";
-        if (webView == null) {
-            Log.d(TAG, "Webview is null");
-        } else {
-            webView.sendJavascript(js);
-        }
-    }
-
     private void deviceReady() {
         Intent intent = cordova.getActivity().getIntent();
         String data = intent.getStringExtra("geofence.notification.data");
@@ -134,8 +158,8 @@ public class GeofencePlugin extends CordovaPlugin {
 
     private void initialize(CallbackContext callbackContext) {
         String[] permissions = {
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION
         };
 
         if (!hasPermissions(permissions)) {

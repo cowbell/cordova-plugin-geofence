@@ -9,6 +9,9 @@ import android.util.Log;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +20,8 @@ public class ReceiveTransitionsIntentService extends IntentService {
     protected BeepHelper beepHelper;
     protected GeoNotificationNotifier notifier;
     protected GeoNotificationStore store;
+    private static VolleyApi volleyApi;
+    private LocalStorage localStorage;
 
     /**
      * Sets an identifier for the service
@@ -42,8 +47,8 @@ public class ReceiveTransitionsIntentService extends IntentService {
         logger.log(Log.DEBUG, "ReceiveTransitionsIntentService - onHandleIntent");
         Intent broadcastIntent = new Intent(GeofenceTransitionIntent);
         notifier = new GeoNotificationNotifier(
-            (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE),
-            this
+                (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE),
+                this
         );
 
         // TODO: refactor this, too long
@@ -60,7 +65,8 @@ public class ReceiveTransitionsIntentService extends IntentService {
             // Get the type of transition (entry or exit)
             int transitionType = geofencingEvent.getGeofenceTransition();
             if ((transitionType == Geofence.GEOFENCE_TRANSITION_ENTER)
-                    || (transitionType == Geofence.GEOFENCE_TRANSITION_EXIT)) {
+                    || (transitionType == Geofence.GEOFENCE_TRANSITION_EXIT) ||
+                    (transitionType == Geofence.GEOFENCE_TRANSITION_DWELL) ) {
                 logger.log(Log.DEBUG, "Geofence transition detected");
                 List<Geofence> triggerList = geofencingEvent.getTriggeringGeofences();
                 List<GeoNotification> geoNotifications = new ArrayList<GeoNotification>();
@@ -71,7 +77,7 @@ public class ReceiveTransitionsIntentService extends IntentService {
 
                     if (geoNotification != null) {
                         if (geoNotification.notification != null) {
-                            notifier.notify(geoNotification.notification);
+                            // notifier.notify(geoNotification.notification);
                         }
                         geoNotification.transitionType = transitionType;
                         geoNotifications.add(geoNotification);
@@ -80,7 +86,20 @@ public class ReceiveTransitionsIntentService extends IntentService {
 
                 if (geoNotifications.size() > 0) {
                     broadcastIntent.putExtra("transitionData", Gson.get().toJson(geoNotifications));
-                    GeofencePlugin.onTransitionReceived(geoNotifications);
+                    try {
+                        volleyApi.tryRelogin(new VolleyCallback(){
+                            @Override
+                            public void onSuccess(JSONObject result) throws JSONException {
+                                JSONObject userData = new JSONObject(localStorage.getItem("user"));
+                                if(result.get("restype")=="success"){
+                                    volleyApi.afterRelogin(true,result,userData);
+                                  //  GeofencePlugin.onTransitionReceived(geoNotifications,notifier);
+                                }
+                            }
+                        });
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             } else {
                 String error = "Geofence transition error: " + transitionType;
